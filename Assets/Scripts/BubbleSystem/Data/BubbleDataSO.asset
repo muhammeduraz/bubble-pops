@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8709ca4e4982e3468b2f65251138f37, type: 3}
+  m_Name: BubbleDataSO
+  m_EditorClassIdentifier: 
+  _bubbleDataList:
+  - id: 2
+    color: {r: 0.9568628, g: 0.46274513, b: 0.5647059, a: 1}
+  - id: 4
+    color: {r: 0.9333334, g: 0.38823533, b: 0.22352943, a: 1}
+  - id: 8
+    color: {r: 1, g: 0.7254902, b: 0.16470589, a: 1}
+  - id: 16
+    color: {r: 0.94117653, g: 0.5294118, b: 0.21568629, a: 1}
+  - id: 64
+    color: {r: 0.26666668, g: 0.7607844, b: 0.6509804, a: 1}
+  - id: 128
+    color: {r: 0.38431376, g: 0.7176471, b: 0.9294118, a: 1}
+  - id: 256
+    color: {r: 0.41176474, g: 0.57254905, b: 0.882353, a: 1}
+  - id: 512
+    color: {r: 0.8431373, g: 0.6039216, b: 0.8235295, a: 1}
+  - id: 1024
+    color: {r: 0.8490566, g: 0.22027414, b: 0.33176535, a: 1}
+  - id: 2048
+    color: {r: 0.4148509, g: 0.8490566, b: 0.38848346, a: 1}
