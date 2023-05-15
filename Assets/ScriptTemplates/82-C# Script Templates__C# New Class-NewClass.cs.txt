@@ -1,0 +1,36 @@
+using System;
+using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
+
+namespace Assets.GameAssets.Scripts
+{
+    public class #SCRIPTNAME#
+    {
+        #region Variables
+
+
+
+        #endregion Variables
+
+        #region Properties
+
+
+
+        #endregion Properties
+
+        #region Functions
+
+        private void Initialize()
+        {
+
+        }
+
+        private void Terminate()
+        {
+
+        }
+
+        #endregion Functions
+    }
+}
