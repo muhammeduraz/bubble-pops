@@ -1,0 +1,54 @@
+using System;
+using UnityEngine;
+using System.Collections.Generic;
+
+namespace Assets.Scripts
+{
+    public class #SCRIPTNAME# : MonoBehaviour, IDisposable
+    {
+        #region Variables
+
+
+
+        #endregion Variables
+
+        #region Properties
+
+
+
+        #endregion Properties
+
+        #region Unity Functions
+
+        private void Awake()
+        {
+            Initialize();
+        }
+
+        private void Update()
+        {
+
+        }
+
+        private void OnDestroy()
+        {
+            Dispose();
+        }
+
+        #endregion Unity Functions
+
+        #region Functions
+
+        private void Initialize()
+        {
+
+        }
+
+        public void Dispose()
+        {
+
+        }
+
+        #endregion Functions
+    }
+}

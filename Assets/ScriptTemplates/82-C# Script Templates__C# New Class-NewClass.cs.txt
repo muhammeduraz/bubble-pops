@@ -1,0 +1,35 @@
+using System;
+using UnityEngine;
+using System.Collections.Generic;
+
+namespace Assets.Scripts
+{
+    public class #SCRIPTNAME#
+    {
+        #region Variables
+
+
+
+        #endregion Variables
+
+        #region Properties
+
+
+
+        #endregion Properties
+
+        #region Functions
+
+        public #SCRIPTNAME#()
+        {
+
+        }
+
+        ~#SCRIPTNAME#()
+        {
+
+        }
+
+        #endregion Functions
+    }
+}
