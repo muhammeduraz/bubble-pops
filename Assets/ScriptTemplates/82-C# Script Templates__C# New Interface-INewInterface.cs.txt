@@ -1,9 +1,15 @@
 using System;
 using UnityEngine;
+<<<<<<< Updated upstream
 using System.Collections;
 using System.Collections.Generic;
 
 namespace Assets.GameAssets.Scripts
+=======
+using System.Collections.Generic;
+
+namespace Assets.Scripts
+>>>>>>> Stashed changes
 {
     public interface #SCRIPTNAME#
     {

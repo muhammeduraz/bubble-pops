@@ -1,9 +1,15 @@
 using System;
 using UnityEngine;
+<<<<<<< Updated upstream
 using System.Collections;
 using System.Collections.Generic;
 
 namespace Assets.GameAssets.Scripts
+=======
+using System.Collections.Generic;
+
+namespace Assets.Scripts
+>>>>>>> Stashed changes
 {
     public class #SCRIPTNAME#
     {
@@ -21,12 +27,20 @@ namespace Assets.GameAssets.Scripts
 
         #region Functions
 
+<<<<<<< Updated upstream
         private void Initialize()
+=======
+        public #SCRIPTNAME#()
+>>>>>>> Stashed changes
         {
 
         }
 
+<<<<<<< Updated upstream
         private void Terminate()
+=======
+        ~#SCRIPTNAME#()
+>>>>>>> Stashed changes
         {
 
         }

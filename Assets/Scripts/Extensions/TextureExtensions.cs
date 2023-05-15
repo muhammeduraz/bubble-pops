@@ -4,6 +4,11 @@ namespace Assets.Scripts.Extensions
 {
     public static class TextureExtensions
     {
+<<<<<<< Updated upstream
+=======
+        #region Functions
+
+>>>>>>> Stashed changes
         public static Texture2D CropToSquareAndResample(this Texture2D texture, int size)
         {
             // Default to no cropping
@@ -51,5 +56,10 @@ namespace Assets.Scripts.Extensions
 
             return croppedTexture;
         }
+<<<<<<< Updated upstream
+=======
+
+        #endregion Functions
+>>>>>>> Stashed changes
     }
 }

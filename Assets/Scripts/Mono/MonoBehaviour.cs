@@ -19,7 +19,11 @@ namespace Assets.Scripts.Mono
 
         #endregion Variables
 
+<<<<<<< Updated upstream
         #region OnEnable - Awake - Start - OnDestroy
+=======
+        #region Unity Functions
+>>>>>>> Stashed changes
 
         protected virtual void OnEnable()
         {
@@ -45,7 +49,11 @@ namespace Assets.Scripts.Mono
             UnregisterLateUpdate();
         }
 
+<<<<<<< Updated upstream
         #endregion OnEnable - Awake - Start - OnDestroy
+=======
+        #endregion Unity Functions
+>>>>>>> Stashed changes
 
         #region Functions
 

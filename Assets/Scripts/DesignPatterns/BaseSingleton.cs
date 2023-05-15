@@ -34,7 +34,11 @@ namespace Assets.Scripts.DesignPatterns
 
         #endregion Properties
 
+<<<<<<< Updated upstream
         #region Awake - OnDisable
+=======
+        #region Unity Functions
+>>>>>>> Stashed changes
 
         private void Awake()
         {
@@ -46,7 +50,11 @@ namespace Assets.Scripts.DesignPatterns
             DisposeSingleton();
         }
 
+<<<<<<< Updated upstream
         #endregion Awake - OnDisable
+=======
+        #endregion Unity Functions
+>>>>>>> Stashed changes
 
         #region Functions
 

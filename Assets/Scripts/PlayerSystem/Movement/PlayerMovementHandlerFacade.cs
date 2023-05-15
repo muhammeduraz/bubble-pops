@@ -19,7 +19,11 @@ namespace Assets.Scripts.PlayerSystem.Movement
 
         #endregion Properties
 
+<<<<<<< Updated upstream
         #region Awake - Update - OnDisable
+=======
+        #region Unity Functions
+>>>>>>> Stashed changes
 
         private void Awake()
         {
@@ -37,7 +41,11 @@ namespace Assets.Scripts.PlayerSystem.Movement
             Dispose();
         }
 
+<<<<<<< Updated upstream
         #endregion Awake - Update - OnDisable
+=======
+        #endregion Unity Functions
+>>>>>>> Stashed changes
 
         #region Functions
 

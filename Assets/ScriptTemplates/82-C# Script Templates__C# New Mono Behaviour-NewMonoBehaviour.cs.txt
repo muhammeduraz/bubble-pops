@@ -1,11 +1,19 @@
 using System;
 using UnityEngine;
+<<<<<<< Updated upstream
 using System.Collections;
 using System.Collections.Generic;
 
 namespace Assets.GameAssets.Scripts
 {
     public class #SCRIPTNAME# : MonoBehaviour
+=======
+using System.Collections.Generic;
+
+namespace Assets.Scripts
+{
+    public class #SCRIPTNAME# : MonoBehaviour, IDisposable
+>>>>>>> Stashed changes
     {
         #region Variables
 
@@ -19,7 +27,11 @@ namespace Assets.GameAssets.Scripts
 
         #endregion Properties
 
+<<<<<<< Updated upstream
         #region Awake - Update - OnDisable
+=======
+        #region Unity Functions
+>>>>>>> Stashed changes
 
         private void Awake()
         {
@@ -31,12 +43,21 @@ namespace Assets.GameAssets.Scripts
 
         }
 
+<<<<<<< Updated upstream
         private void OnDisable()
         {
             Terminate();
         }
 
         #endregion Awake - Update - OnDisable
+=======
+        private void OnDestroy()
+        {
+            Dispose();
+        }
+
+        #endregion Unity Functions
+>>>>>>> Stashed changes
 
         #region Functions
 
@@ -45,7 +66,11 @@ namespace Assets.GameAssets.Scripts
 
         }
 
+<<<<<<< Updated upstream
         private void Terminate()
+=======
+        public void Dispose()
+>>>>>>> Stashed changes
         {
 
         }

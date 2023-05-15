@@ -27,7 +27,11 @@ namespace Assets.Scripts.CurrencySystem.Canvas
 
         #endregion Variables
 
+<<<<<<< Updated upstream
         #region Awake - OnDisable
+=======
+        #region Unity Functions
+>>>>>>> Stashed changes
 
         private void Awake()
         {
@@ -39,7 +43,11 @@ namespace Assets.Scripts.CurrencySystem.Canvas
             Terminate();
         }
 
+<<<<<<< Updated upstream
         #endregion Awake - OnDisable
+=======
+        #endregion Unity Functions
+>>>>>>> Stashed changes
 
         #region Functions
 

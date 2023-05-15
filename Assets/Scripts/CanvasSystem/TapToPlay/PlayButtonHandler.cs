@@ -18,7 +18,11 @@ namespace Assets.Scripts.CanvasSystem
 
         #endregion Variables
 
+<<<<<<< Updated upstream
         #region Awake - OnDisable
+=======
+        #region Unity Functions
+>>>>>>> Stashed changes
 
         private void Awake()
         {
@@ -31,7 +35,11 @@ namespace Assets.Scripts.CanvasSystem
             Dispose();
         }
 
+<<<<<<< Updated upstream
         #endregion Awake - OnDisable
+=======
+        #endregion Unity Functions
+>>>>>>> Stashed changes
 
         #region Functions
 

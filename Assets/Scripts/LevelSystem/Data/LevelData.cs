@@ -21,12 +21,20 @@ namespace Assets.Scripts.LevelSystem.Data
 
         #region Functions
 
+<<<<<<< Updated upstream
         private void Initialize()
+=======
+        public void Initialize()
+>>>>>>> Stashed changes
         {
 
         }
 
+<<<<<<< Updated upstream
         private void Terminate()
+=======
+        public void Dispose()
+>>>>>>> Stashed changes
         {
 
         }

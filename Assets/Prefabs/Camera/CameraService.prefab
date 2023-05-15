@@ -194,6 +194,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2094164087410701708}
+<<<<<<< Updated upstream
+=======
+  - component: {fileID: 4954217249427876800}
+>>>>>>> Stashed changes
   m_Layer: 0
   m_Name: CameraService
   m_TagString: Untagged
@@ -219,6 +223,21 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+<<<<<<< Updated upstream
+=======
+--- !u!114 &4954217249427876800
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2094164087410701709}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e696b908246b94e8a9091940edc1256c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+>>>>>>> Stashed changes
 --- !u!1 &2094164087629177196
 GameObject:
   m_ObjectHideFlags: 0
@@ -243,15 +262,24 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2094164087629177196}
+<<<<<<< Updated upstream
   m_LocalRotation: {x: 0.21577239, y: -0.07659924, z: 0.01698164, w: 0.97328645}
   m_LocalPosition: {x: 0.7, y: 3.46, z: -4}
+=======
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+>>>>>>> Stashed changes
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2094164086628679935}
   m_Father: {fileID: 2094164087410701708}
   m_RootOrder: 1
+<<<<<<< Updated upstream
   m_LocalEulerAnglesHint: {x: 25, y: -9, z: 0}
+=======
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+>>>>>>> Stashed changes
 --- !u!114 &2094164087629177186
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -276,7 +304,11 @@ MonoBehaviour:
     FieldOfView: 60
     OrthographicSize: 5
     NearClipPlane: 0.3
+<<<<<<< Updated upstream
     FarClipPlane: 1000
+=======
+    FarClipPlane: 10
+>>>>>>> Stashed changes
     Dutch: 0
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
@@ -312,6 +344,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 171977421361212890, guid: 0e4d47bf1a2dd4b0aa7061f3f56551a3, type: 3}
       propertyPath: m_LocalPosition.x
+<<<<<<< Updated upstream
       value: 0.7
       objectReference: {fileID: 0}
     - target: {fileID: 171977421361212890, guid: 0e4d47bf1a2dd4b0aa7061f3f56551a3, type: 3}
@@ -341,6 +374,37 @@ PrefabInstance:
     - target: {fileID: 171977421361212890, guid: 0e4d47bf1a2dd4b0aa7061f3f56551a3, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: 0
+=======
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 171977421361212890, guid: 0e4d47bf1a2dd4b0aa7061f3f56551a3, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 171977421361212890, guid: 0e4d47bf1a2dd4b0aa7061f3f56551a3, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 171977421361212890, guid: 0e4d47bf1a2dd4b0aa7061f3f56551a3, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 171977421361212890, guid: 0e4d47bf1a2dd4b0aa7061f3f56551a3, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 171977421361212890, guid: 0e4d47bf1a2dd4b0aa7061f3f56551a3, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 171977421361212890, guid: 0e4d47bf1a2dd4b0aa7061f3f56551a3, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 171977421361212890, guid: 0e4d47bf1a2dd4b0aa7061f3f56551a3, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 25
+>>>>>>> Stashed changes
       objectReference: {fileID: 0}
     - target: {fileID: 171977421361212890, guid: 0e4d47bf1a2dd4b0aa7061f3f56551a3, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
@@ -350,6 +414,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+<<<<<<< Updated upstream
+=======
+    - target: {fileID: 171977421361212891, guid: 0e4d47bf1a2dd4b0aa7061f3f56551a3, type: 3}
+      propertyPath: orthographic
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 171977421361212891, guid: 0e4d47bf1a2dd4b0aa7061f3f56551a3, type: 3}
+      propertyPath: far clip plane
+      value: 10
+      objectReference: {fileID: 0}
+>>>>>>> Stashed changes
     - target: {fileID: 171977421361212893, guid: 0e4d47bf1a2dd4b0aa7061f3f56551a3, type: 3}
       propertyPath: m_Name
       value: Main Camera
@@ -357,8 +432,57 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
+<<<<<<< Updated upstream
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0e4d47bf1a2dd4b0aa7061f3f56551a3, type: 3}
+=======
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 171977421361212893, guid: 0e4d47bf1a2dd4b0aa7061f3f56551a3, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6856032167594667796}
+  m_SourcePrefab: {fileID: 100100000, guid: 0e4d47bf1a2dd4b0aa7061f3f56551a3, type: 3}
+--- !u!1 &2094164086675579353 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 171977421361212893, guid: 0e4d47bf1a2dd4b0aa7061f3f56551a3, type: 3}
+  m_PrefabInstance: {fileID: 2264479010298973188}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &6856032167594667796
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2094164086675579353}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_RenderShadows: 1
+  m_RequiresDepthTextureOption: 2
+  m_RequiresOpaqueTextureOption: 2
+  m_CameraType: 0
+  m_Cameras: []
+  m_RendererIndex: -1
+  m_VolumeLayerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  m_VolumeTrigger: {fileID: 0}
+  m_VolumeFrameworkUpdateModeOption: 2
+  m_RenderPostProcessing: 0
+  m_Antialiasing: 0
+  m_AntialiasingQuality: 2
+  m_StopNaN: 0
+  m_Dithering: 0
+  m_ClearDepth: 1
+  m_AllowXRRendering: 1
+  m_UseScreenCoordOverride: 0
+  m_ScreenSizeOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_ScreenCoordScaleBias: {x: 0, y: 0, z: 0, w: 0}
+  m_RequiresDepthTexture: 0
+  m_RequiresColorTexture: 0
+  m_Version: 2
+>>>>>>> Stashed changes
 --- !u!4 &2094164086675579358 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 171977421361212890, guid: 0e4d47bf1a2dd4b0aa7061f3f56551a3, type: 3}

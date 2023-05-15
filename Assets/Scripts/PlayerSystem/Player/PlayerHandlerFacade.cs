@@ -16,7 +16,11 @@ namespace Assets.Scripts.PlayerSystem
 
         #endregion Properties
 
+<<<<<<< Updated upstream
         #region Awake - Update - OnDisable
+=======
+        #region Unity Functions
+>>>>>>> Stashed changes
 
         private void Awake()
         {
@@ -33,7 +37,11 @@ namespace Assets.Scripts.PlayerSystem
             Terminate();
         }
 
+<<<<<<< Updated upstream
         #endregion Awake - Update - OnDisable
+=======
+        #endregion Unity Functions
+>>>>>>> Stashed changes
 
         #region Functions
 

@@ -10,6 +10,11 @@ using UnityEditor.SceneManagement;
 
 namespace Assets.Scripts.SceneSystem
 {
+<<<<<<< Updated upstream
+=======
+    #region Functions
+
+>>>>>>> Stashed changes
     /// <summary>
     /// Keeps reference to a scene asset and tracks it's path, so it can be used in the game runtime.
     ///
@@ -249,4 +254,9 @@ namespace Assets.Scripts.SceneSystem
         }
     }
 #endif
+<<<<<<< Updated upstream
+=======
+
+    #endregion Functions
+>>>>>>> Stashed changes
 }

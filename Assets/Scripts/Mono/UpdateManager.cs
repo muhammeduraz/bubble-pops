@@ -36,6 +36,7 @@ namespace Assets.Scripts.Mono
 
         #region Variables
 
+<<<<<<< Updated upstream
         private const int INITIAL_UPDATE_LIST_SIZE = 128;
         private Dictionary<UpdatePhase, List<MonoBehaviour>> m_registeredBehaviours;
         private bool m_isPaused = false;
@@ -43,6 +44,15 @@ namespace Assets.Scripts.Mono
         #endregion Variables
 
         #region Functions
+=======
+        private bool m_isPaused = false;
+        private const int INITIAL_UPDATE_LIST_SIZE = 128;
+        private Dictionary<UpdatePhase, List<MonoBehaviour>> m_registeredBehaviours;
+
+        #endregion Variables
+
+        #region Unity Functions
+>>>>>>> Stashed changes
 
         protected override void OnAwake()
         {
@@ -58,6 +68,37 @@ namespace Assets.Scripts.Mono
             }
         }
 
+<<<<<<< Updated upstream
+=======
+        [SuppressWarning(Warnings.UnityUpdate)]
+        private void Update()
+        {
+            if (m_isPaused) return;
+            Profiler.BeginSample("Rovio.UpdateManager.Update");
+            UpdateBehaviours(UpdatePhase.Update);
+            Profiler.EndSample();
+        }
+
+        [SuppressWarning(Warnings.UnityUpdate)]
+        private void LateUpdate()
+        {
+            if (m_isPaused) return;
+            Profiler.BeginSample("Rovio.UpdateManager.LateUpdate");
+            UpdateBehaviours(UpdatePhase.LateUpdate);
+            Profiler.EndSample();
+        }
+
+        private void OnApplicationPause(bool pause)
+        {
+            Debug.Log("[UpdateManager] OnApplicationPause(" + pause + ")");
+            m_isPaused = pause;
+        }
+
+        #endregion Unity Functions
+        
+        #region Functions
+
+>>>>>>> Stashed changes
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void ResetSingleton()
         {
@@ -143,6 +184,7 @@ namespace Assets.Scripts.Mono
             }
         }
 
+<<<<<<< Updated upstream
         [SuppressWarning(Warnings.UnityUpdate)]
         private void Update()
         {
@@ -167,6 +209,8 @@ namespace Assets.Scripts.Mono
             m_isPaused = pause;
         }
 
+=======
+>>>>>>> Stashed changes
         #endregion Functions
     }
 }

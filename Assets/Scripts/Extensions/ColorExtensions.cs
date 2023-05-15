@@ -27,11 +27,19 @@ namespace Assets.Scripts.Extensions
         public static float Distance(this Color color, Color other)
         {
             return Mathf.Max(
+<<<<<<< Updated upstream
         Mathf.Abs(other.r - color.r),
         Mathf.Abs(other.g - color.g),
         Mathf.Abs(other.b - color.b),
         Mathf.Abs(other.a - color.a)
           );
+=======
+                Mathf.Abs(other.r - color.r),
+                Mathf.Abs(other.g - color.g),
+                Mathf.Abs(other.b - color.b),
+                Mathf.Abs(other.a - color.a)
+                );
+>>>>>>> Stashed changes
         }
     }
 }

@@ -50,9 +50,15 @@ namespace Assets.Scripts.Mono
     {
         #region Variables
 
+<<<<<<< Updated upstream
         private static bool sm_applicationIsQuitting = false;
         private static bool sm_isBeingManuallyDestroyed = false;
         private static T sm_instance;
+=======
+        private static T sm_instance;
+        private static bool sm_applicationIsQuitting = false;
+        private static bool sm_isBeingManuallyDestroyed = false;
+>>>>>>> Stashed changes
 
         #endregion Variables
 

@@ -7,7 +7,11 @@ namespace Assets.Scripts.PlayerSystem.Animation
     {
         #region Variables
 
+<<<<<<< Updated upstream
         private int RunHash;
+=======
+        private readonly int RunHash = Animator.StringToHash("Run");
+>>>>>>> Stashed changes
 
         private Animator _animator;
 
@@ -28,8 +32,11 @@ namespace Assets.Scripts.PlayerSystem.Animation
 
         public void Initialize()
         {
+<<<<<<< Updated upstream
             RunHash = Animator.StringToHash("Run");
 
+=======
+>>>>>>> Stashed changes
             SubscribeSignals(true);
         }
 

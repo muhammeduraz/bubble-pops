@@ -19,7 +19,11 @@ namespace Assets.Scripts.SceneSystem
 
         #endregion Properties
 
+<<<<<<< Updated upstream
         #region Awake - OnDisable
+=======
+        #region Unity Functions
+>>>>>>> Stashed changes
 
         private void Awake()
         {
@@ -31,7 +35,11 @@ namespace Assets.Scripts.SceneSystem
             Terminate();
         }
 
+<<<<<<< Updated upstream
         #endregion Awake - OnDisable
+=======
+        #endregion Unity Functions
+>>>>>>> Stashed changes
 
         #region Functions
 
@@ -54,7 +62,11 @@ namespace Assets.Scripts.SceneSystem
             Scene scene = SceneManager.GetSceneByBuildIndex(1);
             SceneManager.SetActiveScene(scene);
 
+<<<<<<< Updated upstream
             SceneManager.UnloadSceneAsync(gameObject.scene, UnloadSceneOptions.None);
+=======
+            await SceneManager.UnloadSceneAsync(gameObject.scene, UnloadSceneOptions.None);
+>>>>>>> Stashed changes
         }
 
         #endregion Functions

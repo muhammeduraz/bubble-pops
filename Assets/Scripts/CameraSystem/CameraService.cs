@@ -19,7 +19,11 @@ namespace Assets.Scripts.CameraSystem
 
         #endregion Properties
 
+<<<<<<< Updated upstream
         #region Awake - Update - OnDisable
+=======
+        #region Unity Functions
+>>>>>>> Stashed changes
 
         private void Awake()
         {
@@ -36,7 +40,11 @@ namespace Assets.Scripts.CameraSystem
             Terminate();
         }
 
+<<<<<<< Updated upstream
         #endregion Awake - Update - OnDisable
+=======
+        #endregion Unity Functions
+>>>>>>> Stashed changes
 
         #region Functions
 
