@@ -12,6 +12,8 @@ namespace Assets.Scripts.BubbleSystem
     {
         #region Variables
 
+        private int _verticalOffsetIndex;
+
         private List<Bubble> _activeBubbleList;
 
         private BubblePool _bubblePool;
@@ -29,6 +31,20 @@ namespace Assets.Scripts.BubbleSystem
         [SerializeField] private BubbleDataSO _bubbleDataSO;
 
         #endregion Variables
+
+        #region Properties
+
+        private int VerticalOffsetIndex 
+        { 
+            get => _verticalOffsetIndex;
+            set 
+            {
+                if (value == 2) value = 0;
+                _verticalOffsetIndex = value;
+            } 
+        }
+
+        #endregion Properties
 
         #region Unity Functions
 
@@ -48,6 +64,8 @@ namespace Assets.Scripts.BubbleSystem
 
         private void Initialize()
         {
+            VerticalOffsetIndex = 0;
+
             _bubblePool = new BubblePool();
             _bubbleFactory = new BubbleFactory(_bubblePrefab);
             
@@ -89,8 +107,6 @@ namespace Assets.Scripts.BubbleSystem
 
             for (int i = 0; i < _initialLineCount; i++)
             {
-                spawnPosition.x = _initialSpawnPosition.x - 0.5f * (i % 2);
-
                 CreateLinePile(spawnPosition);
 
                 spawnPosition.y += _verticalOffset;
@@ -100,12 +116,17 @@ namespace Assets.Scripts.BubbleSystem
         private void CreateLinePile(Vector3 spawnPosition)
         {
             Bubble instantiatedBubble = null;
+            spawnPosition.x -= 0.5f * (VerticalOffsetIndex % 2);
+            VerticalOffsetIndex++;
 
             for (int j = 0; j < _lineSize; j++)
             {
                 instantiatedBubble = GetBubble();
                 instantiatedBubble.transform.SetParent(transform, true);
-                instantiatedBubble.transform.position = spawnPosition;
+                instantiatedBubble.transform.position = spawnPosition + Vector3.down * _verticalOffset;
+
+                instantiatedBubble.MoveTo(spawnPosition);
+                instantiatedBubble.ScaleOut();
 
                 instantiatedBubble.UpdateBubble(_bubbleDataSO.GetRandomBubbleData(_randomMaxExclusive));
                 instantiatedBubble.SendToPool += RemoveBubble;
@@ -115,7 +136,6 @@ namespace Assets.Scripts.BubbleSystem
             }
         }
 
-        [Button]
         private void MoveAllBubblesDown()
         {
             Bubble loopBubble = null;
@@ -129,6 +149,13 @@ namespace Assets.Scripts.BubbleSystem
                     loopBubble.MoveDown(_verticalOffset);
                 }
             }
+        }
+
+        [Button]
+        private void MoveDownAndCreateLine()
+        {
+            MoveAllBubblesDown();
+            CreateLinePile(_initialSpawnPosition);
         }
 
         #endregion Functions

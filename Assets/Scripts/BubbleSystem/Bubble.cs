@@ -11,7 +11,7 @@ namespace Assets.Scripts.BubbleSystem
     {
         #region Events
 
-        public Action<Bubble> SendToPoolEvent;
+        public Action<Bubble> DisposeEvent;
 
         #endregion Events
 
@@ -22,16 +22,17 @@ namespace Assets.Scripts.BubbleSystem
 
         private BubbleData _bubbleData;
 
-        [SerializeField] protected TextMeshPro _idText;
-        [SerializeField] protected TrailRenderer _trailRenderer;
-        [SerializeField] protected SpriteRenderer _spriteRenderer;
+        [SerializeField] private TextMeshPro _idText;
+        [SerializeField] private TrailRenderer _trailRenderer;
+        [SerializeField] private SpriteRenderer _spriteRenderer;
 
         #endregion Variables
 
         #region Properties
 
         public BubbleData BubbleData { get => _bubbleData; set => _bubbleData = value; }
-        public Action<Bubble> SendToPool { get => SendToPoolEvent; set => SendToPoolEvent = value; }
+        public Action<Bubble> SendToPool { get => DisposeEvent; set => DisposeEvent = value; }
+        public TrailRenderer TrailRenderer { get => _trailRenderer; }
 
         #endregion Properties
 
@@ -39,6 +40,8 @@ namespace Assets.Scripts.BubbleSystem
 
         public void Initialize()
         {
+            _trailRenderer.enabled = false;
+
             UpdateBubble();
         }
 
@@ -70,15 +73,23 @@ namespace Assets.Scripts.BubbleSystem
         {
             _spriteRenderer.color = color;
         }
-
+        
         public void MoveDown(float amount, float duration = 0.25f)
         {
             _movementTween?.Kill();
             _movementTween = transform.DOMoveY(transform.position.y + amount, duration);
         }
 
+        public void MoveTo(Vector3 targetPosition, float duration = 0.25f)
+        {
+            _movementTween?.Kill();
+            _movementTween = transform.DOMove(targetPosition, duration);
+        }
+
         public void ScaleOut(float duration = 0.25f)
         {
+            transform.localScale = Vector3.zero;
+
             _scaleTween?.Kill();
             _scaleTween = transform.DOScale(1f, duration);
         }
