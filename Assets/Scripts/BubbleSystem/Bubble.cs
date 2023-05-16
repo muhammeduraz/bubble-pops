@@ -19,6 +19,7 @@ namespace Assets.Scripts.BubbleSystem
         private BubbleData _bubbleData;
 
         [SerializeField] protected TextMeshPro _idText;
+        [SerializeField] protected TrailRenderer _trailRenderer;
         [SerializeField] protected SpriteRenderer _spriteRenderer;
 
         #endregion Variables
@@ -46,6 +47,12 @@ namespace Assets.Scripts.BubbleSystem
         {
             SetText("" + _bubbleData.id);
             SetColor(_bubbleData.color);
+        }
+
+        public void UpdateBubble(BubbleData bubbleData)
+        {
+            _bubbleData = bubbleData;
+            UpdateBubble();
         }
 
         private void SetText(string text)
