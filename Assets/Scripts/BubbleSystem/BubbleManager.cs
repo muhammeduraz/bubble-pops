@@ -1,14 +1,18 @@
 using System;
 using UnityEngine;
+using System.Collections.Generic;
 using Assets.Scripts.BubbleSystem.Pool;
 using Assets.Scripts.BubbleSystem.Data;
 using Assets.Scripts.BubbleSystem.Factory;
+using Sirenix.OdinInspector;
 
 namespace Assets.Scripts.BubbleSystem
 {
     public class BubbleManager : MonoBehaviour, IDisposable
     {
         #region Variables
+
+        private List<Bubble> _activeBubbleList;
 
         private BubblePool _bubblePool;
         private BubbleFactory _bubbleFactory;
@@ -46,6 +50,8 @@ namespace Assets.Scripts.BubbleSystem
         {
             _bubblePool = new BubblePool();
             _bubbleFactory = new BubbleFactory(_bubblePrefab);
+            
+            _activeBubbleList = new List<Bubble>();
 
             CreateInitialPile();
         }
@@ -54,6 +60,17 @@ namespace Assets.Scripts.BubbleSystem
         {
             _bubblePool = null;
             _bubbleFactory = null;
+        }
+
+        private void AddBubble(Bubble bubble)
+        {
+            if (_activeBubbleList.Contains(bubble)) return;
+            _activeBubbleList.Add(bubble);
+        }
+
+        private void RemoveBubble(Bubble bubble)
+        {
+            _activeBubbleList.Remove(bubble);
         }
 
         private Bubble GetBubble()
@@ -68,49 +85,50 @@ namespace Assets.Scripts.BubbleSystem
 
         private void CreateInitialPile()
         {
-            Bubble loopBubble = null;
             Vector3 spawnPosition = _initialSpawnPosition;
 
             for (int i = 0; i < _initialLineCount; i++)
             {
-                spawnPosition.x += -0.5f * (i % 2);
+                spawnPosition.x = _initialSpawnPosition.x - 0.5f * (i % 2);
 
-                for (int j = 0; j < _lineSize; j++)
-                {
-                    loopBubble = GetBubble();
-                    loopBubble.transform.SetParent(transform, true);
-                    loopBubble.transform.position = spawnPosition;
-
-                    loopBubble.UpdateBubble(_bubbleDataSO.GetRandomBubbleData(_randomMaxExclusive));
-
-                    spawnPosition.x += _horizontalOffset;
-                }
+                CreateLinePile(spawnPosition);
 
                 spawnPosition.y += _verticalOffset;
-                spawnPosition.x = _initialSpawnPosition.x;
             }
         }
 
-        private void CreateLinePile()
+        private void CreateLinePile(Vector3 spawnPosition)
         {
-            Bubble loopBubble = null;
-            Vector3 spawnPosition = _initialSpawnPosition;
+            Bubble instantiatedBubble = null;
 
             for (int j = 0; j < _lineSize; j++)
             {
-                loopBubble = GetBubble();
-                loopBubble.transform.SetParent(transform, true);
-                loopBubble.transform.position = spawnPosition;
+                instantiatedBubble = GetBubble();
+                instantiatedBubble.transform.SetParent(transform, true);
+                instantiatedBubble.transform.position = spawnPosition;
 
-                loopBubble.UpdateBubble(_bubbleDataSO.GetRandomBubbleData(_randomMaxExclusive));
+                instantiatedBubble.UpdateBubble(_bubbleDataSO.GetRandomBubbleData(_randomMaxExclusive));
+                instantiatedBubble.SendToPool += RemoveBubble;
+                AddBubble(instantiatedBubble);
 
                 spawnPosition.x += _horizontalOffset;
             }
         }
 
+        [Button]
         private void MoveAllBubblesDown()
         {
+            Bubble loopBubble = null;
 
+            for (int i = 0; i < _activeBubbleList.Count; i++)
+            {
+                loopBubble = _activeBubbleList[i];
+
+                if (loopBubble != null)
+                {
+                    loopBubble.MoveDown(_verticalOffset);
+                }
+            }
         }
 
         #endregion Functions
