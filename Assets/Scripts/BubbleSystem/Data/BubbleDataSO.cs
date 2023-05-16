@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Assets.Scripts.BubbleSystem.Data
 {
     [CreateAssetMenu (fileName = "BubbleDataSO", menuName = "Scriptable Objects/Bubble/Data/BubbleDataSO")]
-    public class NewScriptableObject : ScriptableObject
+    public class BubbleDataSO : ScriptableObject
     {
         #region Variables
 
@@ -13,6 +13,14 @@ namespace Assets.Scripts.BubbleSystem.Data
         #endregion Variables
 
         #region Functions
+
+        public BubbleData GetRandomBubbleData(int maxExclusive = -1)
+        {
+            if (maxExclusive == -1 || maxExclusive > _bubbleDataList.Count)
+                maxExclusive = _bubbleDataList.Count;
+
+            return _bubbleDataList[Random.Range(0, maxExclusive)];
+        }
 
         public BubbleData GetBubbleDataById(int id)
         {
