@@ -41,7 +41,9 @@ namespace Assets.Scripts.EnvironmentSystem
 
         public void Dispose()
         {
-
+            _camera = null;
+            _backgroundSpriteRenderer = null;
+            _foregroundSpriteRenderer = null;
         }
 
         private void UpdateBackgroundSprite()
