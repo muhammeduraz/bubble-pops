@@ -5,11 +5,11 @@ using Assets.Scripts.BubbleSystem.Data;
 
 namespace Assets.Scripts.BubbleSystem
 {
-    public abstract class BaseBubble : MonoBehaviour, IDisposable
+    public class Bubble : MonoBehaviour, IDisposable
     {
         #region Variables
 
-        [SerializeField] private BubbleData _bubbleData;
+        private BubbleData _bubbleData;
 
         [SerializeField] protected TextMeshPro _idText;
         [SerializeField] protected SpriteRenderer _spriteRenderer;
@@ -24,18 +24,15 @@ namespace Assets.Scripts.BubbleSystem
 
         #region Unity Functions
 
-        private void Awake()
-        {
-            Initialize();
-        }
+
 
         #endregion Unity Functions
 
         #region Functions
 
-        private void Initialize()
+        public void Initialize()
         {
-
+            UpdateBubble();
         }
 
         public void Dispose()

@@ -1,22 +1,9 @@
-using UnityEngine;
 using Assets.Scripts.ProductSystem;
 
 namespace Assets.Scripts.FactorySystem
 {
-    public abstract class BaseFactory<T>
+    public abstract class BaseFactory<T> where T : IProduct
     {
-        #region Variables
-
-
-
-        #endregion Variables
-
-        #region Properties
-
-
-
-        #endregion Properties
-
         #region Functions
 
         public BaseFactory()
