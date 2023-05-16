@@ -1,8 +1,7 @@
 using UnityEngine;
 using Sirenix.OdinInspector;
-using Assets.Scripts.BulletSystem;
 
-namespace Assets.Scripts.BulletSystem.Data
+namespace Assets.Scripts.Data
 {
     [CreateAssetMenu (fileName = "FactoryData", menuName = "Scriptable Objects/Factory/Data/FactoryData")]
     public class FactoryData<T> : ScriptableObject

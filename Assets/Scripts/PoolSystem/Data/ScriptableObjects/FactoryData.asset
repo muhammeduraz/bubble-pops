@@ -9,7 +9,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 36022165764d94299b6099d5abf93c4f, type: 3}
+  m_Script: {fileID: 11500000, guid: 8aaddc17e62bb4f0b9d3f930b947793c, type: 3}
   m_Name: FactoryData
   m_EditorClassIdentifier: 
-  _bulletPrefab: {fileID: 3708279746370749425, guid: 851feb94a59ed49c08bca63aff037667, type: 3}

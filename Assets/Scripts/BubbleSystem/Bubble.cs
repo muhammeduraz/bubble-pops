@@ -1,12 +1,19 @@
 using TMPro;
 using System;
 using UnityEngine;
+using Assets.Scripts.ProductSystem;
 using Assets.Scripts.BubbleSystem.Data;
 
 namespace Assets.Scripts.BubbleSystem
 {
-    public class Bubble : MonoBehaviour, IDisposable
+    public class Bubble : MonoBehaviour, IProduct<Bubble>
     {
+        #region Events
+
+        public Action<Bubble> SendToPoolEvent;
+        
+        #endregion Events
+
         #region Variables
 
         private BubbleData _bubbleData;
@@ -19,14 +26,9 @@ namespace Assets.Scripts.BubbleSystem
         #region Properties
 
         public BubbleData BubbleData { get => _bubbleData; set => _bubbleData = value; }
+        public Action<Bubble> SendToPool { get => SendToPoolEvent; set => SendToPoolEvent = value; }
 
         #endregion Properties
-
-        #region Unity Functions
-
-
-
-        #endregion Unity Functions
 
         #region Functions
 

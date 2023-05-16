@@ -2,7 +2,7 @@ using Assets.Scripts.ProductSystem;
 
 namespace Assets.Scripts.FactorySystem
 {
-    public abstract class BaseFactory<T> where T : IProduct
+    public abstract class BaseFactory<T> where T : IProduct<T>
     {
         #region Functions
 

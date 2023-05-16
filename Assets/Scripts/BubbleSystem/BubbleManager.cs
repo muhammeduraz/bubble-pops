@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
-using Assets.Scripts.BubbleSystem;
+using Assets.Scripts.BubbleSystem.Pool;
+using Assets.Scripts.BubbleSystem.Factory;
 
 namespace Assets.Scripts.BubbleSystem
 {
@@ -8,17 +9,12 @@ namespace Assets.Scripts.BubbleSystem
     {
         #region Variables
 
-        private Bubble
+        private BubblePool _bubblePool;
+        private BubbleFactory _bubbleFactory;
 
         [SerializeField] private Bubble _bubblePrefab;
 
         #endregion Variables
-
-        #region Properties
-
-
-
-        #endregion Properties
 
         #region Unity Functions
 
@@ -38,12 +34,14 @@ namespace Assets.Scripts.BubbleSystem
 
         private void Initialize()
         {
-
+            _bubblePool = new BubblePool();
+            _bubbleFactory = new BubbleFactory(_bubblePrefab);
         }
 
         public void Dispose()
         {
-
+            _bubblePool = null;
+            _bubbleFactory = null;
         }
 
         #endregion Functions
