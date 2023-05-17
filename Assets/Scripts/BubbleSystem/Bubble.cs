@@ -20,6 +20,8 @@ namespace Assets.Scripts.BubbleSystem
         private Tween _scaleTween;
         private Tween _movementTween;
 
+        private Vector3 _currentPosition;
+
         private BubbleData _bubbleData;
 
         [SerializeField] private TextMeshPro _idText;
@@ -76,14 +78,18 @@ namespace Assets.Scripts.BubbleSystem
         
         public void MoveDown(float amount, float duration = 0.25f)
         {
+            _currentPosition.y += amount;
+
             _movementTween?.Kill();
-            _movementTween = transform.DOMoveY(transform.position.y + amount, duration);
+            _movementTween = transform.DOMoveY(_currentPosition.y, duration);
         }
 
         public void MoveTo(Vector3 targetPosition, float duration = 0.25f)
         {
+            _currentPosition = targetPosition;
+
             _movementTween?.Kill();
-            _movementTween = transform.DOMove(targetPosition, duration);
+            _movementTween = transform.DOMove(_currentPosition, duration);
         }
 
         public void ScaleOut(float duration = 0.25f)

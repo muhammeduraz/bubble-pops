@@ -1,10 +1,11 @@
 using System;
 using UnityEngine;
+using System.Collections;
+using Sirenix.OdinInspector;
 using System.Collections.Generic;
 using Assets.Scripts.BubbleSystem.Pool;
 using Assets.Scripts.BubbleSystem.Data;
 using Assets.Scripts.BubbleSystem.Factory;
-using Sirenix.OdinInspector;
 
 namespace Assets.Scripts.BubbleSystem
 {
@@ -71,7 +72,7 @@ namespace Assets.Scripts.BubbleSystem
             
             _activeBubbleList = new List<Bubble>();
 
-            CreateInitialPile();
+            StartCoroutine(CreateInitialPile());
         }
 
         public void Dispose()
@@ -101,19 +102,19 @@ namespace Assets.Scripts.BubbleSystem
             return bubble;
         }
 
-        private void CreateInitialPile()
+        private IEnumerator CreateInitialPile()
         {
             Vector3 spawnPosition = _initialSpawnPosition;
 
             for (int i = 0; i < _initialLineCount; i++)
             {
-                CreateLinePile(spawnPosition);
-
+                StartCoroutine(CreateLinePile(spawnPosition));
+                yield return new WaitForSeconds(0.1f);
                 spawnPosition.y += _verticalOffset;
             }
         }
 
-        private void CreateLinePile(Vector3 spawnPosition)
+        private IEnumerator CreateLinePile(Vector3 spawnPosition)
         {
             Bubble instantiatedBubble = null;
             spawnPosition.x -= 0.5f * (VerticalOffsetIndex % 2);
@@ -133,6 +134,8 @@ namespace Assets.Scripts.BubbleSystem
                 AddBubble(instantiatedBubble);
 
                 spawnPosition.x += _horizontalOffset;
+
+                yield return new WaitForSeconds(0.05f);
             }
         }
 
@@ -155,7 +158,7 @@ namespace Assets.Scripts.BubbleSystem
         private void MoveDownAndCreateLine()
         {
             MoveAllBubblesDown();
-            CreateLinePile(_initialSpawnPosition);
+            StartCoroutine(CreateLinePile(_initialSpawnPosition));
         }
 
         #endregion Functions
