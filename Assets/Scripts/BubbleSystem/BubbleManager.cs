@@ -9,6 +9,7 @@ using Assets.Scripts.BubbleSystem.Factory;
 
 namespace Assets.Scripts.BubbleSystem
 {
+    [DefaultExecutionOrder(-1)]
     public class BubbleManager : MonoBehaviour, IDisposable
     {
         #region Variables
@@ -44,6 +45,8 @@ namespace Assets.Scripts.BubbleSystem
                 _verticalOffsetIndex = value;
             } 
         }
+
+        public BubbleData GetRandomBubbleData { get => _bubbleDataSO.GetRandomBubbleData(_randomMaxExclusive); }
 
         #endregion Properties
 
@@ -84,6 +87,7 @@ namespace Assets.Scripts.BubbleSystem
         private void AddBubble(Bubble bubble)
         {
             if (_activeBubbleList.Contains(bubble)) return;
+
             _activeBubbleList.Add(bubble);
         }
 
@@ -92,13 +96,14 @@ namespace Assets.Scripts.BubbleSystem
             _activeBubbleList.Remove(bubble);
         }
 
-        private Bubble GetBubble()
+        public Bubble GetBubble()
         {
             Bubble bubble = _bubblePool.GetProduct();
 
             if (bubble == null)
                 bubble = _bubbleFactory.Manufacture();
 
+            bubble.transform.SetParent(transform, true);
             return bubble;
         }
 
@@ -123,12 +128,12 @@ namespace Assets.Scripts.BubbleSystem
             for (int j = 0; j < _lineSize; j++)
             {
                 instantiatedBubble = GetBubble();
-                instantiatedBubble.transform.SetParent(transform, true);
                 instantiatedBubble.transform.position = spawnPosition + Vector3.down * _verticalOffset;
 
                 instantiatedBubble.MoveTo(spawnPosition);
                 instantiatedBubble.ScaleOut();
 
+                instantiatedBubble.Initialize();
                 instantiatedBubble.UpdateBubble(_bubbleDataSO.GetRandomBubbleData(_randomMaxExclusive));
                 instantiatedBubble.SendToPool += RemoveBubble;
                 AddBubble(instantiatedBubble);

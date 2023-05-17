@@ -43,8 +43,6 @@ namespace Assets.Scripts.BubbleSystem
         public void Initialize()
         {
             _trailRenderer.enabled = false;
-
-            UpdateBubble();
         }
 
         public void Dispose()
@@ -54,7 +52,7 @@ namespace Assets.Scripts.BubbleSystem
             gameObject.SetActive(false);
         }
 
-        public void UpdateBubble()
+        private void UpdateBubble()
         {
             SetText("" + _bubbleData.id);
             SetColor(_bubbleData.color);
@@ -92,12 +90,12 @@ namespace Assets.Scripts.BubbleSystem
             _movementTween = transform.DOMove(_currentPosition, duration);
         }
 
-        public void ScaleOut(float duration = 0.25f)
+        public void ScaleOut(float amount = 1f, float duration = 0.25f, float delay = 0f)
         {
             transform.localScale = Vector3.zero;
 
             _scaleTween?.Kill();
-            _scaleTween = transform.DOScale(1f, duration);
+            _scaleTween = transform.DOScale(amount, duration).SetDelay(delay);
         }
 
         #endregion Functions
