@@ -9,8 +9,6 @@ namespace Assets.Scripts.EnvironmentSystem
 
         private Camera _camera;
 
-        [SerializeField] private Vector2 _foregroundScaleFactor;
-
         [SerializeField] private SpriteRenderer _backgroundSpriteRenderer;
         [SerializeField] private SpriteRenderer _foregroundSpriteRenderer;
 
@@ -49,13 +47,12 @@ namespace Assets.Scripts.EnvironmentSystem
         private void UpdateBackgroundSprite()
         {
             _backgroundSpriteRenderer.transform.localScale = GetScreenToWorldSize();
-            _foregroundSpriteRenderer.transform.localScale = _foregroundScaleFactor;
         }
 
         private Vector2 GetScreenToWorldSize()
         {
             Vector2 topRightCorner = new Vector2(1, 1);
-            Vector2 edgeVector = Camera.main.ViewportToWorldPoint(topRightCorner);
+            Vector2 edgeVector = _camera.ViewportToWorldPoint(topRightCorner);
             
             Vector2 size = edgeVector * 2;
             return size;

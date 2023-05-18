@@ -4,6 +4,8 @@ using UnityEngine;
 using DG.Tweening;
 using Assets.Scripts.ProductSystem;
 using Assets.Scripts.BubbleSystem.Data;
+using Assets.Scripts.Particle;
+using Sirenix.OdinInspector;
 
 namespace Assets.Scripts.BubbleSystem
 {
