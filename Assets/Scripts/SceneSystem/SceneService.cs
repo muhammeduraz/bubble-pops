@@ -40,7 +40,7 @@ namespace Assets.Scripts.SceneSystem
 
         public void Dispose()
         {
-            
+            _loadingPanel = null;
         }
 
         public IEnumerator LoadSceneAsync()

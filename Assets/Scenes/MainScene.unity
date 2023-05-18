@@ -199,7 +199,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cbcb11567420442668235db811fe4646, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _extraLoadingDuration: 1
+  _extraLoadingDuration: 0
   _loadingPanel: {fileID: 1421797765}
 --- !u!1 &927071358
 GameObject:

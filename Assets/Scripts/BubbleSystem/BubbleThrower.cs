@@ -9,6 +9,9 @@ namespace Assets.Scripts.BubbleSystem
     {
         #region Variables
 
+        private bool _isFingerDown;
+        private bool _isThrowActive;
+
         private Camera _camera;
 
         private Tween _throwTween;
@@ -29,12 +32,6 @@ namespace Assets.Scripts.BubbleSystem
 
         #endregion Variables
 
-        #region Properties
-
-
-
-        #endregion Properties
-
         #region Unity Functions
 
         private void Awake()
@@ -54,6 +51,7 @@ namespace Assets.Scripts.BubbleSystem
         private void Initialize()
         {
             _camera = Camera.main;
+            _isThrowActive = true;
 
             _inputHandler = FindObjectOfType<InputHandler>();
             _bubbleManager = FindObjectOfType<BubbleManager>();
@@ -104,6 +102,8 @@ namespace Assets.Scripts.BubbleSystem
                 .AppendInterval(0.2f)
                 .Append(_currentBubble.transform.DOScale(1f, 0.2f))
                 .Append(_currentBubble.transform.DOMove(_currentBubbleTransform.position, 0.2f));
+
+            _nextBubbleSequence.OnComplete(() => _isThrowActive = true);
         }
 
         private void GetNewNextBubble()
@@ -117,6 +117,7 @@ namespace Assets.Scripts.BubbleSystem
 
         private void ThrowBubble(Vector3 mousePosition)
         {
+            _isThrowActive = false;
             Vector3 targetPosition = GetScreenPosition(mousePosition);
 
             _throwTween?.Kill();
@@ -156,17 +157,25 @@ namespace Assets.Scripts.BubbleSystem
 
         private void OnFingerDown(Vector3 mousePosition)
         {
+            if (!_isThrowActive) return;
+            _isFingerDown = true;
+
             UpdateLineRenderer(mousePosition);
             _lineRenderer.enabled = true;
         }
 
         private void OnFinger(Vector3 mousePosition)
         {
+            if (!_isThrowActive || !_isFingerDown) return;
+
             UpdateLineRenderer(mousePosition);
         }
 
         private void OnFingerUp(Vector3 mousePosition)
         {
+            if (!_isThrowActive || !_isFingerDown) return;
+            _isFingerDown = false;
+            
             _lineRenderer.enabled = false;
 
             ThrowBubble(mousePosition);
