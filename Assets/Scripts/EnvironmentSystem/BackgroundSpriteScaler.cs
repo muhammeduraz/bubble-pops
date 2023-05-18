@@ -10,7 +10,6 @@ namespace Assets.Scripts.EnvironmentSystem
         private Camera _camera;
 
         [SerializeField] private SpriteRenderer _backgroundSpriteRenderer;
-        [SerializeField] private SpriteRenderer _foregroundSpriteRenderer;
 
         #endregion Variables
 

@@ -15,7 +15,6 @@ namespace Assets.Scripts.BubbleSystem
         private Camera _camera;
 
         private Tween _throwTween;
-        private Tween _currentBubbleTween;
         private Sequence _nextBubbleSequence;
 
         private InputHandler _inputHandler;
@@ -26,6 +25,7 @@ namespace Assets.Scripts.BubbleSystem
 
         [SerializeField] private LineRenderer _lineRenderer;
 
+        [SerializeField] private Transform _rayStartTransform;
         [SerializeField] private Transform _lineStartTransform;
         [SerializeField] private Transform _nextBubbleTransform;
         [SerializeField] private Transform _currentBubbleTransform;
@@ -132,9 +132,9 @@ namespace Assets.Scripts.BubbleSystem
             _lineRenderer.SetPosition(0, _lineStartTransform.position);
         }
 
-        private void UpdateLineRenderer(Vector3 mousePosition)
+        private void UpdateLineRenderer(Vector3 targetPosition)
         {
-            Vector3 targetPosition = GetScreenPosition(mousePosition);
+            //Vector3 targetPosition = GetScreenPosition(mousePosition);
             _lineRenderer.SetPosition(1, targetPosition);
         }
 
@@ -155,6 +155,22 @@ namespace Assets.Scripts.BubbleSystem
             _currentBubble.transform.position = _currentBubbleTransform.position;
         }
 
+        private void FireRay(Vector3 mousePosition)
+        {
+            Vector3 targetPosition = GetScreenPosition(mousePosition);
+            Vector3 direction = targetPosition - _rayStartTransform.position;
+            direction = direction.normalized;
+
+            bool isHit = Physics.Raycast(_rayStartTransform.position, direction, out RaycastHit hit);
+
+            if (!isHit) return;
+            if (hit.collider == null) return;
+
+            hit.collider.TryGetComponent(out Bubble bubble);
+            UpdateLineRenderer(hit.point);
+            Debug.LogError(bubble?.BubbleData.id);
+        }
+
         private void OnFingerDown(Vector3 mousePosition)
         {
             if (!_isThrowActive) return;
@@ -168,7 +184,8 @@ namespace Assets.Scripts.BubbleSystem
         {
             if (!_isThrowActive || !_isFingerDown) return;
 
-            UpdateLineRenderer(mousePosition);
+            FireRay(mousePosition);
+            //UpdateLineRenderer(mousePosition);
         }
 
         private void OnFingerUp(Vector3 mousePosition)
