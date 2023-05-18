@@ -40,7 +40,6 @@ namespace Assets.Scripts.EnvironmentSystem
         {
             _camera = null;
             _backgroundSpriteRenderer = null;
-            _foregroundSpriteRenderer = null;
         }
 
         private void UpdateBackgroundSprite()
