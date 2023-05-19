@@ -6,6 +6,8 @@ using Assets.Scripts.ProductSystem;
 using Assets.Scripts.BubbleSystem.Data;
 using Assets.Scripts.Particle;
 using Sirenix.OdinInspector;
+using UnityEngine.Rendering.Universal;
+using Unity.VisualScripting.YamlDotNet.Serialization;
 
 namespace Assets.Scripts.BubbleSystem
 {
@@ -74,6 +76,11 @@ namespace Assets.Scripts.BubbleSystem
         private void SetColor(Color color)
         {
             _spriteRenderer.color = color;
+        }
+        
+        public void SetPosition(Vector3 position)
+        {
+            transform.position = position;
         }
         
         public void MoveDown(float amount, float duration = 0.25f)

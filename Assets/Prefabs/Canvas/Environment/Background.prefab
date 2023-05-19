@@ -46,7 +46,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _backgroundSpriteRenderer: {fileID: 7512328175546279640}
-  _foregroundSpriteRenderer: {fileID: 7512328175005469346}
 --- !u!1 &7512328175005469348
 GameObject:
   m_ObjectHideFlags: 0
@@ -157,7 +156,7 @@ Transform:
   m_GameObject: {fileID: 7512328175546279642}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 6.75, y: 12, z: 1}
+  m_LocalScale: {x: 7.3125, y: 13, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7512328175005469349}

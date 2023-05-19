@@ -218,7 +218,7 @@ Transform:
   - {fileID: 2094164087629177187}
   - {fileID: 2094164086853485816}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1035107244919281478
 MonoBehaviour:
@@ -287,7 +287,7 @@ MonoBehaviour:
   m_Follow: {fileID: 0}
   m_Lens:
     FieldOfView: 60
-    OrthographicSize: 6
+    OrthographicSize: 6.5
     NearClipPlane: 0.3
     FarClipPlane: 10
     Dutch: 0
@@ -373,7 +373,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 171977421361212891, guid: 0e4d47bf1a2dd4b0aa7061f3f56551a3, type: 3}
       propertyPath: orthographic size
-      value: 6
+      value: 6.5
       objectReference: {fileID: 0}
     - target: {fileID: 171977421361212893, guid: 0e4d47bf1a2dd4b0aa7061f3f56551a3, type: 3}
       propertyPath: m_Name

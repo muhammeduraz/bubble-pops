@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using DG.Tweening;
 using Assets.Scripts.InputSystem;
+using Assets.Scripts.EnvironmentSystem;
 
 namespace Assets.Scripts.BubbleSystem
 {
@@ -109,9 +110,11 @@ namespace Assets.Scripts.BubbleSystem
         private void GetNewNextBubble()
         {
             _nextBubble = _bubbleManager.GetBubble();
+
             _nextBubble.Initialize();
+            _nextBubble.SetPosition(_nextBubbleTransform.position);
             _nextBubble.UpdateBubble(_bubbleManager.GetRandomBubbleData);
-            _nextBubble.transform.position = _nextBubbleTransform.position;
+            
             _nextBubble.ScaleOut(0.8f, delay: 0.25f);
         }
 
@@ -128,14 +131,15 @@ namespace Assets.Scripts.BubbleSystem
         {
             _lineRenderer.enabled = false;
 
-            _lineRenderer.positionCount = 2;
+            _lineRenderer.positionCount = 3;
             _lineRenderer.SetPosition(0, _lineStartTransform.position);
+            _lineRenderer.SetPosition(1, _lineStartTransform.position);
+            _lineRenderer.SetPosition(2, _lineStartTransform.position);
         }
 
-        private void UpdateLineRenderer(Vector3 targetPosition)
+        private void UpdateLineRenderer(int index, Vector3 targetPosition)
         {
-            //Vector3 targetPosition = GetScreenPosition(mousePosition);
-            _lineRenderer.SetPosition(1, targetPosition);
+            _lineRenderer.SetPosition(index, targetPosition);
         }
 
         private void InitializeCurrentAndNextBubbles()
@@ -166,9 +170,32 @@ namespace Assets.Scripts.BubbleSystem
             if (!isHit) return;
             if (hit.collider == null) return;
 
-            hit.collider.TryGetComponent(out Bubble bubble);
-            UpdateLineRenderer(hit.point);
-            Debug.LogError(bubble?.BubbleData.id);
+            hit.collider.TryGetComponent(out Wall wall);
+            if(wall != null)
+            {
+                UpdateLineRenderer(1, hit.point);
+
+                direction.x *= -1f;
+                isHit = Physics.Raycast(hit.point, direction, out hit);
+
+                if (!isHit) return;
+                if (hit.collider == null) return;
+
+                hit.collider.TryGetComponent(out Bubble bubble);
+                if (bubble != null)
+                {
+                    UpdateLineRenderer(2, hit.point);
+                }
+            }
+            else
+            {
+                hit.collider.TryGetComponent(out Bubble bubble);
+                if (bubble != null)
+                {
+                    UpdateLineRenderer(1, _rayStartTransform.position);
+                    UpdateLineRenderer(2, hit.point);
+                }
+            }
         }
 
         private void OnFingerDown(Vector3 mousePosition)
@@ -176,7 +203,6 @@ namespace Assets.Scripts.BubbleSystem
             if (!_isThrowActive) return;
             _isFingerDown = true;
 
-            UpdateLineRenderer(mousePosition);
             _lineRenderer.enabled = true;
         }
 
