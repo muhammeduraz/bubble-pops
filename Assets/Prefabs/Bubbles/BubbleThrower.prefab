@@ -256,6 +256,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 205af6199b9fcd54fb058aa518b6ee9b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _minDirectionY: 0.25
   _lineRenderer: {fileID: 1088406492}
   _rayStartTransform: {fileID: 4903655573763595074}
   _lineStartTransform: {fileID: 2057891273}

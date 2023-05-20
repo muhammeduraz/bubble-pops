@@ -24,6 +24,8 @@ namespace Assets.Scripts.BubbleSystem
         private Bubble _nextBubble;
         private Bubble _currentBubble;
 
+        [SerializeField] private float _minDirectionY;
+
         [SerializeField] private LineRenderer _lineRenderer;
 
         [SerializeField] private Transform _rayStartTransform;
@@ -123,8 +125,12 @@ namespace Assets.Scripts.BubbleSystem
             _isThrowActive = false;
             Vector3 targetPosition = GetScreenPosition(mousePosition);
 
+            _currentBubble.TrailRenderer.enabled = true;
+
             _throwTween?.Kill();
             _throwTween = _currentBubble.transform.DOMove(targetPosition, 0.2f).SetEase(Ease.Linear);
+
+            _throwTween.OnComplete(() => _currentBubble.TrailRenderer.enabled = false);
         }
 
         private void InitializeLineRenderer()
@@ -159,16 +165,25 @@ namespace Assets.Scripts.BubbleSystem
             _currentBubble.transform.position = _currentBubbleTransform.position;
         }
 
+        private Vector3 ClampDirection(Vector3 direction)
+        {
+            if (direction.y < _minDirectionY)
+                direction.y = _minDirectionY;
+
+            return direction;
+        }
+
         private void FireRay(Vector3 mousePosition)
         {
             Vector3 targetPosition = GetScreenPosition(mousePosition);
             Vector3 direction = targetPosition - _rayStartTransform.position;
             direction = direction.normalized;
 
+            direction = ClampDirection(direction);
+
             bool isHit = Physics.Raycast(_rayStartTransform.position, direction, out RaycastHit hit);
 
             if (!isHit) return;
-            if (hit.collider == null) return;
 
             hit.collider.TryGetComponent(out Wall wall);
             if(wall != null)
@@ -179,12 +194,19 @@ namespace Assets.Scripts.BubbleSystem
                 isHit = Physics.Raycast(hit.point, direction, out hit);
 
                 if (!isHit) return;
-                if (hit.collider == null) return;
 
                 hit.collider.TryGetComponent(out Bubble bubble);
                 if (bubble != null)
                 {
                     UpdateLineRenderer(2, hit.point);
+                }
+                else
+                {
+                    hit.collider.TryGetComponent(out wall);
+                    if (wall != null)
+                    {
+                        UpdateLineRenderer(2, _lineRenderer.GetPosition(1));
+                    }
                 }
             }
             else
