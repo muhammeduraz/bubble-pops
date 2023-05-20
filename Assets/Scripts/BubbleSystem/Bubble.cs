@@ -4,10 +4,8 @@ using UnityEngine;
 using DG.Tweening;
 using Assets.Scripts.ProductSystem;
 using Assets.Scripts.BubbleSystem.Data;
-using Assets.Scripts.Particle;
-using Sirenix.OdinInspector;
-using UnityEngine.Rendering.Universal;
-using Unity.VisualScripting.YamlDotNet.Serialization;
+using System.Collections.Generic;
+using UnityEngine.PlayerLoop;
 
 namespace Assets.Scripts.BubbleSystem
 {
@@ -27,6 +25,18 @@ namespace Assets.Scripts.BubbleSystem
         private Vector3 _currentPosition;
 
         private BubbleData _bubbleData;
+
+        private List<Vector3> _neighbourOffsetList = new List<Vector3>
+        {
+            new Vector3(0.5f, 0.88f, 0f),
+            new Vector3(-0.5f, 0.88f, 0f),
+
+            new Vector3(0.5f, -0.88f, 0f),
+            new Vector3(-0.5f, -0.88f, 0f),
+
+            new Vector3(1f, 0f, 0f),
+            new Vector3(-1f, 0f, 0f),
+        };
 
         [SerializeField] private TextMeshPro _idText;
         [SerializeField] private TrailRenderer _trailRenderer;
@@ -105,6 +115,29 @@ namespace Assets.Scripts.BubbleSystem
 
             _scaleTween?.Kill();
             _scaleTween = transform.DOScale(amount, duration).SetDelay(delay);
+        }
+
+        public List<Vector3> GetEmptyPositions()
+        {
+            int overlapCount = 0;
+
+            Vector3 offset;
+            Vector3 position;
+            List<Vector3> emptyPositions = new List<Vector3>();
+
+            for (int i = 0; i < _neighbourOffsetList.Count; i++)
+            {
+                offset = _neighbourOffsetList[i];
+                position = transform.position + offset;
+
+                overlapCount = Physics.OverlapBoxNonAlloc(position, Vector3.one * 0.25f, null);
+                if (overlapCount == 0)
+                {
+                    emptyPositions.Add(position);
+                }
+            }
+
+            return emptyPositions;
         }
 
         #endregion Functions

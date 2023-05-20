@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using DG.Tweening;
 using Assets.Scripts.InputSystem;
+using System.Collections.Generic;
 using Assets.Scripts.EnvironmentSystem;
 
 namespace Assets.Scripts.BubbleSystem
@@ -23,6 +24,8 @@ namespace Assets.Scripts.BubbleSystem
 
         private Bubble _nextBubble;
         private Bubble _currentBubble;
+
+        private Vector3 _targetPosition;
 
         [SerializeField] private float _minDirectionY;
 
@@ -123,10 +126,9 @@ namespace Assets.Scripts.BubbleSystem
             _nextBubble.ScaleOut(0.8f, delay: 0.25f);
         }
 
-        private void ThrowBubble(Vector3 mousePosition)
+        private void ThrowBubble(Vector3 targetPosition)
         {
             _isThrowActive = false;
-            Vector3 targetPosition = GetScreenPosition(mousePosition);
 
             _currentBubble.TrailRenderer.enabled = true;
 
@@ -166,6 +168,8 @@ namespace Assets.Scripts.BubbleSystem
             _nextBubble.transform.position = _nextBubbleTransform.position;
 
             _currentBubble.transform.position = _currentBubbleTransform.position;
+
+            _throwGuide.SetColor(_currentBubble.BubbleData.color);
         }
 
         private Vector3 ClampDirection(Vector3 direction)
@@ -219,8 +223,43 @@ namespace Assets.Scripts.BubbleSystem
                 {
                     UpdateLineRenderer(1, _rayStartTransform.position);
                     UpdateLineRenderer(2, hit.point);
+
+                    Vector3 guidePosition = GetClosestPosition(bubble, hit.point);
+                    
+                    if (guidePosition != _targetPosition)
+                    {
+                        _targetPosition = guidePosition;
+
+                        _throwGuide.SetPosition(guidePosition);
+                        _throwGuide.ScaleOut();
+                    }
                 }
             }
+        }
+
+        private Vector3 GetClosestPosition(Bubble bubble, Vector3 hitPoint)
+        {
+            List<Vector3> positionList = bubble.GetEmptyPositions();
+
+            float tempDistance;
+            float closestDistance = float.MaxValue;
+            
+            Vector3 loopPosition;
+            Vector3 closestPosition = Vector3.one * float.MaxValue;
+
+            for (int i = 0; i < positionList.Count; i++)
+            {
+                loopPosition = positionList[i];
+
+                tempDistance = Vector3.Distance(hitPoint, loopPosition);
+                if (tempDistance < closestDistance)
+                {
+                    closestDistance = tempDistance;
+                    closestPosition = loopPosition;
+                }
+            }
+
+            return closestPosition;
         }
 
         private void OnFingerDown(Vector3 mousePosition)
@@ -245,7 +284,7 @@ namespace Assets.Scripts.BubbleSystem
             
             _lineRenderer.enabled = false;
 
-            ThrowBubble(mousePosition);
+            ThrowBubble(_targetPosition);
 
             ActivateNextBubble();
             GetNewNextBubble();

@@ -56,6 +56,11 @@ namespace Assets.Scripts.BubbleSystem
             _sprite.color = color;
         }
 
+        public void SetPosition(Vector3 position)
+        {
+            transform.position = position;
+        }
+
         public void ScaleOut()
         {
             transform.localScale = Vector3.zero;
