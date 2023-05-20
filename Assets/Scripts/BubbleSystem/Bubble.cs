@@ -65,6 +65,12 @@ namespace Assets.Scripts.BubbleSystem
         {
             transform.localScale = Vector3.zero;
 
+            _scaleTween?.Kill();
+            _throwTween?.Kill();
+            _movementTween?.Kill();
+
+            _bubbleData = null;
+
             gameObject.SetActive(false);
         }
 
