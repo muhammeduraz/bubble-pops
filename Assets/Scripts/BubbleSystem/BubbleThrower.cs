@@ -130,12 +130,7 @@ namespace Assets.Scripts.BubbleSystem
         {
             _isThrowActive = false;
 
-            _currentBubble.TrailRenderer.enabled = true;
-
-            _throwTween?.Kill();
-            _throwTween = _currentBubble.transform.DOMove(targetPosition, 0.2f).SetEase(Ease.Linear);
-
-            _throwTween.OnComplete(() => _currentBubble.TrailRenderer.enabled = false);
+            _currentBubble.Throw(targetPosition, 0.2f);
         }
 
         private void InitializeLineRenderer()

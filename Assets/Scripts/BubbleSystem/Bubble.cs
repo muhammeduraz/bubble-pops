@@ -2,10 +2,9 @@ using TMPro;
 using System;
 using UnityEngine;
 using DG.Tweening;
+using System.Collections.Generic;
 using Assets.Scripts.ProductSystem;
 using Assets.Scripts.BubbleSystem.Data;
-using System.Collections.Generic;
-using UnityEngine.PlayerLoop;
 
 namespace Assets.Scripts.BubbleSystem
 {
@@ -20,6 +19,7 @@ namespace Assets.Scripts.BubbleSystem
         #region Variables
 
         private Tween _scaleTween;
+        private Tween _throwTween;
         private Tween _movementTween;
 
         private Vector3 _currentPosition;
@@ -37,6 +37,8 @@ namespace Assets.Scripts.BubbleSystem
             new Vector3(1f, 0f, 0f),
             new Vector3(-1f, 0f, 0f),
         };
+
+        [SerializeField] private float _shakeDuration;
 
         [SerializeField] private TextMeshPro _idText;
         [SerializeField] private TrailRenderer _trailRenderer;
@@ -101,6 +103,21 @@ namespace Assets.Scripts.BubbleSystem
             _movementTween = transform.DOMoveY(_currentPosition.y, duration);
         }
 
+        public void Throw(Vector3 targetPosition, float duration = 0.25f)
+        {
+            _currentPosition = targetPosition;
+            _trailRenderer.enabled = true;
+
+            _throwTween?.Kill();
+            _throwTween = transform.DOMove(_currentPosition, duration).SetEase(Ease.Linear);
+
+            _throwTween.OnComplete(() =>
+            {
+                ShakeNeighbourBubbles();
+                _trailRenderer.enabled = false;
+            });
+        }
+
         public void MoveTo(Vector3 targetPosition, float duration = 0.25f)
         {
             _currentPosition = targetPosition;
@@ -115,6 +132,54 @@ namespace Assets.Scripts.BubbleSystem
 
             _scaleTween?.Kill();
             _scaleTween = transform.DOScale(amount, duration).SetDelay(delay);
+        }
+
+        public void ShakeBubble(Vector3 direction)
+        {
+            _movementTween.Kill();
+            _movementTween = transform.DOPunchPosition(direction, _shakeDuration);
+        }
+
+        private void ShakeNeighbourBubbles()
+        {
+            List<Bubble> neighbourBubbleList = GetNeighbourBubbles();
+            if (neighbourBubbleList.Count <= 0) return;
+
+            Vector3 direction;
+            Bubble loopBubble = null;
+
+            for (int i = 0; i < neighbourBubbleList.Count; i++)
+            {
+                loopBubble = neighbourBubbleList[i];
+
+                direction = loopBubble.transform.position - transform.position;
+                direction = direction.normalized;
+
+                loopBubble.ShakeBubble(direction * 0.05f);
+            }
+        }
+
+        private List<Bubble> GetNeighbourBubbles()
+        {
+            Bubble loopBubble = null;
+            Collider loopCollider = null;
+            List<Bubble> bubbleList = new List<Bubble>();
+
+            Collider[] colliders = new Collider[9];
+            int count = Physics.OverlapSphereNonAlloc(transform.position, 1.2f, colliders);
+
+            for (int i = 0; i < count; i++)
+            {
+                loopCollider = colliders[i];
+                loopCollider.TryGetComponent(out loopBubble);
+                if (loopBubble != null && loopBubble != this)
+                {
+                    bubbleList.Add(loopBubble);
+                }
+            }
+            Debug.LogError(count);
+
+            return bubbleList;
         }
 
         public List<Vector3> GetEmptyPositions()
