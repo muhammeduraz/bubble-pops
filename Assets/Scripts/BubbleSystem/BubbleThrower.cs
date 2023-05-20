@@ -26,6 +26,7 @@ namespace Assets.Scripts.BubbleSystem
 
         [SerializeField] private float _minDirectionY;
 
+        [SerializeField] private ThrowGuide _throwGuide;
         [SerializeField] private LineRenderer _lineRenderer;
 
         [SerializeField] private Transform _rayStartTransform;
