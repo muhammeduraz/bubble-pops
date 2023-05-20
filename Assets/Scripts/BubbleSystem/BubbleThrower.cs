@@ -201,6 +201,7 @@ namespace Assets.Scripts.BubbleSystem
                 if (bubble != null)
                 {
                     UpdateLineRenderer(2, hit.point);
+                    UpdateThrowGuide(bubble, hit.point);
                 }
                 else
                 {
@@ -219,16 +220,21 @@ namespace Assets.Scripts.BubbleSystem
                     UpdateLineRenderer(1, _rayStartTransform.position);
                     UpdateLineRenderer(2, hit.point);
 
-                    Vector3 guidePosition = GetClosestPosition(bubble, hit.point);
-                    
-                    if (guidePosition != _targetPosition)
-                    {
-                        _targetPosition = guidePosition;
-
-                        _throwGuide.SetPosition(guidePosition);
-                        _throwGuide.ScaleOut();
-                    }
+                    UpdateThrowGuide(bubble, hit.point);
                 }
+            }
+        }
+
+        private void UpdateThrowGuide(Bubble bubble, Vector3 point)
+        {
+            Vector3 guidePosition = GetClosestPosition(bubble, point);
+
+            if (guidePosition != _targetPosition)
+            {
+                _targetPosition = guidePosition;
+
+                _throwGuide.SetPosition(guidePosition);
+                _throwGuide.ScaleOut();
             }
         }
 
