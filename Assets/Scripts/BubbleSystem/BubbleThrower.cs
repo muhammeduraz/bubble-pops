@@ -16,7 +16,6 @@ namespace Assets.Scripts.BubbleSystem
 
         private Camera _camera;
 
-        private Tween _throwTween;
         private Sequence _currentBubbleSequence;
 
         private InputHandler _inputHandler;
@@ -24,8 +23,10 @@ namespace Assets.Scripts.BubbleSystem
 
         private Bubble _nextBubble;
         private Bubble _currentBubble;
+        private Bubble _targetBubble;
 
         private Vector3 _targetPosition;
+        private List<Vector3> _cachedPositionList;
 
         [SerializeField] private float _minDirectionY;
 
@@ -202,6 +203,8 @@ namespace Assets.Scripts.BubbleSystem
                 {
                     UpdateLineRenderer(2, hit.point);
                     UpdateThrowGuide(bubble, hit.point);
+
+                    _targetBubble = bubble;
                 }
                 else
                 {
@@ -221,6 +224,8 @@ namespace Assets.Scripts.BubbleSystem
                     UpdateLineRenderer(2, hit.point);
 
                     UpdateThrowGuide(bubble, hit.point);
+
+                    _targetBubble = bubble;
                 }
             }
         }
@@ -240,7 +245,8 @@ namespace Assets.Scripts.BubbleSystem
 
         private Vector3 GetClosestPosition(Bubble bubble, Vector3 hitPoint)
         {
-            List<Vector3> positionList = bubble.GetEmptyPositions();
+            if (_targetBubble != bubble) 
+                _cachedPositionList = bubble.GetEmptyPositions();
 
             float tempDistance;
             float closestDistance = float.MaxValue;
@@ -248,9 +254,9 @@ namespace Assets.Scripts.BubbleSystem
             Vector3 loopPosition;
             Vector3 closestPosition = Vector3.zero;
 
-            for (int i = 0; i < positionList.Count; i++)
+            for (int i = 0; i < _cachedPositionList.Count; i++)
             {
-                loopPosition = positionList[i];
+                loopPosition = _cachedPositionList[i];
                 tempDistance = Vector3.Distance(hitPoint, loopPosition);
                 if (tempDistance < closestDistance)
                 {
