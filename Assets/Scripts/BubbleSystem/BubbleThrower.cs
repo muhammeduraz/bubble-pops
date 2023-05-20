@@ -16,7 +16,7 @@ namespace Assets.Scripts.BubbleSystem
         private Camera _camera;
 
         private Tween _throwTween;
-        private Sequence _nextBubbleSequence;
+        private Sequence _currentBubbleSequence;
 
         private InputHandler _inputHandler;
         private BubbleManager _bubbleManager;
@@ -100,14 +100,16 @@ namespace Assets.Scripts.BubbleSystem
             _currentBubble = _nextBubble;
             _nextBubble.transform.position -= 1f * Vector3.forward;
 
-            _nextBubbleSequence?.Kill();
-            _nextBubbleSequence = DOTween.Sequence();
-            _nextBubbleSequence
+            _throwGuide.SetColor(_currentBubble.BubbleData.color);
+
+            _currentBubbleSequence?.Kill();
+            _currentBubbleSequence = DOTween.Sequence();
+            _currentBubbleSequence
                 .AppendInterval(0.2f)
                 .Append(_currentBubble.transform.DOScale(1f, 0.2f))
                 .Append(_currentBubble.transform.DOMove(_currentBubbleTransform.position, 0.2f));
 
-            _nextBubbleSequence.OnComplete(() => _isThrowActive = true);
+            _currentBubbleSequence.OnComplete(() => _isThrowActive = true);
         }
 
         private void GetNewNextBubble()
@@ -234,7 +236,6 @@ namespace Assets.Scripts.BubbleSystem
             if (!_isThrowActive || !_isFingerDown) return;
 
             FireRay(mousePosition);
-            //UpdateLineRenderer(mousePosition);
         }
 
         private void OnFingerUp(Vector3 mousePosition)
@@ -248,6 +249,8 @@ namespace Assets.Scripts.BubbleSystem
 
             ActivateNextBubble();
             GetNewNextBubble();
+
+            _throwGuide.Reset();
         }
 
         #endregion Functions

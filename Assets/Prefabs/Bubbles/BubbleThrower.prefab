@@ -258,7 +258,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _minDirectionY: 0.25
-  _throwGuide: {fileID: 0}
+  _throwGuide: {fileID: 3690658605929588799}
   _lineRenderer: {fileID: 1088406492}
   _rayStartTransform: {fileID: 4903655573763595074}
   _lineStartTransform: {fileID: 2057891273}
@@ -396,3 +396,14 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8400919699184233672, guid: dc9737ed609c44b4eb28805e12b6408f, type: 3}
   m_PrefabInstance: {fileID: 9024835169747422264}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &3690658605929588799 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5623163838046446599, guid: dc9737ed609c44b4eb28805e12b6408f, type: 3}
+  m_PrefabInstance: {fileID: 9024835169747422264}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11a2e0bf0c439934690f2198c3467a63, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

@@ -1,6 +1,5 @@
 using System;
 using DG.Tweening;
-using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Assets.Scripts.BubbleSystem
@@ -46,13 +45,17 @@ namespace Assets.Scripts.BubbleSystem
             _sprite = null;
         }
 
+        public void Reset()
+        {
+            transform.localScale = Vector3.zero;
+        }
+
         public void SetColor(Color color)
         {
             color.a = _imageAlpha;
             _sprite.color = color;
         }
 
-        [Button]
         public void ScaleOut()
         {
             transform.localScale = Vector3.zero;
