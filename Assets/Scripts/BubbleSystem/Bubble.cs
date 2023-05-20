@@ -26,6 +26,9 @@ namespace Assets.Scripts.BubbleSystem
 
         private BubbleData _bubbleData;
 
+        private Collider[] _neighbourColliders;
+        private Collider[] _emptyNeighbourColliders;
+
         private List<Vector3> _neighbourOffsetList = new List<Vector3>
         {
             new Vector3(0.5f, 0.88f, 0f),
@@ -38,6 +41,7 @@ namespace Assets.Scripts.BubbleSystem
             new Vector3(-1f, 0f, 0f),
         };
 
+        [SerializeField] private float _shakeAmount;
         [SerializeField] private float _shakeDuration;
 
         [SerializeField] private TextMeshPro _idText;
@@ -59,6 +63,9 @@ namespace Assets.Scripts.BubbleSystem
         public void Initialize()
         {
             _trailRenderer.enabled = false;
+
+            _neighbourColliders = new Collider[9];
+            _emptyNeighbourColliders = new Collider[1];
         }
 
         public void Dispose()
@@ -70,6 +77,9 @@ namespace Assets.Scripts.BubbleSystem
             _movementTween?.Kill();
 
             _bubbleData = null;
+
+            _neighbourColliders = null;
+            _emptyNeighbourColliders = null;
 
             gameObject.SetActive(false);
         }
@@ -143,7 +153,7 @@ namespace Assets.Scripts.BubbleSystem
         public void ShakeBubble(Vector3 direction)
         {
             _movementTween.Kill();
-            _movementTween = transform.DOPunchPosition(direction, _shakeDuration);
+            _movementTween = transform.DOPunchPosition(direction * _shakeAmount, _shakeDuration);
         }
 
         private void ShakeNeighbourBubbles()
@@ -161,7 +171,7 @@ namespace Assets.Scripts.BubbleSystem
                 direction = loopBubble.transform.position - transform.position;
                 direction = direction.normalized;
 
-                loopBubble.ShakeBubble(direction * 0.05f);
+                loopBubble.ShakeBubble(direction);
             }
         }
 
@@ -171,19 +181,18 @@ namespace Assets.Scripts.BubbleSystem
             Collider loopCollider = null;
             List<Bubble> bubbleList = new List<Bubble>();
 
-            Collider[] colliders = new Collider[9];
-            int count = Physics.OverlapSphereNonAlloc(transform.position, 1.2f, colliders);
-
+            _neighbourColliders = new Collider[9];
+            int count = Physics.OverlapSphereNonAlloc(transform.position, 1.2f, _neighbourColliders);
+            
             for (int i = 0; i < count; i++)
             {
-                loopCollider = colliders[i];
+                loopCollider = _neighbourColliders[i];
                 loopCollider.TryGetComponent(out loopBubble);
                 if (loopBubble != null && loopBubble != this)
                 {
                     bubbleList.Add(loopBubble);
                 }
             }
-            Debug.LogError(count);
 
             return bubbleList;
         }
@@ -201,7 +210,9 @@ namespace Assets.Scripts.BubbleSystem
                 offset = _neighbourOffsetList[i];
                 position = transform.position + offset;
 
-                overlapCount = Physics.OverlapBoxNonAlloc(position, Vector3.one * 0.25f, null);
+                _emptyNeighbourColliders = new Collider[1];
+                overlapCount = Physics.OverlapBoxNonAlloc(position, Vector3.one * 0.25f, _emptyNeighbourColliders);
+                
                 if (overlapCount == 0)
                 {
                     emptyPositions.Add(position);

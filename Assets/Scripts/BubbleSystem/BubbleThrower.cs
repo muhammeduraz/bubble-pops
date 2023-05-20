@@ -240,12 +240,11 @@ namespace Assets.Scripts.BubbleSystem
             float closestDistance = float.MaxValue;
             
             Vector3 loopPosition;
-            Vector3 closestPosition = Vector3.one * float.MaxValue;
+            Vector3 closestPosition = Vector3.zero;
 
             for (int i = 0; i < positionList.Count; i++)
             {
                 loopPosition = positionList[i];
-
                 tempDistance = Vector3.Distance(hitPoint, loopPosition);
                 if (tempDistance < closestDistance)
                 {
@@ -254,7 +253,7 @@ namespace Assets.Scripts.BubbleSystem
                 }
             }
 
-            return closestPosition;
+            return closestPosition; 
         }
 
         private void OnFingerDown(Vector3 mousePosition)

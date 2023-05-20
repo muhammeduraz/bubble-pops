@@ -13,7 +13,6 @@ namespace Assets.Scripts.CanvasSystem.ProgressBar
 
         private const string ProgressTextPrefix = "%";
 
-        private bool _isVisible;
         private bool _isProgressTextActive;
 
         protected Tween fillTween;
@@ -50,8 +49,6 @@ namespace Assets.Scripts.CanvasSystem.ProgressBar
 
         public virtual void Appear(bool withProgressText)
         {
-            _isVisible = true;
-
             Reset();
 
             _isProgressTextActive = withProgressText;
@@ -63,8 +60,6 @@ namespace Assets.Scripts.CanvasSystem.ProgressBar
         public virtual void Disappear()
         {
             Fade(0f);
-
-            _isVisible = false;
         }
 
         private void Fade(float value)
