@@ -39,6 +39,24 @@ namespace Assets.Scripts.BubbleSystem.Data
             return null;
         }
 
+        public BubbleData GetBubbleDataByMultiplication(int id, int count)
+        {
+            int newId = id * count;
+            BubbleData bubbleData = null;
+
+            for (int i = 0; i < _bubbleDataList.Count; i++)
+            {
+                bubbleData = _bubbleDataList[i];
+
+                if (bubbleData != null && bubbleData.id == newId)
+                {
+                    return bubbleData;
+                }
+            }
+
+            return null;
+        }
+
         #endregion Functions
     }
 }

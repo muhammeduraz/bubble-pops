@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 using System.Collections;
-using Sirenix.OdinInspector;
+using Assets.Scripts.Particle;
 using System.Collections.Generic;
 using Assets.Scripts.BubbleSystem.Pool;
 using Assets.Scripts.BubbleSystem.Data;
@@ -33,6 +33,7 @@ namespace Assets.Scripts.BubbleSystem
 
         [SerializeField] private Bubble _bubblePrefab;
         [SerializeField] private BubbleDataSO _bubbleDataSO;
+        [SerializeField] private ParticlePlayer _particlePlayer;
 
         #endregion Variables
 
@@ -192,7 +193,19 @@ namespace Assets.Scripts.BubbleSystem
 
         private void OnMatch(Bubble bubble)
         {
+            List<Bubble> matchedBubbles = GetBubblesWithSameId(bubble);
 
+            Bubble loopBubble = null;
+            for (int i = 0; i < matchedBubbles.Count - 1; i++)
+            {
+                loopBubble = matchedBubbles[i];
+
+                _particlePlayer.PlayParticle(loopBubble.BubbleData.id, loopBubble.transform.position);
+
+                loopBubble.MoveToDispose(matchedBubbles[^1].transform.position);
+            }
+
+            matchedBubbles[^1].UpdateBubble(_bubbleDataSO.GetBubbleDataByMultiplication(matchedBubbles[^1].BubbleData.id, matchedBubbles.Count));
         }
 
         private void OnNonMatch()
@@ -215,6 +228,30 @@ namespace Assets.Scripts.BubbleSystem
             }
 
             return false;
+        }
+
+        private List<Bubble> GetBubblesWithSameId(Bubble bubble)
+        {
+            Bubble loopBubble = null;
+
+            List<Bubble> tempBubbles;
+            List<Bubble> finalBubbles = new List<Bubble>();
+            finalBubbles.Add(bubble);
+
+            tempBubbles = bubble.GetNeighbourBubblesWithTheSameId();
+
+            for (int i = 0; i < tempBubbles.Count; i++)
+            {
+                loopBubble = tempBubbles[i];
+
+                if (!finalBubbles.Contains(loopBubble))
+                {
+                    finalBubbles.Add(loopBubble);
+                    tempBubbles.AddRange(loopBubble.GetNeighbourBubblesWithTheSameId());
+                }
+            }
+
+            return finalBubbles;
         }
 
         #endregion Functions

@@ -87,6 +87,8 @@ namespace Assets.Scripts.BubbleSystem
             _neighbourColliders = null;
             _emptyNeighbourColliders = null;
 
+            _idText.alpha = 1f;
+
             gameObject.SetActive(false);
         }
 
@@ -116,7 +118,31 @@ namespace Assets.Scripts.BubbleSystem
         {
             transform.position = position;
         }
-        
+
+        public void MoveTo(Vector3 targetPosition, float duration = 0.25f)
+        {
+            _currentPosition = targetPosition;
+
+            _movementTween?.Kill();
+            _movementTween = transform.DOMove(_currentPosition, duration);
+        }
+
+        public void MoveToDispose(Vector3 targetPosition, float duration = 0.2f)
+        {
+            _currentPosition = targetPosition;
+
+            _throwSequence?.Kill();
+            _throwSequence = DOTween.Sequence();
+            _throwSequence
+                 .Append(transform.DOMove(_currentPosition, duration))
+                 .Join(_idText.DOFade(0f, duration / 2f));
+
+            _throwSequence.OnComplete(() => 
+            {
+                Dispose();
+            });
+        }
+
         public void MoveDown(float amount, float duration = 0.25f)
         {
             _currentPosition.y += amount;
@@ -150,14 +176,6 @@ namespace Assets.Scripts.BubbleSystem
 
                 ThrowEvent?.Invoke(this);
             });
-        }
-
-        public void MoveTo(Vector3 targetPosition, float duration = 0.25f)
-        {
-            _currentPosition = targetPosition;
-
-            _movementTween?.Kill();
-            _movementTween = transform.DOMove(_currentPosition, duration);
         }
 
         public void ScaleOut(float amount = 1f, float duration = 0.25f, float delay = 0f)
@@ -213,6 +231,24 @@ namespace Assets.Scripts.BubbleSystem
             }
 
             return bubbleList;
+        }
+
+        public List<Bubble> GetNeighbourBubblesWithTheSameId()
+        {
+            List<Bubble> neighbourList = GetNeighbourBubbles();
+
+            Bubble loopBubble = null;
+            for (int i = neighbourList.Count - 1; i >= 0; i--)
+            {
+                loopBubble = neighbourList[i];
+
+                if (loopBubble._bubbleData.id != _bubbleData.id)
+                {
+                    neighbourList.RemoveAt(i);
+                }
+            }
+
+            return neighbourList;
         }
 
         public List<Vector3> GetEmptyPositions()
