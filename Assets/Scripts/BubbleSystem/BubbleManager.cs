@@ -73,8 +73,8 @@ namespace Assets.Scripts.BubbleSystem
         {
             VerticalOffsetIndex = 0;
 
-            _bubblePool = new BubblePool();
             _bubbleFactory = new BubbleFactory(_bubblePrefab);
+            _bubblePool = new BubblePool(_bubbleFactory);
             
             _activeBubbleList = new List<Bubble>();
 
@@ -102,9 +102,6 @@ namespace Assets.Scripts.BubbleSystem
         public Bubble GetBubble()
         {
             Bubble bubble = _bubblePool.GetProduct();
-
-            if (bubble == null)
-                bubble = _bubbleFactory.Manufacture();
 
             bubble.transform.SetParent(transform, true);
             bubble.ThrowEvent += MatchProcess;

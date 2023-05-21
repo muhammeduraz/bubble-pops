@@ -32,8 +32,8 @@ namespace Assets.Scripts.CanvasSystem.BubbleScoreSystem
 
         private void Initialize()
         {
-            _bubbleScorePool = new BubbleScorePool();
             _bubbleScoreFactory = new BubbleScoreFactory(_bubbleScorePrefab);
+            _bubbleScorePool = new BubbleScorePool(_bubbleScoreFactory);
         }
 
         public void Dispose()

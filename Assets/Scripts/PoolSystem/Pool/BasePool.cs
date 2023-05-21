@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Assets.Scripts.FactorySystem;
 
 namespace Assets.Scripts.ProductSystem.Pool
 {
@@ -7,14 +8,16 @@ namespace Assets.Scripts.ProductSystem.Pool
         #region Variables
 
         private Stack<T> _stack;
+        private BaseFactory<T> _factory;
 
         #endregion Variables
 
         #region Functions
 
-        public BasePool()
+        public BasePool(BaseFactory<T> factory)
         {
             _stack = new Stack<T>();
+            _factory = factory;
         }
 
         ~BasePool()
@@ -37,6 +40,8 @@ namespace Assets.Scripts.ProductSystem.Pool
         public T GetProduct()
         {
             T product = GetProductFromPool();
+
+            product ??= _factory.Manufacture();
 
             if (product != null)
             {

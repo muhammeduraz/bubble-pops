@@ -72,6 +72,8 @@ namespace Assets.Scripts.BubbleSystem
 
             _neighbourColliders = new Collider[9];
             _emptyNeighbourColliders = new Collider[1];
+
+            gameObject.SetActive(true);
         }
 
         public void Dispose()
@@ -89,6 +91,7 @@ namespace Assets.Scripts.BubbleSystem
 
             _idText.alpha = 1f;
 
+            DisposeEvent?.Invoke(this);
             gameObject.SetActive(false);
         }
 
