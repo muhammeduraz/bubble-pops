@@ -29,6 +29,8 @@ namespace Assets.Scripts.BubbleSystem
         [SerializeField] private int _initialLineCount;
 
         [SerializeField] private int _randomMaxExclusive;
+        [SerializeField] private int _minActiveBubbleToCreateNewLine;
+
         [SerializeField] private Bubble _bubblePrefab;
         [SerializeField] private BubbleDataSO _bubbleDataSO;
 
@@ -163,33 +165,39 @@ namespace Assets.Scripts.BubbleSystem
 
         private void MoveDownAndCreateLine()
         {
+            if (_activeBubbleList.Count >= _minActiveBubbleToCreateNewLine) return;
+
             MoveAllBubblesDown();
             StartCoroutine(CreateLinePile(_initialSpawnPosition));
         }
 
         private void MatchProcess(Bubble bubble)
         {
+            AddBubble(bubble);
             bubble.ThrowEvent -= MatchProcess;
+
             List<Bubble> neighbourBubbleList = bubble.GetNeighbourBubbles();
 
             if (IsThereAnyMatch(bubble, neighbourBubbleList))
             {
-                OnMatch();
+                OnMatch(bubble);
             }
             else
             {
                 OnNonMatch();
             }
+
+            MoveDownAndCreateLine();
         }
 
-        private void OnMatch()
+        private void OnMatch(Bubble bubble)
         {
-            Debug.LogError("Match");
+
         }
 
         private void OnNonMatch()
         {
-            Debug.LogError("Non Match");
+            
         }
 
         private bool IsThereAnyMatch(Bubble bubble, List<Bubble> neighbourBubbleList)
