@@ -127,28 +127,6 @@ namespace Assets.Scripts.BubbleSystem
             _nextBubble.ScaleOut(0.8f, delay: 0.25f);
         }
 
-        private void ThrowBubble(Vector3 targetPosition)
-        {
-            _isThrowActive = false;
-
-            _currentBubble.Throw(targetPosition, 0.2f);
-        }
-
-        private void InitializeLineRenderer()
-        {
-            _lineRenderer.enabled = false;
-
-            _lineRenderer.positionCount = 3;
-            _lineRenderer.SetPosition(0, _lineStartTransform.position);
-            _lineRenderer.SetPosition(1, _lineStartTransform.position);
-            _lineRenderer.SetPosition(2, _lineStartTransform.position);
-        }
-
-        private void UpdateLineRenderer(int index, Vector3 targetPosition)
-        {
-            _lineRenderer.SetPosition(index, targetPosition);
-        }
-
         private void InitializeCurrentAndNextBubbles()
         {
             _nextBubble = _bubbleManager.GetBubble();
@@ -166,6 +144,47 @@ namespace Assets.Scripts.BubbleSystem
             _currentBubble.transform.position = _currentBubbleTransform.position;
 
             _throwGuide.SetColor(_currentBubble.BubbleData.color);
+        }
+
+        private Vector3[] GetThrowPath()
+        {
+            Vector3[] targetPositions;
+
+            if (_lineRenderer.GetPosition(0) == _lineRenderer.GetPosition(1))
+            {
+                targetPositions = new Vector3[1];
+            }
+            else
+            {
+                targetPositions = new Vector3[2];
+                targetPositions[0] = _lineRenderer.GetPosition(1);
+            }
+
+            targetPositions[^1] = _targetPosition;
+            return targetPositions;
+        }
+
+        private void ThrowBubble()
+        {
+            _isThrowActive = false;
+
+            Vector3[] targetPositions = GetThrowPath();
+            _currentBubble.Throw(targetPositions);
+        }
+
+        private void InitializeLineRenderer()
+        {
+            _lineRenderer.enabled = false;
+
+            _lineRenderer.positionCount = 3;
+            _lineRenderer.SetPosition(0, _lineStartTransform.position);
+            _lineRenderer.SetPosition(1, _lineStartTransform.position);
+            _lineRenderer.SetPosition(2, _lineStartTransform.position);
+        }
+
+        private void UpdateLineRenderer(int index, Vector3 targetPosition)
+        {
+            _lineRenderer.SetPosition(index, targetPosition);
         }
 
         private Vector3 ClampDirection(Vector3 direction)
@@ -290,7 +309,7 @@ namespace Assets.Scripts.BubbleSystem
             
             _lineRenderer.enabled = false;
 
-            ThrowBubble(_targetPosition);
+            ThrowBubble();
 
             ActivateNextBubble();
             GetNewNextBubble();

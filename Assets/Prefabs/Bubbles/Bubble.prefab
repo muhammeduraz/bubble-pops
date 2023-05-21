@@ -192,6 +192,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d10ed80d9538c554ea96567dec264b61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _distance: 4
+  _duration: 0.2
   _shakeAmount: 0.1
   _shakeDuration: 0.2
   _idText: {fileID: 4110070480598184177}

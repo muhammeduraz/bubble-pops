@@ -19,8 +19,8 @@ namespace Assets.Scripts.BubbleSystem
         #region Variables
 
         private Tween _scaleTween;
-        private Tween _throwTween;
         private Tween _movementTween;
+        private Sequence _throwSequence;
 
         private Vector3 _currentPosition;
 
@@ -40,6 +40,9 @@ namespace Assets.Scripts.BubbleSystem
             new Vector3(1f, 0f, 0f),
             new Vector3(-1f, 0f, 0f),
         };
+
+        [SerializeField] private float _distance;
+        [SerializeField] private float _duration;
 
         [SerializeField] private float _shakeAmount;
         [SerializeField] private float _shakeDuration;
@@ -73,7 +76,7 @@ namespace Assets.Scripts.BubbleSystem
             transform.localScale = Vector3.zero;
 
             _scaleTween?.Kill();
-            _throwTween?.Kill();
+            _throwSequence?.Kill();
             _movementTween?.Kill();
 
             _bubbleData = null;
@@ -119,15 +122,25 @@ namespace Assets.Scripts.BubbleSystem
             _movementTween = transform.DOMoveY(_currentPosition.y, duration);
         }
 
-        public void Throw(Vector3 targetPosition, float duration = 0.25f)
+        public void Throw(Vector3[] targetPositions)
         {
-            _currentPosition = targetPosition;
+            _currentPosition = targetPositions[^1];
             _trailRenderer.enabled = true;
 
-            _throwTween?.Kill();
-            _throwTween = transform.DOMove(_currentPosition, duration).SetEase(Ease.Linear);
+            float distance;
+            float throwDuration = 0.2f;
 
-            _throwTween.OnComplete(() =>
+            _throwSequence?.Kill();
+            _throwSequence = DOTween.Sequence();
+
+            for (int i = 0; i < targetPositions.Length; i++)
+            {
+                distance = Vector3.Distance(transform.position, targetPositions[i]);
+                throwDuration = (distance * _duration) / _distance;
+                _throwSequence.Append(transform.DOMove(targetPositions[i], throwDuration / targetPositions.Length).SetEase(Ease.Linear));
+            }
+
+            _throwSequence.OnComplete(() =>
             {
                 ShakeNeighbourBubbles();
                 _trailRenderer.enabled = false;
