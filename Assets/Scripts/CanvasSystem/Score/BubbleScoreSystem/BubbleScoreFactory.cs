@@ -8,7 +8,7 @@ namespace Assets.Scripts.CanvasSystem.BubbleScoreSystem
     {
         #region Variables
 
-        private BubbleScore _bubbleScore;
+        private BubbleScore _bubbleScorePrefab;
 
         #endregion Variables
 
@@ -16,12 +16,12 @@ namespace Assets.Scripts.CanvasSystem.BubbleScoreSystem
 
         public BubbleScoreFactory(BubbleScore bubbleScore)
         {
-
+            _bubbleScorePrefab = bubbleScore;
         }
 
         public override BubbleScore Manufacture()
         {
-            return GameObject.Instantiate(_bubbleScore, null, true);
+            return GameObject.Instantiate(_bubbleScorePrefab, null, true);
         }
 
         #endregion Functions
