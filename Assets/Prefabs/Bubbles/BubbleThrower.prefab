@@ -243,7 +243,7 @@ Transform:
   - {fileID: 723263961631245618}
   - {fileID: 695991073675829488}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &695991075116497029
 MonoBehaviour:
@@ -263,7 +263,7 @@ MonoBehaviour:
   _bubbleLayerMask:
     serializedVersion: 2
     m_Bits: 8
-  _minDirectionY: 0.25
+  _minDirectionY: 0.5
   _throwGuide: {fileID: 3690658605929588799}
   _lineRenderer: {fileID: 1088406492}
   _rayStartTransform: {fileID: 4903655573763595074}

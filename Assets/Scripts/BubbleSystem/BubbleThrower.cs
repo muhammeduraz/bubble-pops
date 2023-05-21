@@ -230,11 +230,11 @@ namespace Assets.Scripts.BubbleSystem
                 }
                 else
                 {
-                    hit.collider.TryGetComponent(out wall);
-                    if (wall != null)
-                    {
-                        UpdateLineRenderer(2, _lineRenderer.GetPosition(1));
-                    }
+                    //hit.collider.TryGetComponent(out wall);
+                    //if (wall != null)
+                    //{
+                    //    UpdateLineRenderer(2, _lineRenderer.GetPosition(1));
+                    //}
                 }
             }
             else
