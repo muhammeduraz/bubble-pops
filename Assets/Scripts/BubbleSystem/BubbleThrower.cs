@@ -28,6 +28,9 @@ namespace Assets.Scripts.BubbleSystem
         private Vector3 _targetPosition;
         private List<Vector3> _cachedPositionList;
 
+        [SerializeField] private LayerMask _wallLayerMask;
+        [SerializeField] private LayerMask _bubbleLayerMask;
+
         [SerializeField] private float _minDirectionY;
 
         [SerializeField] private ThrowGuide _throwGuide;
@@ -150,7 +153,7 @@ namespace Assets.Scripts.BubbleSystem
         {
             Vector3[] targetPositions;
 
-            if (_lineRenderer.GetPosition(0) == _lineRenderer.GetPosition(1))
+            if (_lineRenderer.GetPosition(0) == _lineRenderer.GetPosition(1) || _lineRenderer.GetPosition(1).y > _targetPosition.y)
             {
                 targetPositions = new Vector3[1];
             }
@@ -202,10 +205,10 @@ namespace Assets.Scripts.BubbleSystem
             direction = direction.normalized;
 
             direction = ClampDirection(direction);
+            
+            bool didHit = Physics.Raycast(_rayStartTransform.position, direction, out RaycastHit hit);
 
-            bool isHit = Physics.Raycast(_rayStartTransform.position, direction, out RaycastHit hit);
-
-            if (!isHit) return;
+            if (!didHit) return;
 
             hit.collider.TryGetComponent(out Wall wall);
             if(wall != null)
@@ -213,9 +216,9 @@ namespace Assets.Scripts.BubbleSystem
                 UpdateLineRenderer(1, hit.point);
 
                 direction.x *= -1f;
-                isHit = Physics.Raycast(hit.point, direction, out hit);
+                didHit = Physics.Raycast(hit.point, direction, out hit);
 
-                if (!isHit) return;
+                if (!didHit) return;
 
                 hit.collider.TryGetComponent(out Bubble bubble);
                 if (bubble != null)

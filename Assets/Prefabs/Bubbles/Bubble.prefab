@@ -156,7 +156,7 @@ GameObject:
   - component: {fileID: 4110070478810438711}
   - component: {fileID: 4110070478810438712}
   - component: {fileID: 7852419115170553877}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Bubble
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -196,6 +196,9 @@ MonoBehaviour:
   _duration: 0.2
   _shakeAmount: 0.1
   _shakeDuration: 0.2
+  _bubbleWallMask:
+    serializedVersion: 2
+    m_Bits: 136
   _idText: {fileID: 4110070480598184177}
   _trailRenderer: {fileID: 285618472}
   _spriteRenderer: {fileID: 4110070478831851579}

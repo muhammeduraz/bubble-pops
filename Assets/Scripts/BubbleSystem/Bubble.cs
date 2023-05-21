@@ -47,6 +47,8 @@ namespace Assets.Scripts.BubbleSystem
         [SerializeField] private float _shakeAmount;
         [SerializeField] private float _shakeDuration;
 
+        [SerializeField] private LayerMask _bubbleWallMask;
+
         [SerializeField] private TextMeshPro _idText;
         [SerializeField] private TrailRenderer _trailRenderer;
         [SerializeField] private SpriteRenderer _spriteRenderer;
@@ -224,7 +226,7 @@ namespace Assets.Scripts.BubbleSystem
                 position = transform.position + offset;
 
                 _emptyNeighbourColliders = new Collider[1];
-                overlapCount = Physics.OverlapBoxNonAlloc(position, Vector3.one * 0.25f, _emptyNeighbourColliders);
+                overlapCount = Physics.OverlapBoxNonAlloc(position, Vector3.one * 0.25f, _emptyNeighbourColliders, Quaternion.identity, _bubbleWallMask);
                 
                 if (overlapCount == 0)
                 {

@@ -257,6 +257,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 205af6199b9fcd54fb058aa518b6ee9b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _wallLayerMask:
+    serializedVersion: 2
+    m_Bits: 64
+  _bubbleLayerMask:
+    serializedVersion: 2
+    m_Bits: 8
   _minDirectionY: 0.25
   _throwGuide: {fileID: 3690658605929588799}
   _lineRenderer: {fileID: 1088406492}
@@ -334,10 +340,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 695991075116497028}
     m_Modifications:
-    - target: {fileID: 5623163838046446599, guid: dc9737ed609c44b4eb28805e12b6408f, type: 3}
-      propertyPath: _scaleDuration
-      value: 0.15
-      objectReference: {fileID: 0}
     - target: {fileID: 8400919699184233672, guid: dc9737ed609c44b4eb28805e12b6408f, type: 3}
       propertyPath: m_RootOrder
       value: -1
