@@ -12,6 +12,7 @@ namespace Assets.Scripts.BubbleSystem
     {
         #region Events
 
+        public Action<Bubble> ThrowEvent;
         public Action<Bubble> DisposeEvent;
 
         #endregion Events
@@ -146,6 +147,8 @@ namespace Assets.Scripts.BubbleSystem
             {
                 ShakeNeighbourBubbles();
                 _trailRenderer.enabled = false;
+
+                ThrowEvent?.Invoke(this);
             });
         }
 
@@ -190,7 +193,7 @@ namespace Assets.Scripts.BubbleSystem
             }
         }
 
-        private List<Bubble> GetNeighbourBubbles()
+        public List<Bubble> GetNeighbourBubbles()
         {
             Bubble loopBubble = null;
             Collider loopCollider = null;

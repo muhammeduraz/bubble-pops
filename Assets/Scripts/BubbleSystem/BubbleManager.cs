@@ -104,6 +104,8 @@ namespace Assets.Scripts.BubbleSystem
                 bubble = _bubbleFactory.Manufacture();
 
             bubble.transform.SetParent(transform, true);
+            bubble.ThrowEvent += MatchProcess;
+
             return bubble;
         }
 
@@ -159,11 +161,52 @@ namespace Assets.Scripts.BubbleSystem
             }
         }
 
-        [Button]
         private void MoveDownAndCreateLine()
         {
             MoveAllBubblesDown();
             StartCoroutine(CreateLinePile(_initialSpawnPosition));
+        }
+
+        private void MatchProcess(Bubble bubble)
+        {
+            bubble.ThrowEvent -= MatchProcess;
+            List<Bubble> neighbourBubbleList = bubble.GetNeighbourBubbles();
+
+            if (IsThereAnyMatch(bubble, neighbourBubbleList))
+            {
+                OnMatch();
+            }
+            else
+            {
+                OnNonMatch();
+            }
+        }
+
+        private void OnMatch()
+        {
+            Debug.LogError("Match");
+        }
+
+        private void OnNonMatch()
+        {
+            Debug.LogError("Non Match");
+        }
+
+        private bool IsThereAnyMatch(Bubble bubble, List<Bubble> neighbourBubbleList)
+        {
+            Bubble loopBubble = null;
+
+            for (int i = 0; i < neighbourBubbleList.Count; i++)
+            {
+                loopBubble = neighbourBubbleList[i];
+
+                if (loopBubble.BubbleData.id == bubble.BubbleData.id)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         #endregion Functions
