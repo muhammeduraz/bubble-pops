@@ -4,7 +4,7 @@ using DG.Tweening;
 using UnityEngine;
 using Assets.Scripts.ProductSystem;
 
-namespace Assets.Scripts.CanvasSystem.BubbleScoreSystem
+namespace Assets.Scripts.CanvasSystem.Score.BubbleScoreSystem
 {
     public class BubbleScore : MonoBehaviour, IProduct<BubbleScore>
     {

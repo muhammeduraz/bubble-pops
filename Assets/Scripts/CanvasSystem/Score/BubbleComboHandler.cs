@@ -3,9 +3,9 @@ using System;
 using DG.Tweening;
 using UnityEngine;
 
-namespace Assets.Scripts.CanvasSystem.Combo
+namespace Assets.Scripts.CanvasSystem.Score
 {
-    public class ComboHandler : MonoBehaviour, IDisposable
+    public class BubbleComboHandler : MonoBehaviour, IDisposable
     {
         #region Variables
 

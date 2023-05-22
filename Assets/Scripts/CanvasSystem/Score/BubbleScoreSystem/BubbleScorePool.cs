@@ -1,7 +1,7 @@
 using Assets.Scripts.FactorySystem;
 using Assets.Scripts.ProductSystem.Pool;
 
-namespace Assets.Scripts.CanvasSystem.BubbleScoreSystem
+namespace Assets.Scripts.CanvasSystem.Score.BubbleScoreSystem
 {
     public class BubbleScorePool : BasePool<BubbleScore>
     {

@@ -6,7 +6,9 @@ using System.Collections.Generic;
 using Assets.Scripts.HapticSystem;
 using Assets.Scripts.BubbleSystem.Pool;
 using Assets.Scripts.BubbleSystem.Data;
+using Assets.Scripts.CanvasSystem.Score;
 using Assets.Scripts.BubbleSystem.Factory;
+using Assets.Scripts.CanvasSystem.Score.BubbleScoreSystem;
 
 namespace Assets.Scripts.BubbleSystem
 {
@@ -22,7 +24,12 @@ namespace Assets.Scripts.BubbleSystem
         private BubblePool _bubblePool;
         private BubbleFactory _bubbleFactory;
         private BubbleThrower _bubbleThrower;
+
         private ParticlePlayer _particlePlayer;
+        private BubbleScoreHandler _scoreHandler;
+        private BubbleComboHandler _comboHandler;
+
+        private int _comboCounter;
 
         [SerializeField] private float _verticalOffset;
         [SerializeField] private float _horizontalOffset;
@@ -79,6 +86,9 @@ namespace Assets.Scripts.BubbleSystem
             _bubbleThrower = FindObjectOfType<BubbleThrower>();
             _bubbleFactory = new BubbleFactory(_bubblePrefab);
             _bubblePool = new BubblePool(_bubbleFactory);
+
+            _scoreHandler = FindObjectOfType<BubbleScoreHandler>();
+            _comboHandler = FindObjectOfType<BubbleComboHandler>();
             
             _activeBubbleList = new List<Bubble>();
 
@@ -176,6 +186,16 @@ namespace Assets.Scripts.BubbleSystem
             StartCoroutine(CreateLinePile(_initialSpawnPosition));
         }
 
+        private void HandleCombo()
+        {
+            _comboCounter++;
+
+            if (_comboCounter > 1)
+            {
+                _comboHandler.ShowCombo(_comboCounter);
+            }
+        }
+
         private void MatchProcess(Bubble bubble)
         {
             AddBubble(bubble);
@@ -201,15 +221,19 @@ namespace Assets.Scripts.BubbleSystem
 
             yield return new WaitForSeconds(0.1f);
 
+            HandleCombo();
+
             Bubble loopBubble = null;
+
             for (int i = 0; i < matchedBubbles.Count - 1; i++)
             {
                 loopBubble = matchedBubbles[i];
+                _activeBubbleList.Remove(loopBubble);
 
+                _scoreHandler.ShowScore(loopBubble.BubbleData.id, loopBubble.transform.position);
                 _particlePlayer.PlayParticle(loopBubble.BubbleData.id, loopBubble.transform.position);
 
                 loopBubble.MoveToDispose(matchedBubbles[^1].transform.position);
-                _activeBubbleList.Remove(loopBubble);
             }
 
             yield return new WaitForSeconds(0.2f);
@@ -222,6 +246,7 @@ namespace Assets.Scripts.BubbleSystem
 
         private void OnNonMatch()
         {
+            _comboCounter = 0;
             _bubbleThrower.IsThrowActive = true;
         }
 
