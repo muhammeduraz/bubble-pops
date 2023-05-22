@@ -21,7 +21,7 @@ namespace Assets.Scripts.BubbleSystem.Data
             if (maxExclusive == -1 || maxExclusive > _bubbleDataList.Count)
                 maxExclusive = _bubbleDataList.Count;
 
-            return _bubbleDataList[UnityEngine.Random.Range(0, maxExclusive)];
+            return _bubbleDataList[UnityEngine.Random.Range(10, maxExclusive)];
         }
 
         public BubbleData GetBubbleDataById(int id)
@@ -58,10 +58,10 @@ namespace Assets.Scripts.BubbleSystem.Data
                 }
             }
 
-            if (bubbleData == null && newId > _bubbleDataList[^1].id)
+            if (bubbleData == null || newId > _bubbleDataList[^1].id)
                 bubbleData = _bubbleDataList[^1];
 
-            return null;
+            return bubbleData;
         }
 
         #endregion Functions

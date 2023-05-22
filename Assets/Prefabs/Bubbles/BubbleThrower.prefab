@@ -263,7 +263,7 @@ MonoBehaviour:
   _bubbleLayerMask:
     serializedVersion: 2
     m_Bits: 8
-  _minDirectionY: 0.5
+  _minDirectionY: 0.25
   _throwGuide: {fileID: 3690658605929588799}
   _lineRenderer: {fileID: 1088406492}
   _rayStartTransform: {fileID: 4903655573763595074}
