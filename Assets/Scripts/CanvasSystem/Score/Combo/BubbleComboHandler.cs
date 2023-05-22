@@ -3,7 +3,7 @@ using System;
 using DG.Tweening;
 using UnityEngine;
 
-namespace Assets.Scripts.CanvasSystem.Score
+namespace Assets.Scripts.CanvasSystem.Score.Combo
 {
     public class BubbleComboHandler : MonoBehaviour, IDisposable
     {

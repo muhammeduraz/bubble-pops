@@ -6,9 +6,10 @@ using System.Collections.Generic;
 using Assets.Scripts.HapticSystem;
 using Assets.Scripts.BubbleSystem.Pool;
 using Assets.Scripts.BubbleSystem.Data;
-using Assets.Scripts.CanvasSystem.Score;
 using Assets.Scripts.BubbleSystem.Factory;
-using Assets.Scripts.CanvasSystem.Score.BubbleScoreSystem;
+using Assets.Scripts.CanvasSystem.Score.Combo;
+using Assets.Scripts.CanvasSystem.Score.BubbleScore;
+using Assets.Scripts.CanvasSystem.Score.General;
 
 namespace Assets.Scripts.BubbleSystem
 {
@@ -28,6 +29,7 @@ namespace Assets.Scripts.BubbleSystem
         private ParticlePlayer _particlePlayer;
         private BubbleScoreHandler _scoreHandler;
         private BubbleComboHandler _comboHandler;
+        private GeneralScoreHandler _generalScoreHandler;
 
         private int _comboCounter;
 
@@ -89,6 +91,7 @@ namespace Assets.Scripts.BubbleSystem
 
             _scoreHandler = FindObjectOfType<BubbleScoreHandler>();
             _comboHandler = FindObjectOfType<BubbleComboHandler>();
+            _generalScoreHandler = FindObjectOfType<GeneralScoreHandler>();
             
             _activeBubbleList = new List<Bubble>();
 
@@ -230,6 +233,7 @@ namespace Assets.Scripts.BubbleSystem
                 loopBubble = matchedBubbles[i];
                 _activeBubbleList.Remove(loopBubble);
 
+                _generalScoreHandler.UpdateScore(loopBubble.BubbleData.id);
                 _scoreHandler.ShowScore(loopBubble.BubbleData.id, loopBubble.transform.position);
                 _particlePlayer.PlayParticle(loopBubble.BubbleData.id, loopBubble.transform.position);
 

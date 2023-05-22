@@ -80,7 +80,7 @@ namespace Assets.Scripts.CurrencySystem.Canvas
 
         private void UpdateCurrencyText(double currencyAmount)
         {
-            _currentAmountText.text = "" + currencyAmount.AbbrivateNum();
+            _currentAmountText.text = "" + currencyAmount.AbbrivateNumber();
         }
 
         private void AddCurrencyWithTween(float duration = 1f)

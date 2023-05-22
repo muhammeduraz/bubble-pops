@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using Assets.Scripts.FactorySystem;
 
-namespace Assets.Scripts.CanvasSystem.Score.BubbleScoreSystem
+namespace Assets.Scripts.CanvasSystem.Score.BubbleScore
 {
     public class BubbleScoreFactory : BaseFactory<BubbleScore>
     {

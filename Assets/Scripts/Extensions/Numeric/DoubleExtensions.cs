@@ -17,7 +17,7 @@ namespace Assets.Scripts.Extensions.Numeric
         /// </summary>
         /// <param name="num"></param>
         /// <returns></returns>
-        public static string AbbrivateNum(this double num)
+        public static string AbbrivateNumber(this double num)
         {
             if (num < 1000) return num.ToString("N0");
             int exp = (int)(Math.Log(num) / Math.Log(1000));

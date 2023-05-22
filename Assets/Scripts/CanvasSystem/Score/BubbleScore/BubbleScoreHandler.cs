@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Assets.Scripts.CanvasSystem.Score.BubbleScoreSystem
+namespace Assets.Scripts.CanvasSystem.Score.BubbleScore
 {
     public class BubbleScoreHandler : MonoBehaviour, IDisposable
     {
