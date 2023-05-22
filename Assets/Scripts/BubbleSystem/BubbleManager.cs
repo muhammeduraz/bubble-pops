@@ -196,6 +196,7 @@ namespace Assets.Scripts.BubbleSystem
             if (_comboCounter > 1)
             {
                 _comboHandler.ShowCombo(_comboCounter);
+                _generalScoreHandler.UpdateMultiplier(_comboCounter);
             }
         }
 
@@ -235,6 +236,7 @@ namespace Assets.Scripts.BubbleSystem
 
                 _generalScoreHandler.UpdateScore(loopBubble.BubbleData.id);
                 _scoreHandler.ShowScore(loopBubble.BubbleData.id, loopBubble.transform.position);
+                
                 _particlePlayer.PlayParticle(loopBubble.BubbleData.id, loopBubble.transform.position);
 
                 loopBubble.MoveToDispose(matchedBubbles[^1].transform.position);
