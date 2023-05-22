@@ -47,6 +47,8 @@ namespace Assets.Scripts.BubbleSystem
 
         public void Reset()
         {
+            _scaleTween?.Kill();
+
             transform.localScale = Vector3.zero;
         }
 

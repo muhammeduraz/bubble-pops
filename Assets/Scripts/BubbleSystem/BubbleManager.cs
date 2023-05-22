@@ -100,12 +100,15 @@ namespace Assets.Scripts.BubbleSystem
             _activeBubbleList.Remove(bubble);
         }
 
-        public Bubble GetBubble()
+        public Bubble GetBubble(bool withSubscription = true)
         {
             Bubble bubble = _bubblePool.GetProduct();
 
+            bubble.transform.position = _initialSpawnPosition;
             bubble.transform.SetParent(transform, true);
-            bubble.ThrowEvent += MatchProcess;
+
+            if (withSubscription)
+                bubble.ThrowEvent += MatchProcess;
 
             return bubble;
         }
@@ -130,7 +133,7 @@ namespace Assets.Scripts.BubbleSystem
 
             for (int j = 0; j < _lineSize; j++)
             {
-                instantiatedBubble = GetBubble();
+                instantiatedBubble = GetBubble(false);
                 instantiatedBubble.transform.position = spawnPosition + Vector3.down * _verticalOffset;
 
                 instantiatedBubble.MoveTo(spawnPosition);
@@ -179,7 +182,7 @@ namespace Assets.Scripts.BubbleSystem
 
             if (IsThereAnyMatch(bubble, neighbourBubbleList))
             {
-                OnMatch(bubble);
+                StartCoroutine(OnMatch(bubble));
             }
             else
             {
@@ -189,7 +192,7 @@ namespace Assets.Scripts.BubbleSystem
             MoveDownAndCreateLine();
         }
 
-        private void OnMatch(Bubble bubble)
+        private IEnumerator OnMatch(Bubble bubble)
         {
             List<Bubble> matchedBubbles = GetBubblesWithSameId(bubble);
 
@@ -202,6 +205,8 @@ namespace Assets.Scripts.BubbleSystem
 
                 loopBubble.MoveToDispose(matchedBubbles[^1].transform.position);
             }
+
+            yield return new WaitForSeconds(0.2f);
 
             matchedBubbles[^1].UpdateBubble(_bubbleDataSO.GetBubbleDataByMultiplication(matchedBubbles[^1].BubbleData.id, matchedBubbles.Count));
         }

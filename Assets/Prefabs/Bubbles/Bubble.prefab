@@ -199,6 +199,7 @@ MonoBehaviour:
   _bubbleWallMask:
     serializedVersion: 2
     m_Bits: 136
+  _collider: {fileID: 7852419115170553877}
   _idText: {fileID: 4110070480598184177}
   _trailRenderer: {fileID: 285618472}
   _spriteRenderer: {fileID: 4110070478831851579}

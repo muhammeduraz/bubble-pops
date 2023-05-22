@@ -50,6 +50,7 @@ namespace Assets.Scripts.BubbleSystem
 
         [SerializeField] private LayerMask _bubbleWallMask;
 
+        [SerializeField] private Collider _collider;
         [SerializeField] private TextMeshPro _idText;
         [SerializeField] private TrailRenderer _trailRenderer;
         [SerializeField] private SpriteRenderer _spriteRenderer;
@@ -73,6 +74,7 @@ namespace Assets.Scripts.BubbleSystem
             _neighbourColliders = new Collider[9];
             _emptyNeighbourColliders = new Collider[1];
 
+            _collider.enabled = true;
             gameObject.SetActive(true);
         }
 
@@ -91,6 +93,7 @@ namespace Assets.Scripts.BubbleSystem
 
             _idText.alpha = 1f;
 
+            _collider.enabled = false;
             DisposeEvent?.Invoke(this);
             gameObject.SetActive(false);
         }
@@ -98,7 +101,7 @@ namespace Assets.Scripts.BubbleSystem
         private void UpdateBubble()
         {
             SetText("" + _bubbleData.id);
-            SetColor(_bubbleData.color);
+            SetColor(_bubbleData.color, true);
         }
 
         public void UpdateBubble(BubbleData bubbleData)
@@ -112,9 +115,16 @@ namespace Assets.Scripts.BubbleSystem
             _idText.text = text;
         }
 
-        private void SetColor(Color color)
+        private void SetColor(Color color, bool withTween, float duration = 0.2f)
         {
-            _spriteRenderer.color = color;
+            if (!withTween)
+            {
+                _spriteRenderer.color = color;
+            }
+            else if (withTween)
+            {
+                _spriteRenderer.DOColor(color, duration);
+            }
         }
         
         public void SetPosition(Vector3 position)
@@ -132,7 +142,9 @@ namespace Assets.Scripts.BubbleSystem
 
         public void MoveToDispose(Vector3 targetPosition, float duration = 0.2f)
         {
+            _collider.enabled = false;
             _currentPosition = targetPosition;
+            transform.position += Vector3.forward * 0.05f;
 
             _throwSequence?.Kill();
             _throwSequence = DOTween.Sequence();
@@ -176,7 +188,6 @@ namespace Assets.Scripts.BubbleSystem
             {
                 ShakeNeighbourBubbles();
                 _trailRenderer.enabled = false;
-
                 ThrowEvent?.Invoke(this);
             });
         }
