@@ -2,7 +2,6 @@ using System;
 using UnityEngine;
 using DG.Tweening;
 using UnityEngine.UI;
-using Sirenix.OdinInspector;
 using Assets.Scripts.CanvasSystem.ProgressBar;
 
 namespace Assets.Scripts.CanvasSystem.Loading
@@ -11,12 +10,12 @@ namespace Assets.Scripts.CanvasSystem.Loading
     {
         #region Variables
 
-        [BoxGroup("Settings")][SerializeField] private float _appearDuration;
-        [BoxGroup("Settings")][SerializeField] private float _disappearDuration;
+        [SerializeField] private float _appearDuration;
+        [SerializeField] private float _disappearDuration;
 
-        [BoxGroup("Components")][SerializeField] private Image _backgroundImage;
-        [BoxGroup("Components")][SerializeField] private CanvasGroup _canvasGroup;
-        [BoxGroup("Components")][SerializeField] private DefaultProgressBar _progressBar;
+        [SerializeField] private Image _backgroundImage;
+        [SerializeField] private CanvasGroup _canvasGroup;
+        [SerializeField] private DefaultProgressBar _progressBar;
 
         #endregion Variables
 

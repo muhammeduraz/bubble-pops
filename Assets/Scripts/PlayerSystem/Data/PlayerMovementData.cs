@@ -1,5 +1,4 @@
 using UnityEngine;
-using Sirenix.OdinInspector;
 
 namespace Assets.Scripts.PlayerSystem.Data
 {
@@ -8,11 +7,11 @@ namespace Assets.Scripts.PlayerSystem.Data
     {
         #region Variables
 
-        [BoxGroup("Speed")][SerializeField] private float _verticalSpeed;
-        [BoxGroup("Speed")][SerializeField] private float _horizontalSpeed;
+        [SerializeField] private float _verticalSpeed;
+        [SerializeField] private float _horizontalSpeed;
 
-        [BoxGroup("Speed Lerp")][SerializeField] private float _verticalSpeedLerpMultiplier;
-        [BoxGroup("Speed Lerp")][SerializeField] private float _horizontalSpeedLerpMultiplier;
+        [SerializeField] private float _verticalSpeedLerpMultiplier;
+        [SerializeField] private float _horizontalSpeedLerpMultiplier;
 
         #endregion Variables
 

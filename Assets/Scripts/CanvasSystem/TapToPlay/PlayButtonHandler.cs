@@ -3,7 +3,6 @@ using System;
 using UnityEngine;
 using DG.Tweening;
 using UnityEngine.UI;
-using Sirenix.OdinInspector;
 
 namespace Assets.Scripts.CanvasSystem
 {
@@ -13,8 +12,8 @@ namespace Assets.Scripts.CanvasSystem
 
         private Sequence _textSequence;
 
-        [BoxGroup("Components")][SerializeField] private Button _playButton;
-        [BoxGroup("Components")][SerializeField] private TextMeshProUGUI _playText;
+        [SerializeField] private Button _playButton;
+        [SerializeField] private TextMeshProUGUI _playText;
 
         #endregion Variables
 

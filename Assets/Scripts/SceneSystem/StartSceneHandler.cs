@@ -1,5 +1,4 @@
 using UnityEngine;
-using Sirenix.OdinInspector;
 using Cysharp.Threading.Tasks;
 using UnityEngine.SceneManagement;
 
@@ -9,15 +8,9 @@ namespace Assets.Scripts.SceneSystem
     {
         #region Variables
 
-        [BoxGroup("Scene Data")][SerializeField] private string _sceneNameToLoad;
+        [SerializeField] private string _sceneNameToLoad;
 
         #endregion Variables
-
-        #region Properties
-
-
-
-        #endregion Properties
 
         #region Unity Functions
 

@@ -2,7 +2,6 @@ using TMPro;
 using System;
 using DG.Tweening;
 using UnityEngine;
-using Sirenix.OdinInspector;
 
 namespace Assets.Scripts.CanvasSystem.Combo
 {
@@ -70,7 +69,6 @@ namespace Assets.Scripts.CanvasSystem.Combo
                 .Join(_canvasGroup.DOFade(0f, _fadeDuration).SetEase(_fadeEase).SetDelay(_fadeDelay));
         }
 
-        [Button]
         public void ShowCombo(int combo)
         {
             _canvasGroup.alpha = 1f;

@@ -1,4 +1,3 @@
-using Sirenix.OdinInspector;
 using System;
 using UnityEngine;
 
@@ -50,7 +49,6 @@ namespace Assets.Scripts.CanvasSystem.BubbleScoreSystem
             _bubbleScorePrefab = null;
         }
 
-        [Button]
         public void ShowScore(int id, Vector3 position)
         {
             BubbleScore bubbleScore = _bubbleScorePool.GetProduct();

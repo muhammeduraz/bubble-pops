@@ -1,5 +1,4 @@
 using UnityEngine;
-using Sirenix.OdinInspector;
 using Assets.Scripts.SceneSystem;
 
 namespace Assets.Scripts.LevelSystem.Data
@@ -9,7 +8,7 @@ namespace Assets.Scripts.LevelSystem.Data
     {
         #region Variables
 
-        [BoxGroup("Scene")][SerializeField] private SceneReference _sceneReference;
+        [SerializeField] private SceneReference _sceneReference;
 
         #endregion Variables
 

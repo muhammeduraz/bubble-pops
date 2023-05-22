@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using Sirenix.OdinInspector;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -17,7 +16,7 @@ namespace Assets.Scripts.SceneSystem
         [SerializeField] private SceneAsset _sceneAsset;
 #endif
 
-        [ReadOnly][SerializeField] private string _scenePath = string.Empty;
+        [SerializeField] private string _scenePath = string.Empty;
 
         #endregion Variables
 
@@ -29,7 +28,6 @@ namespace Assets.Scripts.SceneSystem
 
         #region EditorFunctions
 
-        [Button]
         private void SerializeScenePath()
         {
             _scenePath = AssetDatabase.GetAssetPath(_sceneAsset);

@@ -3,7 +3,6 @@ using System;
 using UnityEngine;
 using DG.Tweening;
 using UnityEngine.UI;
-using Sirenix.OdinInspector;
 
 namespace Assets.Scripts.CanvasSystem.ProgressBar
 {
@@ -18,16 +17,16 @@ namespace Assets.Scripts.CanvasSystem.ProgressBar
         protected Tween fillTween;
         protected Tween scaleTween;
 
-        [BoxGroup("Settings")][SerializeField] protected float fillDuration;
+        [SerializeField] protected float fillDuration;
 
-        [BoxGroup("Scale Settings")][SerializeField] protected Ease scaleInEase;
-        [BoxGroup("Scale Settings")][SerializeField] protected Ease scaleOutEase;
+        [SerializeField] protected Ease scaleInEase;
+        [SerializeField] protected Ease scaleOutEase;
 
-        [BoxGroup("Appear Settings")][SerializeField] protected float fadeDuration;
+        [SerializeField] protected float fadeDuration;
 
-        [BoxGroup("Components")][SerializeField] protected Image fillImage;
-        [BoxGroup("Components")][SerializeField] protected CanvasGroup canvasGroup;
-        [BoxGroup("Components")][SerializeField] protected TextMeshProUGUI _progressText;
+        [SerializeField] protected Image fillImage;
+        [SerializeField] protected CanvasGroup canvasGroup;
+        [SerializeField] protected TextMeshProUGUI _progressText;
 
         #endregion Variables
 

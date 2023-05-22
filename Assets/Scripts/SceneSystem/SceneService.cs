@@ -1,7 +1,6 @@
 using System;
 using UnityEngine;
 using System.Collections;
-using Sirenix.OdinInspector;
 using UnityEngine.SceneManagement;
 using Assets.Scripts.CanvasSystem.Loading;
 
@@ -11,9 +10,9 @@ namespace Assets.Scripts.SceneSystem
     {
         #region Variables
 
-        [BoxGroup("Settings")][SerializeField] private float _extraLoadingDuration;
+        [SerializeField] private float _extraLoadingDuration;
 
-        [BoxGroup("Components")][SerializeField] private LoadingPanel _loadingPanel;
+        [SerializeField] private LoadingPanel _loadingPanel;
 
         #endregion Variables
 

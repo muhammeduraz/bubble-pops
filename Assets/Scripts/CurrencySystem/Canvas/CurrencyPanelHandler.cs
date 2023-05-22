@@ -2,7 +2,6 @@ using TMPro;
 using UnityEngine;
 using DG.Tweening;
 using UnityEngine.UI;
-using Sirenix.OdinInspector;
 using Assets.Scripts.RaycastSystem;
 using Assets.Scripts.Extensions.Numeric;
 
@@ -19,11 +18,11 @@ namespace Assets.Scripts.CurrencySystem.Canvas
         private double _targetAmount;
         private double _currencyAmount;
 
-        [BoxGroup("Components")][SerializeField] private Image _moneyImage;
-        [BoxGroup("Components")][SerializeField] private TextMeshProUGUI _currentAmountText;
+        [SerializeField] private Image _moneyImage;
+        [SerializeField] private TextMeshProUGUI _currentAmountText;
 
-        [BoxGroup("Flow Settings")][SerializeField] private double _amountForIcon;
-        [BoxGroup("Flow Settings")][SerializeField] private GameObject _moneyIconPrefab;
+        [SerializeField] private double _amountForIcon;
+        [SerializeField] private GameObject _moneyIconPrefab;
 
         #endregion Variables
 

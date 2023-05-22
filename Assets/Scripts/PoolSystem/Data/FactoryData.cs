@@ -1,5 +1,4 @@
 using UnityEngine;
-using Sirenix.OdinInspector;
 
 namespace Assets.Scripts.Data
 {
@@ -8,7 +7,7 @@ namespace Assets.Scripts.Data
     {
         #region Variables
 
-        [BoxGroup("Data")][SerializeField] public T _prefab;
+        [SerializeField] public T _prefab;
 
         #endregion Variables
 
