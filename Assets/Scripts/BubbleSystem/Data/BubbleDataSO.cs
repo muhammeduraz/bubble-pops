@@ -21,7 +21,7 @@ namespace Assets.Scripts.BubbleSystem.Data
             if (maxExclusive == -1 || maxExclusive > _bubbleDataList.Count)
                 maxExclusive = _bubbleDataList.Count;
 
-            return _bubbleDataList[UnityEngine.Random.Range(10, maxExclusive)];
+            return _bubbleDataList[UnityEngine.Random.Range(0, maxExclusive)];
         }
 
         public BubbleData GetBubbleDataById(int id)
