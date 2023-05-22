@@ -142,6 +142,37 @@ namespace Assets.Scripts.Extensions.Numeric
         }
 
         /// <summary>
+        /// Returns true if the number is a power of 2.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static bool IsPowerOfTwo(int value)
+        {
+            return value != 0 && ((value & (value - 1)) == 0);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static int GetPow(int value)
+        {
+            int res = 0;
+
+            if (value == res || !IsPowerOfTwo(value))
+                return res;
+
+            while(value % 2 != 1)
+            {
+                value /= 2;
+                res += 1;
+            }
+
+            return res;
+        }
+
+        /// <summary>
         /// Converts this color code to a color.
         /// </summary>
         /// <param name="colorCode"></param>

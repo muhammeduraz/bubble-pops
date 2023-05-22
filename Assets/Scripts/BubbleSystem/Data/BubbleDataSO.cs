@@ -1,5 +1,7 @@
+using System;
 using UnityEngine;
 using System.Collections.Generic;
+using Assets.Scripts.Extensions.Numeric;
 
 namespace Assets.Scripts.BubbleSystem.Data
 {
@@ -19,7 +21,7 @@ namespace Assets.Scripts.BubbleSystem.Data
             if (maxExclusive == -1 || maxExclusive > _bubbleDataList.Count)
                 maxExclusive = _bubbleDataList.Count;
 
-            return _bubbleDataList[Random.Range(0, maxExclusive)];
+            return _bubbleDataList[UnityEngine.Random.Range(0, maxExclusive)];
         }
 
         public BubbleData GetBubbleDataById(int id)
@@ -41,7 +43,9 @@ namespace Assets.Scripts.BubbleSystem.Data
 
         public BubbleData GetBubbleDataByMultiplication(int id, int count)
         {
-            int newId = id * count;
+            int power = IntegerExtensions.GetPow(id);
+            int newId = (int)Math.Pow(2, power + (count - 1));
+
             BubbleData bubbleData = null;
 
             for (int i = 0; i < _bubbleDataList.Count; i++)

@@ -140,7 +140,7 @@ namespace Assets.Scripts.BubbleSystem
                  .Append(transform.DOMove(_currentPosition, duration))
                  .Join(_idText.DOFade(0f, duration / 2f));
 
-            _throwSequence.OnComplete(() => 
+            _throwSequence.OnComplete(() =>
             {
                 Dispose();
             });
