@@ -43,12 +43,10 @@ namespace Assets.Scripts.BubbleSystem.Data
 
         public BubbleData GetBubbleDataByMultiplication(int id, int count)
         {
+            BubbleData bubbleData = null;
+
             int power = IntegerExtensions.GetPow(id);
             int newId = (int)Math.Pow(2, power + (count - 1));
-            //Debug.LogError("id: " + id);
-            //Debug.LogError("power: " + power);
-            //Debug.LogError("newId: " + newId);
-            BubbleData bubbleData = null;
 
             for (int i = 0; i < _bubbleDataList.Count; i++)
             {
@@ -59,6 +57,9 @@ namespace Assets.Scripts.BubbleSystem.Data
                     return bubbleData;
                 }
             }
+
+            if (bubbleData == null && newId > _bubbleDataList[^1].id)
+                bubbleData = _bubbleDataList[^1];
 
             return null;
         }

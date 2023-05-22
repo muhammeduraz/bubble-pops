@@ -209,6 +209,7 @@ namespace Assets.Scripts.BubbleSystem
                 _particlePlayer.PlayParticle(loopBubble.BubbleData.id, loopBubble.transform.position);
 
                 loopBubble.MoveToDispose(matchedBubbles[^1].transform.position);
+                _activeBubbleList.Remove(loopBubble);
             }
 
             yield return new WaitForSeconds(0.2f);
