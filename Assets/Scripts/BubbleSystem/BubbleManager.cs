@@ -21,6 +21,7 @@ namespace Assets.Scripts.BubbleSystem
 
         private BubblePool _bubblePool;
         private BubbleFactory _bubbleFactory;
+        private BubbleThrower _bubbleThrower;
         private ParticlePlayer _particlePlayer;
 
         [SerializeField] private float _verticalOffset;
@@ -75,6 +76,7 @@ namespace Assets.Scripts.BubbleSystem
             VerticalOffsetIndex = 0;
 
             _particlePlayer = FindObjectOfType<ParticlePlayer>();
+            _bubbleThrower = FindObjectOfType<BubbleThrower>();
             _bubbleFactory = new BubbleFactory(_bubblePrefab);
             _bubblePool = new BubblePool(_bubbleFactory);
             
@@ -219,7 +221,7 @@ namespace Assets.Scripts.BubbleSystem
 
         private void OnNonMatch()
         {
-            
+            _bubbleThrower.IsThrowActive = true;
         }
 
         private bool IsThereAnyMatch(Bubble bubble, List<Bubble> neighbourBubbleList)

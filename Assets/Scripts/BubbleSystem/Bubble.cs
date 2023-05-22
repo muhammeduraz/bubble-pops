@@ -3,6 +3,7 @@ using System;
 using UnityEngine;
 using DG.Tweening;
 using System.Collections.Generic;
+using Assets.Scripts.HapticSystem;
 using Assets.Scripts.ProductSystem;
 using Assets.Scripts.BubbleSystem.Data;
 
@@ -188,6 +189,8 @@ namespace Assets.Scripts.BubbleSystem
             {
                 ShakeNeighbourBubbles();
                 _trailRenderer.enabled = false;
+                HapticExtensions.PlayLightHaptic();
+
                 ThrowEvent?.Invoke(this);
             });
         }

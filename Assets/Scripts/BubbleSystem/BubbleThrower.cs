@@ -1,8 +1,9 @@
 using System;
 using UnityEngine;
 using DG.Tweening;
-using Assets.Scripts.InputSystem;
 using System.Collections.Generic;
+using Assets.Scripts.InputSystem;
+using Assets.Scripts.HapticSystem;
 using Assets.Scripts.EnvironmentSystem;
 
 namespace Assets.Scripts.BubbleSystem
@@ -42,6 +43,12 @@ namespace Assets.Scripts.BubbleSystem
         [SerializeField] private Transform _currentBubbleTransform;
 
         #endregion Variables
+
+        #region Properties
+
+        public bool IsThrowActive { get => _isThrowActive; set => _isThrowActive = value; }
+
+        #endregion Properties
 
         #region Unity Functions
 
@@ -115,8 +122,6 @@ namespace Assets.Scripts.BubbleSystem
                 .AppendInterval(0.2f)
                 .Append(_currentBubble.transform.DOScale(1f, 0.2f))
                 .Append(_currentBubble.transform.DOMove(_currentBubbleTransform.position, 0.2f));
-
-            _currentBubbleSequence.OnComplete(() => _isThrowActive = true);
         }
 
         private void GetNewNextBubble()
@@ -318,6 +323,8 @@ namespace Assets.Scripts.BubbleSystem
             GetNewNextBubble();
 
             _throwGuide.Reset();
+
+            HapticExtensions.PlayLightHaptic();
         }
 
         #endregion Functions
