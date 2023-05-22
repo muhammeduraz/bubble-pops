@@ -15,6 +15,7 @@ namespace Assets.Scripts.BubbleSystem
 
         public Action<Bubble> ThrowEvent;
         public Action<Bubble> DisposeEvent;
+        public Action<Bubble> ExplodeEvent;
 
         #endregion Events
 
@@ -109,6 +110,9 @@ namespace Assets.Scripts.BubbleSystem
         {
             _bubbleData = bubbleData;
             UpdateBubble();
+
+            if (_bubbleData.id == 2048)
+                ExplodeEvent?.Invoke(this);
         }
 
         private void SetText(string text)

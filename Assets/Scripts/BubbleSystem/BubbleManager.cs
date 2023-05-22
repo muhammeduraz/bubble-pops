@@ -8,8 +8,8 @@ using Assets.Scripts.BubbleSystem.Pool;
 using Assets.Scripts.BubbleSystem.Data;
 using Assets.Scripts.BubbleSystem.Factory;
 using Assets.Scripts.CanvasSystem.Score.Combo;
-using Assets.Scripts.CanvasSystem.Score.BubbleScore;
 using Assets.Scripts.CanvasSystem.Score.General;
+using Assets.Scripts.CanvasSystem.Score.BubbleScore;
 
 namespace Assets.Scripts.BubbleSystem
 {
@@ -122,6 +122,7 @@ namespace Assets.Scripts.BubbleSystem
 
             bubble.transform.position = _initialSpawnPosition;
             bubble.transform.SetParent(transform, true);
+            bubble.ExplodeEvent += ExplodeBubble;
 
             if (withSubscription)
                 bubble.ThrowEvent += MatchProcess;
@@ -200,6 +201,32 @@ namespace Assets.Scripts.BubbleSystem
             }
         }
 
+        private void ExplodeBubble(Bubble bubble)
+        {
+            bubble.ThrowEvent -= MatchProcess;
+            bubble.ExplodeEvent -= ExplodeBubble;
+
+            _activeBubbleList.Remove(bubble);
+
+            List<Bubble> neighbourList = bubble.GetNeighbourBubbles();
+            neighbourList.Add(bubble);
+
+            Bubble loopBubble = null;
+            for (int i = 0; i < neighbourList.Count; i++)
+            {
+                loopBubble = neighbourList[i];
+
+                if (loopBubble != null && loopBubble.BubbleData != null)
+                {
+                    _particlePlayer.PlayParticle(loopBubble.BubbleData.id, loopBubble.transform.position);
+                    _generalScoreHandler.UpdateScore(loopBubble.BubbleData.id);
+                    _scoreHandler.ShowScore(loopBubble.BubbleData.id, loopBubble.transform.position);
+                }
+
+                loopBubble.Dispose();
+            }
+        }
+
         private void MatchProcess(Bubble bubble)
         {
             AddBubble(bubble);
@@ -233,6 +260,7 @@ namespace Assets.Scripts.BubbleSystem
             {
                 loopBubble = matchedBubbles[i];
                 _activeBubbleList.Remove(loopBubble);
+                loopBubble.ExplodeEvent -= ExplodeBubble;
 
                 _generalScoreHandler.UpdateScore(loopBubble.BubbleData.id);
                 _scoreHandler.ShowScore(loopBubble.BubbleData.id, loopBubble.transform.position);
