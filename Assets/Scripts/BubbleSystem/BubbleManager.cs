@@ -20,6 +20,7 @@ namespace Assets.Scripts.BubbleSystem
 
         private BubblePool _bubblePool;
         private BubbleFactory _bubbleFactory;
+        private ParticlePlayer _particlePlayer;
 
         [SerializeField] private float _verticalOffset;
         [SerializeField] private float _horizontalOffset;
@@ -33,7 +34,6 @@ namespace Assets.Scripts.BubbleSystem
 
         [SerializeField] private Bubble _bubblePrefab;
         [SerializeField] private BubbleDataSO _bubbleDataSO;
-        [SerializeField] private ParticlePlayer _particlePlayer;
 
         #endregion Variables
 
@@ -73,6 +73,7 @@ namespace Assets.Scripts.BubbleSystem
         {
             VerticalOffsetIndex = 0;
 
+            _particlePlayer = FindObjectOfType<ParticlePlayer>();
             _bubbleFactory = new BubbleFactory(_bubblePrefab);
             _bubblePool = new BubblePool(_bubbleFactory);
             

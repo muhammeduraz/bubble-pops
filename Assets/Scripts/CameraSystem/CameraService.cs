@@ -1,23 +1,22 @@
 using System;
 using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
+using Cinemachine;
+using DG.Tweening;
 
 namespace Assets.Scripts.CameraSystem
 {
-    public class CameraService : MonoBehaviour
+    public class CameraService : MonoBehaviour, IDisposable
     {
         #region Variables
 
+        [SerializeField] private Camera _mainCamera;
+        [SerializeField] private CinemachineVirtualCamera _gameCamera;
 
+        [SerializeField] private float _shakeDuration;
+        [SerializeField] private float _shakeStrength;
+        [SerializeField] private int _shakeVibrato;
 
         #endregion Variables
-
-        #region Properties
-
-
-
-        #endregion Properties
 
         #region Unity Functions
 
@@ -26,14 +25,9 @@ namespace Assets.Scripts.CameraSystem
             Initialize();
         }
 
-        private void Update()
+        private void OnDestroy()
         {
-
-        }
-
-        private void OnDisable()
-        {
-            Terminate();
+            Dispose();
         }
 
         #endregion Unity Functions
@@ -45,9 +39,15 @@ namespace Assets.Scripts.CameraSystem
 
         }
 
-        private void Terminate()
+        public void Dispose()
         {
+            _mainCamera = null;
+            _gameCamera = null;
+        }
 
+        public void ShakeCamera()
+        {
+            _gameCamera.transform.DOShakePosition(_shakeDuration, _shakeStrength, _shakeVibrato);
         }
 
         #endregion Functions
