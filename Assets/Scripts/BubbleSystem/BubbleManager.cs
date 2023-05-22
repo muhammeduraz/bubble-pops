@@ -3,6 +3,7 @@ using UnityEngine;
 using System.Collections;
 using Assets.Scripts.Particle;
 using System.Collections.Generic;
+using Assets.Scripts.HapticSystem;
 using Assets.Scripts.BubbleSystem.Pool;
 using Assets.Scripts.BubbleSystem.Data;
 using Assets.Scripts.BubbleSystem.Factory;
@@ -196,6 +197,8 @@ namespace Assets.Scripts.BubbleSystem
         {
             List<Bubble> matchedBubbles = GetBubblesWithSameId(bubble);
 
+            yield return new WaitForSeconds(0.1f);
+
             Bubble loopBubble = null;
             for (int i = 0; i < matchedBubbles.Count - 1; i++)
             {
@@ -209,6 +212,9 @@ namespace Assets.Scripts.BubbleSystem
             yield return new WaitForSeconds(0.2f);
 
             matchedBubbles[^1].UpdateBubble(_bubbleDataSO.GetBubbleDataByMultiplication(matchedBubbles[^1].BubbleData.id, matchedBubbles.Count));
+            HapticExtensions.PlayLightHaptic();
+
+            MatchProcess(matchedBubbles[^1]);
         }
 
         private void OnNonMatch()

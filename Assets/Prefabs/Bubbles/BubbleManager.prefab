@@ -30,7 +30,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &93432456303937740
 MonoBehaviour:
@@ -50,5 +50,6 @@ MonoBehaviour:
   _lineSize: 6
   _initialLineCount: 5
   _randomMaxExclusive: 5
+  _minActiveBubbleToCreateNewLine: 20
   _bubblePrefab: {fileID: 4110070478810438712, guid: f360d6dc728904d428a7c37396ee18bc, type: 3}
   _bubbleDataSO: {fileID: 11400000, guid: 2930ab207f0dae44ca7bf0d570306eca, type: 2}
