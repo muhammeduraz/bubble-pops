@@ -17,8 +17,6 @@ namespace Assets.Scripts.CanvasSystem.ProgressBar
         protected Tween fillTween;
         protected Tween scaleTween;
 
-        [SerializeField] protected float fillDuration;
-
         [SerializeField] protected Ease scaleInEase;
         [SerializeField] protected Ease scaleOutEase;
 
@@ -68,17 +66,8 @@ namespace Assets.Scripts.CanvasSystem.ProgressBar
 
         public void SetValue(float targetValue)
         {
-            fillTween?.Kill();
-            fillTween = fillImage.DOFillAmount(targetValue, fillDuration);
-            fillTween.SetEase(Ease.Linear);
-
-            if (_isProgressTextActive)
-            {
-                fillTween.OnUpdate(() =>
-                {
-                    _progressText.text = ProgressTextPrefix + ((int)(fillImage.fillAmount * 100f));
-                });
-            }
+            fillImage.fillAmount = targetValue;
+            _progressText.text = ProgressTextPrefix + ((int)(fillImage.fillAmount * 100f));
         }
 
         public void SetValue(float targetValue, float duration = 0.25f)

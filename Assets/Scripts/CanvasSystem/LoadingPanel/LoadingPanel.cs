@@ -62,6 +62,7 @@ namespace Assets.Scripts.CanvasSystem.Loading
 
             Reset();
 
+            gameObject.SetActive(true);
             _progressBar.Appear(true);
             _canvasGroup.DOFade(1f, _appearDuration);
         }
@@ -71,13 +72,14 @@ namespace Assets.Scripts.CanvasSystem.Loading
             if (!_isVisible) return;
             _isVisible = false;
 
-            _canvasGroup.DOFade(0f, _disappearDuration);
+            _canvasGroup.DOFade(0f, _disappearDuration)
+                .OnComplete(() => gameObject.SetActive(false));
         }
 
         private void Reset()
         {
             _canvasGroup.alpha = 0f;
-            _progressBar.SetValue(0f, 0f);
+            _progressBar.SetValue(0f);
         }
 
         public void UpdateProgress(float progress, float duration = 0.25f)
