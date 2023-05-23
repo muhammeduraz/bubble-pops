@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8226325759582699181}
   - component: {fileID: 8226325759582699183}
   - component: {fileID: 8226325759582699182}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: ComboText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -146,7 +146,7 @@ GameObject:
   - component: {fileID: 8226325761511069269}
   - component: {fileID: 8226325761511069271}
   - component: {fileID: 8226325761511069270}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: ComboHandler
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -183,7 +183,7 @@ CanvasGroup:
   m_GameObject: {fileID: 8226325761511069268}
   m_Enabled: 1
   m_Alpha: 1
-  m_Interactable: 1
+  m_Interactable: 0
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
 --- !u!114 &8226325761511069270
