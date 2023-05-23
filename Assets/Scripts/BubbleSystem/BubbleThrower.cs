@@ -300,6 +300,7 @@ namespace Assets.Scripts.BubbleSystem
             if (!_isThrowActive) return;
             _isFingerDown = true;
 
+            FireRay(mousePosition);
             _lineRenderer.enabled = true;
         }
 

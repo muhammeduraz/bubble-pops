@@ -10,6 +10,9 @@ namespace Assets.Scripts.SceneSystem
     {
         #region Variables
 
+        private const string MainScene = "MainScene";
+        private const string GameScene = "GameScene";
+
         [SerializeField] private float _extraLoadingDuration;
 
         [SerializeField] private LoadingPanel _loadingPanel;
@@ -34,24 +37,45 @@ namespace Assets.Scripts.SceneSystem
 
         public void Initialize()
         {
-            StartCoroutine(LoadSceneAsync());
+            StartCoroutine(LoadSceneAsync(GameScene, LoadSceneMode.Additive));
         }
 
         public void Dispose()
         {
             _loadingPanel = null;
         }
-
-        public IEnumerator LoadSceneAsync()
+        private void Update()
         {
-            _loadingPanel.Appear();
-            yield return new WaitForSeconds(_loadingPanel.AppearDuration);
-
-            AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(1, LoadSceneMode.Additive);
-
-            while (!asyncOperation.isDone)
+            if (Input.GetKeyDown(KeyCode.S))
             {
-                _loadingPanel.UpdateProgress(asyncOperation.progress / 2f);
+                ReloadCurrentLevel();
+            }
+        }
+        public void ReloadCurrentLevel()
+        {
+            StartCoroutine(LoadSceneAsync(GameScene, LoadSceneMode.Additive));
+        }
+
+        public IEnumerator LoadSceneAsync(string sceneName, LoadSceneMode loadSceneMode)
+        {
+            if (!_loadingPanel.IsVisible)
+            {
+                _loadingPanel.Appear();
+                yield return new WaitForSeconds(_loadingPanel.AppearDuration);
+            }
+
+            Scene activeScene = SceneManager.GetActiveScene();
+            if (loadSceneMode == LoadSceneMode.Additive && activeScene.name.Equals(sceneName))
+            {
+                Coroutine unloadCoroutine = StartCoroutine(UnloadSceneAsync(sceneName));
+                yield return unloadCoroutine;
+            }
+
+            AsyncOperation loadOperation = SceneManager.LoadSceneAsync(sceneName, loadSceneMode);
+
+            while (!loadOperation.isDone)
+            {
+                _loadingPanel.UpdateProgress(0.33f + loadOperation.progress / 3f);
                 yield return null;
             }
 
@@ -63,6 +87,23 @@ namespace Assets.Scripts.SceneSystem
             yield return new WaitForSeconds(_extraLoadingDuration);
 
             _loadingPanel.Disappear();
+        }
+
+        public IEnumerator UnloadSceneAsync(string sceneName)
+        {
+            if (!_loadingPanel.IsVisible)
+            {
+                _loadingPanel.Appear();
+                yield return new WaitForSeconds(_loadingPanel.AppearDuration);
+            }
+
+            AsyncOperation unloadOperation = SceneManager.UnloadSceneAsync(GameScene);
+
+            while (!unloadOperation.isDone)
+            {
+                _loadingPanel.UpdateProgress(unloadOperation.progress / 3f);
+                yield return null;
+            }
         }
 
         #endregion Functions

@@ -10,6 +10,8 @@ namespace Assets.Scripts.CanvasSystem.Loading
     {
         #region Variables
 
+        private bool _isVisible;
+
         [SerializeField] private float _appearDuration;
         [SerializeField] private float _disappearDuration;
 
@@ -21,6 +23,7 @@ namespace Assets.Scripts.CanvasSystem.Loading
 
         #region Properties
 
+        public bool IsVisible { get => _isVisible; }
         public float AppearDuration { get => _appearDuration; }
         public float DisappearDuration { get => _disappearDuration; }
 
@@ -49,11 +52,14 @@ namespace Assets.Scripts.CanvasSystem.Loading
 
         public void Dispose()
         {
-
+            
         }
 
         public void Appear()
         {
+            if (_isVisible) return;
+            _isVisible = true;
+
             Reset();
 
             _progressBar.Appear(true);
@@ -62,16 +68,16 @@ namespace Assets.Scripts.CanvasSystem.Loading
 
         public void Disappear()
         {
-            _canvasGroup.DOFade(0f, _disappearDuration)
-                .OnComplete(()=> gameObject.SetActive(false));
+            if (!_isVisible) return;
+            _isVisible = false;
+
+            _canvasGroup.DOFade(0f, _disappearDuration);
         }
 
         private void Reset()
         {
-            gameObject.SetActive(true);
             _canvasGroup.alpha = 0f;
             _progressBar.SetValue(0f, 0f);
-
         }
 
         public void UpdateProgress(float progress, float duration = 0.25f)
