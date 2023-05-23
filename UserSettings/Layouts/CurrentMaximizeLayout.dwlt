@@ -204,7 +204,7 @@ MonoBehaviour:
   m_MinSize: {x: 100, y: 100}
   m_MaxSize: {x: 8096, y: 16192}
   vertical: 1
-  controlID: 13692
+  controlID: 1158
 --- !u!114 &6
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -267,9 +267,9 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: 96faffff
-      m_LastClickedID: -1386
-      m_ExpandedIDs: d42dacffdc2dacff3e0aafff460aafffbc53afffc453afffc059afffc859afffbcaeafffc4aeafff7a04bcff8204bcff1e93daffba93daff1298daff96faffffa6faffffd8faffff06fbffff08fbffffd280000006810000
+      m_SelectedIDs: defaffff
+      m_LastClickedID: -1314
+      m_ExpandedIDs: 08fbffff
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -365,23 +365,23 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Plugins/TextMesh Pro/Resources/Fonts & Materials/Square
+    - Assets/Scripts
     m_Globs: []
     m_OriginalText: 
     m_ImportLogFlags: 0
   m_ViewMode: 1
   m_StartGridSize: 16
   m_LastFolders:
-  - Assets/Plugins/TextMesh Pro/Resources/Fonts & Materials/Square
+  - Assets/Scripts
   m_LastFoldersGridSize: -1
   m_LastProjectPath: D:\Repositories\bubble-pops
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
-    scrollPos: {x: 0, y: 111}
-    m_SelectedIDs: bee90000
-    m_LastClickedID: 59838
-    m_ExpandedIDs: 00000000ae800000b4830000b6830000b8830000ba830000e0830000d4d90000c0e90000c2e9000000ca9a3bffffff7f
+    scrollPos: {x: 0, y: 223}
+    m_SelectedIDs: 1c830000
+    m_LastClickedID: 33564
+    m_ExpandedIDs: 00000000967f00001a8300001c8300001e8300002083000000ca9a3bffffff7f
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -409,7 +409,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 00000000ae800000b4830000b6830000b8830000ba83000000ca9a3bffffff7f
+    m_ExpandedIDs: 00000000967f00001a8300001c8300001e8300002083000000ca9a3bffffff7f
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -434,8 +434,8 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
   m_ListAreaState:
-    m_SelectedInstanceIDs: 96faffff
-    m_LastClickedInstanceID: -1386
+    m_SelectedInstanceIDs: defaffff
+    m_LastClickedInstanceID: -1314
     m_HadKeyboardFocusLastEvent: 0
     m_ExpandedInstanceIDs: ea830000d47f000000000000ae810000c6430000
     m_RenameOverlay:
@@ -461,7 +461,7 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
     m_NewAssetIndexInList: -1
-    m_ScrollPosition: {x: 0, y: 0}
+    m_ScrollPosition: {x: 0, y: 67.5}
     m_GridSize: 16
   m_SkipHiddenPackages: 0
   m_DirectoriesAreaWidth: 171
@@ -872,9 +872,9 @@ MonoBehaviour:
   m_PlayAudio: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: -2.5129545, y: -1.9524381, z: 2.5764232}
+    m_Target: {x: 0.31488472, y: -0.05490524, z: 0.32051948}
     speed: 2
-    m_Value: {x: -2.5129545, y: -1.9524381, z: 2.5764232}
+    m_Value: {x: 0.31488472, y: -0.05490524, z: 0.32051948}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -924,9 +924,9 @@ MonoBehaviour:
     speed: 2
     m_Value: {x: 0, y: 0, z: 0, w: 1}
   m_Size:
-    m_Target: 11.562728
+    m_Target: 4.0231924
     speed: 2
-    m_Value: 11.562728
+    m_Value: 4.0231924
   m_Ortho:
     m_Target: 1
     speed: 2
@@ -1050,23 +1050,23 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Scripts/CanvasSystem/Score
+    - Assets/Scripts
     m_Globs: []
     m_OriginalText: 
     m_ImportLogFlags: 0
   m_ViewMode: 1
   m_StartGridSize: 16
   m_LastFolders:
-  - Assets/Scripts/CanvasSystem/Score
+  - Assets/Scripts
   m_LastFoldersGridSize: 16
   m_LastProjectPath: D:\Repositories\bubble-pops
   m_LockTracker:
     m_IsLocked: 1
   m_FolderTreeState:
-    scrollPos: {x: 0, y: 249}
-    m_SelectedIDs: 56e70000
-    m_LastClickedID: 59222
-    m_ExpandedIDs: 00000000ae800000b4830000b6830000b8830000ba83000000ca9a3bffffff7f
+    scrollPos: {x: 0, y: 223}
+    m_SelectedIDs: 42830000
+    m_LastClickedID: 33602
+    m_ExpandedIDs: 00000000967f00001a8300001c8300001e8300002083000000ca9a3bffffff7f
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1094,7 +1094,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 00000000ae800000b4830000b6830000b8830000ba83000000ca9a3bffffff7f
+    m_ExpandedIDs: 00000000967f00001a8300001c8300001e8300002083000000ca9a3bffffff7f
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1119,9 +1119,9 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
   m_ListAreaState:
-    m_SelectedInstanceIDs: b4360000
-    m_LastClickedInstanceID: 14004
-    m_HadKeyboardFocusLastEvent: 1
+    m_SelectedInstanceIDs: 
+    m_LastClickedInstanceID: 0
+    m_HadKeyboardFocusLastEvent: 0
     m_ExpandedInstanceIDs: c6230000668c0000648c0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
@@ -1393,9 +1393,9 @@ MonoBehaviour:
     m_Tooltip: 
   m_Pos:
     serializedVersion: 2
-    x: 1411
-    y: 73
-    width: 508
+    x: 1412
+    y: 81
+    width: 506
     height: 926
   m_SerializedDataModeController:
     m_DataMode: 0

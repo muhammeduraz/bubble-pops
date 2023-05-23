@@ -4,6 +4,7 @@ using System.Collections;
 using Assets.Scripts.Particle;
 using System.Collections.Generic;
 using Assets.Scripts.HapticSystem;
+using Assets.Scripts.CameraSystem;
 using Assets.Scripts.BubbleSystem.Pool;
 using Assets.Scripts.BubbleSystem.Data;
 using Assets.Scripts.BubbleSystem.Factory;
@@ -26,6 +27,7 @@ namespace Assets.Scripts.BubbleSystem
         private BubbleFactory _bubbleFactory;
         private BubbleThrower _bubbleThrower;
 
+        private CameraService _cameraService;
         private ParticlePlayer _particlePlayer;
         private BubbleScoreHandler _scoreHandler;
         private BubbleComboHandler _comboHandler;
@@ -83,6 +85,8 @@ namespace Assets.Scripts.BubbleSystem
         private void Initialize()
         {
             VerticalOffsetIndex = 0;
+
+            _cameraService = FindObjectOfType<CameraService>();
 
             _particlePlayer = FindObjectOfType<ParticlePlayer>();
             _bubbleThrower = FindObjectOfType<BubbleThrower>();
@@ -206,8 +210,6 @@ namespace Assets.Scripts.BubbleSystem
             bubble.ThrowEvent -= MatchProcess;
             bubble.ExplodeEvent -= ExplodeBubble;
 
-            _activeBubbleList.Remove(bubble);
-
             List<Bubble> neighbourList = bubble.GetNeighbourBubbles();
             neighbourList.Add(bubble);
 
@@ -221,10 +223,13 @@ namespace Assets.Scripts.BubbleSystem
                     _particlePlayer.PlayParticle(loopBubble.BubbleData.id, loopBubble.transform.position);
                     _generalScoreHandler.UpdateScore(loopBubble.BubbleData.id);
                     _scoreHandler.ShowScore(loopBubble.BubbleData.id, loopBubble.transform.position);
-                }
 
-                loopBubble.Dispose();
+                    _activeBubbleList.Remove(loopBubble);
+                    loopBubble.Dispose();
+                }
             }
+
+            _cameraService.ShakeCamera();
         }
 
         private void MatchProcess(Bubble bubble)
