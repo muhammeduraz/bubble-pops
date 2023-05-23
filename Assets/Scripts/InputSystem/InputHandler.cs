@@ -1,5 +1,7 @@
 using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using System.Collections.Generic;
 
 namespace Assets.Scripts.InputSystem
 {
@@ -16,6 +18,10 @@ namespace Assets.Scripts.InputSystem
         #region Variables
 
         private bool _isEnabled;
+
+        private PointerEventData _eventData;
+
+        [SerializeField] private LayerMask _uILayerMask;
 
         #endregion Variables
 
@@ -50,7 +56,7 @@ namespace Assets.Scripts.InputSystem
 
         private void Initialize()
         {
-
+            _eventData = new PointerEventData(EventSystem.current);
         }
 
         public void Dispose()
@@ -62,6 +68,8 @@ namespace Assets.Scripts.InputSystem
         {
             if (Input.GetMouseButtonDown(0))
             {
+                if (IsOverGUI()) return;
+
                 OnFingerDown?.Invoke(MousePosition);
             }
             else if (Input.GetMouseButton(0))
@@ -72,6 +80,32 @@ namespace Assets.Scripts.InputSystem
             {
                 OnFingerUp?.Invoke(MousePosition);
             }
+        }
+
+        private bool IsOverGUI()
+        {
+            RaycastResult result;
+            List<RaycastResult> raycastResults = GetRaycastResults();
+
+            for (int i = 0; i < raycastResults.Count; i++)
+            {
+                result = raycastResults[i];
+                if (_uILayerMask == (_uILayerMask | (1 << result.gameObject.layer)))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private List<RaycastResult> GetRaycastResults()
+        {
+            _eventData.position = Input.mousePosition;
+
+            List<RaycastResult> raycastResults = new List<RaycastResult>();
+            EventSystem.current.RaycastAll(_eventData, raycastResults);
+            return raycastResults;
         }
 
         #endregion Functions
