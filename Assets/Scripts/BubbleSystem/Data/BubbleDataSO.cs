@@ -45,8 +45,7 @@ namespace Assets.Scripts.BubbleSystem.Data
         {
             BubbleData bubbleData = null;
 
-            int power = IntegerExtensions.GetPow(id);
-            int newId = (int)Math.Pow(2, power + (count - 1));
+            int newId = GetMultipliedId(id, count);
 
             for (int i = 0; i < _bubbleDataList.Count; i++)
             {
@@ -62,6 +61,14 @@ namespace Assets.Scripts.BubbleSystem.Data
                 bubbleData = _bubbleDataList[^1];
 
             return bubbleData;
+        }
+
+        public int GetMultipliedId(int id, int count)
+        {
+            int power = IntegerExtensions.GetPow(id);
+            int newId = (int)Math.Pow(2, power + (count - 1));
+
+            return newId;
         }
 
         #endregion Functions

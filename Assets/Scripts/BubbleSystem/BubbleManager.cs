@@ -194,6 +194,62 @@ namespace Assets.Scripts.BubbleSystem
             StartCoroutine(CreateLinePile(_initialSpawnPosition));
         }
 
+        private void HandleFall()
+        {
+
+        }
+
+        //private Bubble GetMergeBubble(int id, List<Bubble> matchedBubbleList)
+        //{
+        //    int newId = _bubbleDataSO.GetMultipliedId(id, matchedBubbleList.Count);
+
+        //    Bubble loopBubble = null;
+        //    List<Bubble> tempNeighbourList = new List<Bubble>();
+        //    List<Bubble> otherNeighbourList = new List<Bubble>();
+
+        //    for (int i = 0; i < matchedBubbleList.Count; i++)
+        //    {
+        //        tempNeighbourList = matchedBubbleList[i].GetNeighbourBubbles();
+
+        //        for (int j = 0; j < tempNeighbourList.Count; j++)
+        //        {
+        //            loopBubble = tempNeighbourList[i];
+
+        //            if (!matchedBubbleList.Contains(loopBubble) && !otherNeighbourList.Contains(loopBubble) && loopBubble.BubbleData.id == newId)
+        //            {
+        //                otherNeighbourList.Add(loopBubble);
+        //            }
+        //        }
+        //    }
+
+        //    return loopBubble;
+        //}
+
+        private Bubble GetMergeBubble(int id, List<Bubble> matchedBubbleList)
+        {
+            int newId = _bubbleDataSO.GetMultipliedId(id, matchedBubbleList.Count);
+
+            Bubble loopBubble = null;
+            List<Bubble> tempNeighbourList = new List<Bubble>();
+
+            for (int i = 0; i < matchedBubbleList.Count; i++)
+            {
+                tempNeighbourList = matchedBubbleList[i].GetNeighbourBubbles();
+
+                for (int j = 0; j < tempNeighbourList.Count; j++)
+                {
+                    loopBubble = tempNeighbourList[j];
+
+                    if (!matchedBubbleList.Contains(loopBubble) && loopBubble.BubbleData.id == newId)
+                    {
+                        return matchedBubbleList[i];
+                    }
+                }
+            }
+
+            return matchedBubbleList[^1];
+        }
+
         private void HandleCombo()
         {
             _comboCounter++;
@@ -253,17 +309,19 @@ namespace Assets.Scripts.BubbleSystem
 
         private IEnumerator OnMatch(Bubble bubble)
         {
-            List<Bubble> matchedBubbles = GetBubblesWithSameId(bubble);
+            List<Bubble> matchedBubbleList = GetBubblesWithSameId(bubble);
+            
+            Bubble mergeBubble = GetMergeBubble(bubble.BubbleData.id, matchedBubbleList);
+            if (matchedBubbleList.Contains(mergeBubble))
+            matchedBubbleList.Remove(mergeBubble);
 
             yield return new WaitForSeconds(0.1f);
 
-            HandleCombo();
-
             Bubble loopBubble = null;
 
-            for (int i = 0; i < matchedBubbles.Count - 1; i++)
+            for (int i = 0; i < matchedBubbleList.Count; i++)
             {
-                loopBubble = matchedBubbles[i];
+                loopBubble = matchedBubbleList[i];
                 _activeBubbleList.Remove(loopBubble);
                 loopBubble.ExplodeEvent -= ExplodeBubble;
 
@@ -272,15 +330,16 @@ namespace Assets.Scripts.BubbleSystem
                 
                 _particlePlayer.PlayParticle(loopBubble.BubbleData.id, loopBubble.transform.position);
 
-                loopBubble.MoveToDispose(matchedBubbles[^1].transform.position);
+                loopBubble.MoveToDispose(mergeBubble.transform.position);
             }
 
+            HandleCombo();
             yield return new WaitForSeconds(0.2f);
 
-            matchedBubbles[^1].UpdateBubble(_bubbleDataSO.GetBubbleDataByMultiplication(matchedBubbles[^1].BubbleData.id, matchedBubbles.Count));
+            mergeBubble.UpdateBubble(_bubbleDataSO.GetBubbleDataByMultiplication(mergeBubble.BubbleData.id, matchedBubbleList.Count + 1));
             HapticExtensions.PlayLightHaptic();
 
-            MatchProcess(matchedBubbles[^1]);
+            MatchProcess(mergeBubble);
         }
 
         private void OnNonMatch()
