@@ -49,7 +49,7 @@ namespace Assets.Scripts.Particle
             _particleStack.Push(bubbleParticle);
         }
 
-        public void PlayParticle(int id, Vector3 position)
+        public void PlayBubbleParticle(int id, Vector3 position)
         {
             BubbleParticle bubbleParticle = GetBubbleParticle();
             bubbleParticle.SetPosition(position);

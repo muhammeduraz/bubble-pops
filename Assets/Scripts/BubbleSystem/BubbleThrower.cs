@@ -2,14 +2,24 @@ using System;
 using UnityEngine;
 using DG.Tweening;
 using System.Collections.Generic;
-using Assets.Scripts.InputSystem;
 using Assets.Scripts.HapticSystem;
 using Assets.Scripts.EnvironmentSystem;
+using Assets.Scripts.BubbleSystem.Data;
 
 namespace Assets.Scripts.BubbleSystem
 {
     public class BubbleThrower : MonoBehaviour, IDisposable
     {
+        #region Events
+
+        public delegate Bubble BubbleRequest();
+        public BubbleRequest BubbleRequested;
+
+        public delegate BubbleData BubbleDataRequest();
+        public BubbleDataRequest BubbleDataRequested;
+
+        #endregion Events
+
         #region Variables
 
         private bool _isFingerDown;
@@ -17,14 +27,11 @@ namespace Assets.Scripts.BubbleSystem
 
         private Camera _camera;
 
-        private Sequence _currentBubbleSequence;
-
-        private InputHandler _inputHandler;
-        private BubbleManager _bubbleManager;
-
         private Bubble _nextBubble;
-        private Bubble _currentBubble;
         private Bubble _targetBubble;
+        private Bubble _currentBubble;
+
+        private Sequence _currentBubbleSequence;
 
         private Vector3 _targetPosition;
         private List<Vector3> _cachedPositionList;
@@ -43,12 +50,6 @@ namespace Assets.Scripts.BubbleSystem
         [SerializeField] private Transform _currentBubbleTransform;
 
         #endregion Variables
-
-        #region Properties
-
-        public bool IsThrowActive { get => _isThrowActive; set => _isThrowActive = value; }
-
-        #endregion Properties
 
         #region Unity Functions
 
@@ -71,34 +72,23 @@ namespace Assets.Scripts.BubbleSystem
             _camera = Camera.main;
             _isThrowActive = true;
 
-            _inputHandler = FindObjectOfType<InputHandler>();
-            _bubbleManager = FindObjectOfType<BubbleManager>();
-
             InitializeLineRenderer();
             InitializeCurrentAndNextBubbles();
-
-            SubscribeEvents(true);
         }
 
         public void Dispose()
         {
-            SubscribeEvents(false);
+            _throwGuide = null;
+            _lineRenderer = null;
+            _rayStartTransform = null;
+            _lineStartTransform = null;
+            _nextBubbleTransform = null;
+            _currentBubbleTransform = null;
         }
 
-        private void SubscribeEvents(bool subscribe)
+        public void OnMergeOperationCompleted()
         {
-            if (subscribe)
-            {
-                _inputHandler.OnFingerDown += OnFingerDown;    
-                _inputHandler.OnFinger += OnFinger;    
-                _inputHandler.OnFingerUp += OnFingerUp;    
-            }
-            else if (!subscribe)
-            {
-                _inputHandler.OnFingerDown -= OnFingerDown;
-                _inputHandler.OnFinger -= OnFinger;
-                _inputHandler.OnFingerUp -= OnFingerUp;
-            }
+            _isThrowActive = true;
         }
 
         private Vector3 GetScreenPosition(Vector3 mousePosition)
@@ -126,25 +116,25 @@ namespace Assets.Scripts.BubbleSystem
 
         private void GetNewNextBubble()
         {
-            _nextBubble = _bubbleManager.GetBubble();
+            _nextBubble = BubbleRequested();
 
             _nextBubble.Initialize();
             _nextBubble.SetPosition(_nextBubbleTransform.position);
-            _nextBubble.UpdateBubble(_bubbleManager.GetRandomBubbleData);
+            _nextBubble.UpdateBubble(BubbleDataRequested());
             
             _nextBubble.ScaleOut(0.8f, delay: 0.25f);
         }
 
         private void InitializeCurrentAndNextBubbles()
         {
-            _nextBubble = _bubbleManager.GetBubble();
-            _currentBubble = _bubbleManager.GetBubble();
+            _nextBubble = BubbleRequested();
+            _currentBubble = BubbleRequested();
 
             _nextBubble.Initialize();
             _currentBubble.Initialize();
 
-            _nextBubble.UpdateBubble(_bubbleManager.GetRandomBubbleData);
-            _currentBubble.UpdateBubble(_bubbleManager.GetRandomBubbleData);
+            _nextBubble.UpdateBubble(BubbleDataRequested());
+            _currentBubble.UpdateBubble(BubbleDataRequested());
 
             _nextBubble.transform.localScale = Vector3.one * 0.8f;
             _nextBubble.transform.position = _nextBubbleTransform.position;
@@ -295,7 +285,7 @@ namespace Assets.Scripts.BubbleSystem
             return closestPosition; 
         }
 
-        private void OnFingerDown(Vector3 mousePosition)
+        public void OnFingerDown(Vector3 mousePosition)
         {
             if (!_isThrowActive) return;
             _isFingerDown = true;
@@ -304,14 +294,14 @@ namespace Assets.Scripts.BubbleSystem
             _lineRenderer.enabled = true;
         }
 
-        private void OnFinger(Vector3 mousePosition)
+        public void OnFinger(Vector3 mousePosition)
         {
             if (!_isThrowActive || !_isFingerDown) return;
 
             FireRay(mousePosition);
         }
 
-        private void OnFingerUp(Vector3 mousePosition)
+        public void OnFingerUp(Vector3 mousePosition)
         {
             if (!_isThrowActive || !_isFingerDown) return;
             _isFingerDown = false;

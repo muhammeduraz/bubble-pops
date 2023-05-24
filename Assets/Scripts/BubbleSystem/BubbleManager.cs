@@ -1,24 +1,31 @@
 using System;
 using UnityEngine;
 using System.Collections;
-using Assets.Scripts.Particle;
 using System.Collections.Generic;
 using Assets.Scripts.HapticSystem;
-using Assets.Scripts.CameraSystem;
 using Assets.Scripts.BubbleSystem.Pool;
 using Assets.Scripts.BubbleSystem.Data;
 using Assets.Scripts.BubbleSystem.Factory;
-using Assets.Scripts.CanvasSystem.Score.Combo;
-using Assets.Scripts.CanvasSystem.Score.General;
-using Assets.Scripts.CanvasSystem.Score.BubbleScore;
 
 namespace Assets.Scripts.BubbleSystem
 {
     [DefaultExecutionOrder(-1)]
     public class BubbleManager : MonoBehaviour, IDisposable
     {
+        #region Events
+
+        public Action<int> UpdateCombo;
+        public Action CameraShakeRequested;
+        public Action MergeOperationCompleted;
+        public Action<double> UpdateGeneralScore;
+        public Action<int, Vector3> ShowBubbleScore;
+        public Action<int, Vector3> BubbleParticleRequested;
+
+        #endregion Events
+        
         #region Variables
 
+        private int _comboCounter;
         private int _verticalOffsetIndex;
 
         private List<Bubble> _activeBubbleList;
@@ -26,18 +33,9 @@ namespace Assets.Scripts.BubbleSystem
 
         private BubblePool _bubblePool;
         private BubbleFactory _bubbleFactory;
-        private BubbleThrower _bubbleThrower;
-
-        private CameraService _cameraService;
-        private ParticlePlayer _particlePlayer;
-        private BubbleScoreHandler _scoreHandler;
-        private BubbleComboHandler _comboHandler;
-        private GeneralScoreHandler _generalScoreHandler;
 
         private WaitForSeconds _waitForSeconds_01;
         private WaitForSeconds _waitForSeconds_02;
-
-        private int _comboCounter;
 
         [SerializeField] private float _verticalOffset;
         [SerializeField] private float _horizontalOffset;
@@ -66,8 +64,6 @@ namespace Assets.Scripts.BubbleSystem
             } 
         }
 
-        public BubbleData GetRandomBubbleData { get => _bubbleDataSO.GetRandomBubbleData(_randomMaxExclusive); }
-
         #endregion Properties
 
         #region Unity Functions
@@ -93,17 +89,9 @@ namespace Assets.Scripts.BubbleSystem
             _waitForSeconds_01 = new WaitForSeconds(0.1f);
             _waitForSeconds_02 = new WaitForSeconds(0.2f);
 
-            _cameraService = FindObjectOfType<CameraService>();
-
-            _particlePlayer = FindObjectOfType<ParticlePlayer>();
-            _bubbleThrower = FindObjectOfType<BubbleThrower>();
             _bubbleFactory = new BubbleFactory(_bubblePrefab);
             _bubblePool = new BubblePool(_bubbleFactory);
 
-            _scoreHandler = FindObjectOfType<BubbleScoreHandler>();
-            _comboHandler = FindObjectOfType<BubbleComboHandler>();
-            _generalScoreHandler = FindObjectOfType<GeneralScoreHandler>();
-            
             _activeBubbleList = new List<Bubble>();
             _ceilingBubbleList = new List<Bubble>();
 
@@ -128,7 +116,17 @@ namespace Assets.Scripts.BubbleSystem
             _activeBubbleList.Remove(bubble);
         }
 
-        public Bubble GetBubble(bool withSubscription = true)
+        public Bubble OnBubbleRequested()
+        {
+            return GetBubble();
+        }
+
+        public BubbleData OnBubbleDataRequested()
+        {
+            return GetRandomBubbleData();
+        }
+
+        private Bubble GetBubble(bool withSubscription = true)
         {
             Bubble bubble = _bubblePool.GetProduct();
 
@@ -140,6 +138,11 @@ namespace Assets.Scripts.BubbleSystem
                 bubble.ThrowEvent += MatchProcess;
 
             return bubble;
+        }
+
+        private BubbleData GetRandomBubbleData()
+        {
+            return _bubbleDataSO.GetRandomBubbleData(_randomMaxExclusive);
         }
 
         private IEnumerator CreateInitialPile()
@@ -246,7 +249,7 @@ namespace Assets.Scripts.BubbleSystem
             fallList.ForEach(dallBubble =>
             {
                 _activeBubbleList.Remove(dallBubble);
-                dallBubble.Fall(()=> _particlePlayer.PlayParticle(dallBubble.BubbleData.id, dallBubble.transform.position));
+                dallBubble.Fall(()=> BubbleParticleRequested?.Invoke(dallBubble.BubbleData.id, dallBubble.transform.position));
             });
         }
 
@@ -306,8 +309,7 @@ namespace Assets.Scripts.BubbleSystem
 
             if (_comboCounter > 1)
             {
-                _comboHandler.ShowCombo(_comboCounter);
-                _generalScoreHandler.UpdateMultiplier(_comboCounter);
+                UpdateCombo?.Invoke(_comboCounter);
             }
         }
 
@@ -327,9 +329,9 @@ namespace Assets.Scripts.BubbleSystem
 
                 if (loopBubble != null && loopBubble.BubbleData != null)
                 {
-                    _particlePlayer.PlayParticle(loopBubble.BubbleData.id, loopBubble.transform.position);
-                    _generalScoreHandler.UpdateScore(loopBubble.BubbleData.id);
-                    _scoreHandler.ShowScore(loopBubble.BubbleData.id, loopBubble.transform.position);
+                    BubbleParticleRequested?.Invoke(loopBubble.BubbleData.id, loopBubble.transform.position);
+                    UpdateGeneralScore?.Invoke(loopBubble.BubbleData.id);
+                    ShowBubbleScore?.Invoke(loopBubble.BubbleData.id, loopBubble.transform.position);
 
                     if (loopBubble.IsCeiling)
                         _ceilingBubbleList.Remove(loopBubble);
@@ -339,7 +341,7 @@ namespace Assets.Scripts.BubbleSystem
                 }
             }
 
-            _cameraService.ShakeCamera();
+            CameraShakeRequested.Invoke();
         }
 
         private void MatchProcess(Bubble bubble)
@@ -388,10 +390,10 @@ namespace Assets.Scripts.BubbleSystem
                     _ceilingBubbleList.Remove(loopBubble);
                 _activeBubbleList.Remove(loopBubble);
 
-                _generalScoreHandler.UpdateScore(loopBubble.BubbleData.id);
-                _scoreHandler.ShowScore(loopBubble.BubbleData.id, loopBubble.transform.position);
-                
-                _particlePlayer.PlayParticle(loopBubble.BubbleData.id, loopBubble.transform.position);
+                UpdateGeneralScore?.Invoke(loopBubble.BubbleData.id);
+                ShowBubbleScore?.Invoke(loopBubble.BubbleData.id, loopBubble.transform.position);
+
+                BubbleParticleRequested?.Invoke(loopBubble.BubbleData.id, loopBubble.transform.position);
 
                 loopBubble.MoveToDispose(mergeBubble.transform.position);
             }
@@ -410,7 +412,8 @@ namespace Assets.Scripts.BubbleSystem
         private void OnNonMatch()
         {
             _comboCounter = 0;
-            _bubbleThrower.IsThrowActive = true;
+            
+            MergeOperationCompleted?.Invoke();
         }
 
         private bool IsThereAnyMatch(Bubble bubble, List<Bubble> neighbourBubbleList)

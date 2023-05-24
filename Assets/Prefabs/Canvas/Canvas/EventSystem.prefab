@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &93432456303937741
+--- !u!1 &6871481532163694639
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,61 +8,63 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 93432456303937731}
-  - component: {fileID: 93432456303937740}
-  - component: {fileID: 4090868761407155098}
+  - component: {fileID: 1545024828435720429}
+  - component: {fileID: 8696957017454726197}
+  - component: {fileID: 3020133558664849448}
   m_Layer: 0
-  m_Name: BubbleManager
+  m_Name: EventSystem
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &93432456303937731
+--- !u!4 &1545024828435720429
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 93432456303937741}
+  m_GameObject: {fileID: 6871481532163694639}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &93432456303937740
+--- !u!114 &8696957017454726197
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 93432456303937741}
+  m_GameObject: {fileID: 6871481532163694639}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ad8092e3e3d3e8444b731e74a10a57db, type: 3}
+  m_Script: {fileID: 11500000, guid: 76c392e42b5098c458856cdf6ecaaaa1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _verticalOffset: -0.88
-  _horizontalOffset: 1
-  _initialSpawnPosition: {x: -2.25, y: 5, z: 5}
-  _lineSize: 6
-  _initialLineCount: 5
-  _randomMaxExclusive: 5
-  _minActiveBubbleToCreateNewLine: 30
-  _bubblePrefab: {fileID: 4110070478810438712, guid: f360d6dc728904d428a7c37396ee18bc, type: 3}
-  _bubbleDataSO: {fileID: 11400000, guid: 2930ab207f0dae44ca7bf0d570306eca, type: 2}
---- !u!114 &4090868761407155098
+  m_FirstSelected: {fileID: 0}
+  m_sendNavigationEvents: 1
+  m_DragThreshold: 10
+--- !u!114 &3020133558664849448
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 93432456303937741}
+  m_GameObject: {fileID: 6871481532163694639}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0414f457b3bc80e459f2bdab0afe306c, type: 3}
+  m_Script: {fileID: 11500000, guid: 4f231c4fb786f3946a6b90b886c48677, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_SendPointerHoverToParent: 1
+  m_HorizontalAxis: Horizontal
+  m_VerticalAxis: Vertical
+  m_SubmitButton: Submit
+  m_CancelButton: Cancel
+  m_InputActionsPerSecond: 10
+  m_RepeatDelay: 0.5
+  m_ForceModuleActive: 0

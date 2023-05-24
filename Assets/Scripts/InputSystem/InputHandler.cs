@@ -61,7 +61,7 @@ namespace Assets.Scripts.InputSystem
 
         public void Dispose()
         {
-
+            _eventData = null;
         }
 
         private void UpdateInput()

@@ -1,15 +1,18 @@
 using System;
 using UnityEngine;
 using UnityEngine.UI;
-using Assets.Scripts.SceneSystem;
 
 namespace Assets.Scripts.CanvasSystem.Buttons
 {
     public class RetryButton : MonoBehaviour, IDisposable
     {
-        #region Variables
+        #region Events
 
-        private SceneService _sceneService;
+        public Action ReloadSceneRequested;
+
+        #endregion Events,
+
+        #region Variables
 
         [SerializeField] private Button _retryButton;
 
@@ -33,8 +36,6 @@ namespace Assets.Scripts.CanvasSystem.Buttons
 
         private void Initialize()
         {
-            _sceneService = FindObjectOfType<SceneService>();
-
             InitializeButton();
         }
 
@@ -56,7 +57,8 @@ namespace Assets.Scripts.CanvasSystem.Buttons
 
         private void OnRetryButtonClicked()
         {
-            _sceneService.ReloadCurrentLevel();
+            _retryButton.enabled = false;
+            ReloadSceneRequested?.Invoke();
         }
 
         #endregion Functions

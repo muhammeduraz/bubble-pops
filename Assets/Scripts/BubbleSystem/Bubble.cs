@@ -160,6 +160,8 @@ namespace Assets.Scripts.BubbleSystem
 
         public bool IsFallable()
         {
+            if (IsCeiling) return false;
+
             List<Bubble> neighbourBubbleList = GetNeighbourBubbles();
             List<Bubble> checkedBubbleList = new List<Bubble>();
             checkedBubbleList.Add(this);
