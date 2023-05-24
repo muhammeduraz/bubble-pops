@@ -116,30 +116,6 @@ namespace Assets.Scripts.BubbleSystem
             }
         }
 
-        private List<Bubble> GetBubblesWithSameId(Bubble bubble)
-        {
-            Bubble loopBubble = null;
-
-            List<Bubble> tempBubbles;
-            List<Bubble> finalBubbles = new List<Bubble>();
-            finalBubbles.Add(bubble);
-
-            tempBubbles = bubble.GetNeighbourBubblesWithSameId();
-
-            for (int i = 0; i < tempBubbles.Count; i++)
-            {
-                loopBubble = tempBubbles[i];
-
-                if (!finalBubbles.Contains(loopBubble))
-                {
-                    finalBubbles.Add(loopBubble);
-                    tempBubbles.AddRange(loopBubble.GetNeighbourBubblesWithSameId());
-                }
-            }
-
-            return finalBubbles;
-        }
-
         #region Explode Functions
 
         private void ExplodeBubble(Bubble bubble)
@@ -179,7 +155,7 @@ namespace Assets.Scripts.BubbleSystem
 
         private void HandleFall(List<Bubble> matchedBubbleList)
         {
-            List<Bubble> fallBubbleList = GetFallBubbles(matchedBubbleList);
+            List<Bubble> fallBubbleList = GetBubblesThatEffectedByMerge(matchedBubbleList);
             List<Bubble> fallList = new List<Bubble>();
 
             Bubble loopBubble = null;
@@ -201,7 +177,7 @@ namespace Assets.Scripts.BubbleSystem
             });
         }
 
-        private List<Bubble> GetFallBubbles(List<Bubble> matchedBubbleList)
+        private List<Bubble> GetBubblesThatEffectedByMerge(List<Bubble> matchedBubbleList)
         {
             List<Bubble> tempBubbleList;
             List<Bubble> fallBubbleList = new List<Bubble>();
@@ -240,9 +216,7 @@ namespace Assets.Scripts.BubbleSystem
             _bubbleCreator.AddBubble(bubble);
             bubble.ThrowEvent -= MergeProcess;
 
-            List<Bubble> neighbourBubbleList = bubble.GetNeighbourBubbles();
-
-            if (IsThereAnyMerge(bubble, neighbourBubbleList) && !bubble.IsDisposed)
+            if (!bubble.IsDisposed && bubble.IsMergable())
             {
                 yield return StartCoroutine(OnMerge(bubble));
             }
@@ -263,9 +237,9 @@ namespace Assets.Scripts.BubbleSystem
 
         private IEnumerator OnMerge(Bubble bubble)
         {
-            List<Bubble> mergedBubbleList = GetBubblesWithSameId(bubble);
+            List<Bubble> mergedBubbleList = bubble.GetMergeBubbles();
 
-            Bubble mergeBubble = GetMergeBubble(bubble.BubbleData.id, mergedBubbleList);
+            Bubble mergeBubble = GetPreferredMergeBubble(bubble.BubbleData.id, mergedBubbleList);
 
             if (mergedBubbleList.Contains(mergeBubble))
                 mergedBubbleList.Remove(mergeBubble);
@@ -302,7 +276,7 @@ namespace Assets.Scripts.BubbleSystem
             MergeProcess(mergeBubble);
         }
 
-        private Bubble GetMergeBubble(int id, List<Bubble> mergedBubbleList)
+        private Bubble GetPreferredMergeBubble(int id, List<Bubble> mergedBubbleList)
         {
             int newId = _bubbleDataSO.GetMultipliedId(id, mergedBubbleList.Count);
 
@@ -324,24 +298,27 @@ namespace Assets.Scripts.BubbleSystem
                 }
             }
 
-            return mergedBubbleList[^1];
+            return GetHighestPreferredMergeBubble(mergedBubbleList);
         }
 
-        private bool IsThereAnyMerge(Bubble bubble, List<Bubble> neighbourBubbleList)
+        private Bubble GetHighestPreferredMergeBubble(List<Bubble> mergedBubbleList)
         {
             Bubble loopBubble = null;
+            Bubble highestBubble = null;
+            float highestY = float.NegativeInfinity;
 
-            for (int i = 0; i < neighbourBubbleList.Count; i++)
+            for (int i = 0; i < mergedBubbleList.Count; i++)
             {
-                loopBubble = neighbourBubbleList[i];
+                loopBubble = mergedBubbleList[i];
 
-                if (loopBubble.BubbleData.id == bubble.BubbleData.id)
+                if (loopBubble.transform.position.y > highestY)
                 {
-                    return true;
+                    highestBubble = loopBubble;
+                    highestY = loopBubble.transform.position.y;
                 }
             }
 
-            return false;
+            return highestBubble;
         }
 
         #endregion Merge Functions

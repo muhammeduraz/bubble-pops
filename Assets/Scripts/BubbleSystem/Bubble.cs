@@ -368,6 +368,64 @@ namespace Assets.Scripts.BubbleSystem
             return emptyPositions;
         }
 
+        public bool IsMergable()
+        {
+            Bubble loopBubble = null;
+            List<Bubble> neighbourBubbleList = GetNeighbourBubblesWithSameId();
+            
+            for (int i = 0; i < neighbourBubbleList.Count; i++)
+            {
+                loopBubble = neighbourBubbleList[i];
+
+                if (loopBubble.BubbleData.id == _bubbleData.id)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public List<Bubble> GetMergeBubbles()
+        {
+            Bubble loopBubble = null;
+
+            List<Bubble> tempBubbleList;
+            List<Bubble> finalBubbleList = new List<Bubble>();
+
+            finalBubbleList.Add(this);
+
+            tempBubbleList = GetNeighbourBubblesWithSameId();
+
+            for (int i = 0; i < tempBubbleList.Count; i++)
+            {
+                loopBubble = tempBubbleList[i];
+
+                if (!finalBubbleList.Contains(loopBubble))
+                {
+                    finalBubbleList.Add(loopBubble);
+                    AddRangeWithoutDuplicate(tempBubbleList, loopBubble.GetNeighbourBubblesWithSameId());
+                }
+            }
+
+            return finalBubbleList;
+        }
+
+        private void AddRangeWithoutDuplicate(List<Bubble> mainList, List<Bubble> toBeAddedList)
+        {
+            Bubble loopBubble = null;
+
+            for (int i = 0; i < toBeAddedList.Count; i++)
+            {
+                loopBubble = toBeAddedList[i];
+
+                if (!mainList.Contains(loopBubble))
+                {
+                    mainList.Add(loopBubble);
+                }
+            }
+        }
+
         #endregion Functions
     }
 }
