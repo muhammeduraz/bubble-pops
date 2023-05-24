@@ -31,6 +31,7 @@ namespace Assets.Scripts.BubbleSystem.Creator
 
         private List<Bubble> _activeBubbleList;
         private List<Bubble> _ceilingBubbleList;
+        private List<Bubble> _previousCeilingBubbleList;
 
         private BubbleCreatorSettings _settings;
 
@@ -87,15 +88,25 @@ namespace Assets.Scripts.BubbleSystem.Creator
             _activeBubbleList.Add(bubble);
         }
 
-        private void RemoveBubble(Bubble bubble)
+        public void RemoveBubble(Bubble bubble)
         {
             _activeBubbleList.Remove(bubble);
         }
 
         private void AddBubbleToCeiling(Bubble bubble)
         {
+            if (bubble.IsCeiling || _ceilingBubbleList.Contains(bubble)) return;
+
             bubble.IsCeiling = true;
             _ceilingBubbleList.Add(bubble);
+        }
+
+        public void RemoveBubbleFromCeiling(Bubble bubble)
+        {
+            if (!bubble.IsCeiling) return;
+
+            bubble.IsCeiling = false;
+            _ceilingBubbleList.Remove(bubble);
         }
 
         private void ResetCeilingBubbles()
@@ -119,26 +130,53 @@ namespace Assets.Scripts.BubbleSystem.Creator
             bubble.transform.SetParent(_bubbleParent, true);
             BubbleCreated?.Invoke(bubble);
 
+            bubble.DisposeEvent += RemoveBubble;
+            bubble.DisposeEvent += RemoveBubbleFromCeiling;
+
             return bubble;
         }
 
-        public IEnumerator CreateInitialPile()
+        public void CreateInitialPile()
         {
             _spawnPosition = _settings.initialSpawnPosition;
             _spawnPosition.y += (_settings.verticalOffset * (_settings.initialLineCount - 1));
 
             for (int i = 0; i < _settings.initialLineCount; i++)
             {
-                CreateLinePile(true);
-                yield return _waitForSeconds_01;
+                Bubble instantiatedBubble = null;
+
+                _spawnPosition.x -= 0.5f * (VerticalOffsetIndex % 2);
+                VerticalOffsetIndex++;
+
+                for (int j = 0; j < _settings.lineSize; j++)
+                {
+                    instantiatedBubble = GetBubble();
+                    instantiatedBubble.transform.position = _spawnPosition;
+
+                    instantiatedBubble.Initialize();
+                    instantiatedBubble.ScaleOut();
+
+                    instantiatedBubble.UpdateBubble(_bubbleDataSO.GetRandomBubbleDataByRandomMaxValue());
+                    instantiatedBubble.SendToPool += RemoveBubble;
+                    AddBubble(instantiatedBubble);
+
+                    if (i == _settings.initialLineCount - 1)
+                        AddBubbleToCeiling(instantiatedBubble);
+
+                    _spawnPosition.x += _settings.horizontalOffset;
+                }
+
+                //yield return _waitForSeconds_01;
+                _spawnPosition.x = _settings.initialSpawnPosition.x;
                 _spawnPosition.y -= _settings.verticalOffset;
             }
 
             _spawnPosition = _settings.initialSpawnPosition;
         }
 
-        public void CreateLinePile(bool isInitial = false)
+        public void CreateLinePile()
         {
+            _previousCeilingBubbleList = new List<Bubble>(_ceilingBubbleList);
             ResetCeilingBubbles();
 
             Bubble instantiatedBubble = null;
@@ -151,10 +189,9 @@ namespace Assets.Scripts.BubbleSystem.Creator
                 instantiatedBubble = GetBubble();
                 instantiatedBubble.transform.position = _spawnPosition;
 
-                instantiatedBubble.MoveTo(_spawnPosition);
-                instantiatedBubble.ScaleOut();
-
                 instantiatedBubble.Initialize();
+                instantiatedBubble.ScaleOut();
+                
                 instantiatedBubble.UpdateBubble(_bubbleDataSO.GetRandomBubbleDataByRandomMaxValue());
                 instantiatedBubble.SendToPool += RemoveBubble;
                 AddBubble(instantiatedBubble);
@@ -164,10 +201,11 @@ namespace Assets.Scripts.BubbleSystem.Creator
                 _spawnPosition.x += _settings.horizontalOffset;
             }
 
-            _spawnPosition.x = _settings.initialSpawnPosition.x;
+            _ceilingBubbleList.ForEach(bubble => bubble.UpdateNeighbours());
+            _previousCeilingBubbleList.ForEach(bubble => bubble.UpdateNeighbours());
 
-            if (!isInitial)
-                _spawnPosition = _settings.initialSpawnPosition;
+            _spawnPosition.x = _settings.initialSpawnPosition.x;
+            _spawnPosition = _settings.initialSpawnPosition;
         }
 
         #endregion Functions

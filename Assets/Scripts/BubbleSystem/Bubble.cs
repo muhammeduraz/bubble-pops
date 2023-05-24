@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using Assets.Scripts.HapticSystem;
 using Assets.Scripts.ProductSystem;
 using Assets.Scripts.BubbleSystem.Data;
-using System.Linq;
 
 namespace Assets.Scripts.BubbleSystem
 {
@@ -36,6 +35,7 @@ namespace Assets.Scripts.BubbleSystem
         private Collider[] _neighbourColliders;
         private Collider[] _emptyNeighbourColliders;
 
+        private List<Bubble> _neighbourBubbleList;
         private List<Vector3> _neighbourOffsetList = new List<Vector3>
         {
             new Vector3(0.5f, 0.88f, 0f),
@@ -67,6 +67,8 @@ namespace Assets.Scripts.BubbleSystem
 
         public bool IsCeiling { get => _isCeiling; set => _isCeiling = value; }
         public bool IsDisposed { get => _isDisposed; set => _isDisposed = value; }
+
+        public List<Bubble> NeighbourBubbleList { get => _neighbourBubbleList; }
         public BubbleData BubbleData { get => _bubbleData; set => _bubbleData = value; }
         public Action<Bubble> SendToPool { get => DisposeEvent; set => DisposeEvent = value; }
         public TrailRenderer TrailRenderer { get => _trailRenderer; }
@@ -80,8 +82,12 @@ namespace Assets.Scripts.BubbleSystem
             _isDisposed = false;
             _trailRenderer.enabled = false;
 
+            _currentPosition = transform.position;
+
             _neighbourColliders = new Collider[9];
             _emptyNeighbourColliders = new Collider[1];
+
+            _neighbourBubbleList = new List<Bubble>();
 
             _collider.enabled = true;
             gameObject.SetActive(true);
@@ -92,7 +98,7 @@ namespace Assets.Scripts.BubbleSystem
             _isCeiling = false;
             _isDisposed = true;
 
-            transform.localScale = Vector3.zero;
+            transform.localScale = Vector3.one * 0.1f;
 
             _scaleTween?.Kill();
             _throwSequence?.Kill();
@@ -123,6 +129,11 @@ namespace Assets.Scripts.BubbleSystem
 
             if (_bubbleData.id == 2048)
                 ExplodeEvent?.Invoke(this);
+        }
+
+        public void UpdateNeighbours()
+        {
+            _neighbourBubbleList = GetNeighbourBubblesByOverlap();
         }
 
         private void SetText(string text)
@@ -162,25 +173,24 @@ namespace Assets.Scripts.BubbleSystem
         {
             if (IsCeiling) return false;
 
-            List<Bubble> neighbourBubbleList = GetNeighbourBubbles();
             List<Bubble> checkedBubbleList = new List<Bubble>();
             checkedBubbleList.Add(this);
 
             Bubble loopBubble = null;
 
-            for (int i = 0; i < neighbourBubbleList.Count; i++)
+            for (int i = 0; i < _neighbourBubbleList.Count; i++)
             {
-                loopBubble = neighbourBubbleList[i];
+                loopBubble = _neighbourBubbleList[i];
 
                 if (loopBubble.IsCeiling) return false;
                 if (!checkedBubbleList.Contains(loopBubble))
                 {
-                    List<Bubble> tempList = loopBubble.GetNeighbourBubbles();
+                    List<Bubble> tempList = loopBubble.GetNeighbourBubblesByOverlap();
                     for (int j = 0; j < tempList.Count; j++)
                     {
-                        if (!neighbourBubbleList.Contains(tempList[j]))
+                        if (!_neighbourBubbleList.Contains(tempList[j]))
                         {
-                            neighbourBubbleList.Add(tempList[j]);
+                            _neighbourBubbleList.Add(tempList[j]);
                         }
                     }
                     checkedBubbleList.Add(loopBubble);
@@ -248,6 +258,7 @@ namespace Assets.Scripts.BubbleSystem
                 _trailRenderer.enabled = false;
                 HapticExtensions.PlayLightHaptic();
 
+                UpdateNeighbours();
                 ThrowEvent?.Invoke(this);
             });
         }
@@ -258,6 +269,8 @@ namespace Assets.Scripts.BubbleSystem
 
             _scaleTween?.Kill();
             _scaleTween = transform.DOScale(amount, duration).SetDelay(delay);
+
+            _scaleTween.OnComplete(() => UpdateNeighbours());
         }
 
         public void ShakeBubble(Vector3 direction)
@@ -268,15 +281,14 @@ namespace Assets.Scripts.BubbleSystem
 
         private void ShakeNeighbourBubbles()
         {
-            List<Bubble> neighbourBubbleList = GetNeighbourBubbles();
-            if (neighbourBubbleList.Count <= 0) return;
+            if (_neighbourBubbleList.Count <= 0) return;
 
             Vector3 direction;
             Bubble loopBubble = null;
 
-            for (int i = 0; i < neighbourBubbleList.Count; i++)
+            for (int i = 0; i < _neighbourBubbleList.Count; i++)
             {
-                loopBubble = neighbourBubbleList[i];
+                loopBubble = _neighbourBubbleList[i];
 
                 direction = loopBubble.transform.position - transform.position;
                 direction = direction.normalized;
@@ -285,16 +297,16 @@ namespace Assets.Scripts.BubbleSystem
             }
         }
 
-        public List<Bubble> GetNeighbourBubbles()
+        private List<Bubble> GetNeighbourBubblesByOverlap()
         {
             Bubble loopBubble = null;
             Collider loopCollider = null;
             List<Bubble> bubbleList = new List<Bubble>();
 
             _neighbourColliders = new Collider[9];
-            int count = Physics.OverlapSphereNonAlloc(transform.position, 1.2f, _neighbourColliders);
-            
-            for (int i = 0; i < count; i++)
+            int overlapCount = Physics.OverlapSphereNonAlloc(transform.position, 1.2f, _neighbourColliders);
+
+            for (int i = 0; i < overlapCount; i++)
             {
                 loopCollider = _neighbourColliders[i];
                 loopCollider.TryGetComponent(out loopBubble);
@@ -309,38 +321,34 @@ namespace Assets.Scripts.BubbleSystem
 
         public List<Bubble> GetNeighbourBubblesWithSameId()
         {
-            List<Bubble> neighbourList = GetNeighbourBubbles();
-
             Bubble loopBubble = null;
-            for (int i = neighbourList.Count - 1; i >= 0; i--)
+            for (int i = _neighbourBubbleList.Count - 1; i >= 0; i--)
             {
-                loopBubble = neighbourList[i];
+                loopBubble = _neighbourBubbleList[i];
 
                 if (loopBubble._bubbleData.id != _bubbleData.id)
                 {
-                    neighbourList.RemoveAt(i);
+                    _neighbourBubbleList.RemoveAt(i);
                 }
             }
 
-            return neighbourList;
+            return _neighbourBubbleList;
         }
 
         public List<Bubble> GetNeighbourBubblesWithDifferentId()
         {
-            List<Bubble> neighbourList = GetNeighbourBubbles();
-
             Bubble loopBubble = null;
-            for (int i = neighbourList.Count - 1; i >= 0; i--)
+            for (int i = _neighbourBubbleList.Count - 1; i >= 0; i--)
             {
-                loopBubble = neighbourList[i];
+                loopBubble = _neighbourBubbleList[i];
 
                 if (loopBubble.BubbleData != null && _bubbleData != null && loopBubble._bubbleData.id == _bubbleData.id)
                 {
-                    neighbourList.RemoveAt(i);
+                    _neighbourBubbleList.RemoveAt(i);
                 }
             }
 
-            return neighbourList;
+            return _neighbourBubbleList;
         }
 
         public List<Vector3> GetEmptyPositions()
@@ -366,6 +374,62 @@ namespace Assets.Scripts.BubbleSystem
             }
 
             return emptyPositions;
+        }
+
+        public bool IsMergable()
+        {
+            Bubble loopBubble = null;
+
+            for (int i = 0; i < _neighbourBubbleList.Count; i++)
+            {
+                loopBubble = _neighbourBubbleList[i];
+
+                if (loopBubble.BubbleData.id == _bubbleData.id)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public List<Bubble> GetMergeBubbles()
+        {
+            Bubble loopBubble = null;
+
+            List<Bubble> tempBubbleList;
+            List<Bubble> finalBubbleList = new List<Bubble>();
+            finalBubbleList.Add(this);
+
+            tempBubbleList = GetNeighbourBubblesWithSameId();
+
+            for (int i = 0; i < tempBubbleList.Count; i++)
+            {
+                loopBubble = tempBubbleList[i];
+
+                if (!finalBubbleList.Contains(loopBubble))
+                {
+                    finalBubbleList.Add(loopBubble);
+                    AddRangeWithoutDuplicate(tempBubbleList, loopBubble.GetNeighbourBubblesWithSameId());
+                }
+            }
+
+            return finalBubbleList;
+        }
+
+        private void AddRangeWithoutDuplicate(List<Bubble> mainList, List<Bubble> toBeAddedList)
+        {
+            Bubble loopBubble = null;
+
+            for (int i = 0; i < toBeAddedList.Count; i++)
+            {
+                loopBubble = toBeAddedList[i];
+
+                if (!mainList.Contains(loopBubble))
+                {
+                    mainList.Add(loopBubble);
+                }
+            }
         }
 
         #endregion Functions

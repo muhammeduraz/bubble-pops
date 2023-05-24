@@ -63,7 +63,8 @@ namespace Assets.Scripts.BubbleSystem
             _bubbleCreator = new BubbleCreator(_bubbleDataSO, _bubbleCreatorSettings, transform);
 
             Subscribe(true);
-            StartCoroutine(_bubbleCreator.CreateInitialPile());
+            //StartCoroutine(_bubbleCreator.CreateInitialPile());
+            _bubbleCreator.CreateInitialPile();
         }
 
         public void Dispose()
@@ -116,28 +117,41 @@ namespace Assets.Scripts.BubbleSystem
             }
         }
 
-        private List<Bubble> GetBubblesWithSameId(Bubble bubble)
+        private void UpdateNeighbourOfEffectedBubbles(List<Bubble> mergedBubbleList)
         {
             Bubble loopBubble = null;
+            List<Bubble> effectedBubbleList = GetBubblesThatEffectedByMerge(mergedBubbleList);
 
-            List<Bubble> tempBubbles;
-            List<Bubble> finalBubbles = new List<Bubble>();
-            finalBubbles.Add(bubble);
-
-            tempBubbles = bubble.GetNeighbourBubblesWithSameId();
-
-            for (int i = 0; i < tempBubbles.Count; i++)
+            for (int i = 0; i < effectedBubbleList.Count; i++)
             {
-                loopBubble = tempBubbles[i];
+                loopBubble = effectedBubbleList[i];
+                loopBubble.UpdateNeighbours();
+            }
+        }
 
-                if (!finalBubbles.Contains(loopBubble))
+        private List<Bubble> GetBubblesThatEffectedByMerge(List<Bubble> mergedBubbleList)
+        {
+            List<Bubble> tempBubbleList;
+            List<Bubble> fallBubbleList = new List<Bubble>();
+
+            Bubble loopBubble = null;
+
+            for (int i = 0; i < mergedBubbleList.Count; i++)
+            {
+                tempBubbleList = mergedBubbleList[i].GetNeighbourBubblesWithDifferentId();
+
+                for (int j = 0; j < tempBubbleList.Count; j++)
                 {
-                    finalBubbles.Add(loopBubble);
-                    tempBubbles.AddRange(loopBubble.GetNeighbourBubblesWithSameId());
+                    loopBubble = tempBubbleList[j];
+
+                    if (!mergedBubbleList.Contains(loopBubble) && !fallBubbleList.Contains(loopBubble))
+                    {
+                        fallBubbleList.Add(loopBubble);
+                    }
                 }
             }
 
-            return finalBubbles;
+            return fallBubbleList;
         }
 
         #region Explode Functions
@@ -147,8 +161,7 @@ namespace Assets.Scripts.BubbleSystem
             bubble.ThrowEvent -= MergeProcess;
             bubble.ExplodeEvent -= ExplodeBubble;
 
-            List<Bubble> neighbourList = bubble.GetNeighbourBubbles();
-            HandleFall(neighbourList);
+            List<Bubble> neighbourList = new List<Bubble>(bubble.NeighbourBubbleList);
             neighbourList.Add(bubble);
 
             Bubble loopBubble = null;
@@ -162,13 +175,11 @@ namespace Assets.Scripts.BubbleSystem
                     UpdateGeneralScore?.Invoke(loopBubble.BubbleData.id);
                     ShowBubbleScore?.Invoke(loopBubble.BubbleData.id, loopBubble.transform.position);
 
-                    if (loopBubble.IsCeiling)
-                        _bubbleCreator.CeilingBubbleList.Remove(loopBubble);
-
-                    _bubbleCreator.ActiveBubbleList.Remove(loopBubble);
                     loopBubble.Dispose();
                 }
             }
+
+            HandleFall(neighbourList);
 
             CameraShakeRequested.Invoke();
         }
@@ -177,9 +188,9 @@ namespace Assets.Scripts.BubbleSystem
 
         #region Fall Functions
 
-        private void HandleFall(List<Bubble> matchedBubbleList)
+        private void HandleFall(List<Bubble> mergedBubbleList)
         {
-            List<Bubble> fallBubbleList = GetFallBubbles(matchedBubbleList);
+            List<Bubble> fallBubbleList = GetBubblesThatEffectedByMerge(mergedBubbleList);
             List<Bubble> fallList = new List<Bubble>();
 
             Bubble loopBubble = null;
@@ -201,31 +212,6 @@ namespace Assets.Scripts.BubbleSystem
             });
         }
 
-        private List<Bubble> GetFallBubbles(List<Bubble> matchedBubbleList)
-        {
-            List<Bubble> tempBubbleList;
-            List<Bubble> fallBubbleList = new List<Bubble>();
-
-            Bubble loopBubble = null;
-
-            for (int i = 0; i < matchedBubbleList.Count; i++)
-            {
-                tempBubbleList = matchedBubbleList[i].GetNeighbourBubblesWithDifferentId();
-
-                for (int j = 0; j < tempBubbleList.Count; j++)
-                {
-                    loopBubble = tempBubbleList[j];
-
-                    if (!matchedBubbleList.Contains(loopBubble) && !fallBubbleList.Contains(loopBubble))
-                    {
-                        fallBubbleList.Add(loopBubble);
-                    }
-                }
-            }
-
-            return fallBubbleList;
-        }
-
         #endregion Fall Functions
 
         #region Merge Functions
@@ -240,9 +226,7 @@ namespace Assets.Scripts.BubbleSystem
             _bubbleCreator.AddBubble(bubble);
             bubble.ThrowEvent -= MergeProcess;
 
-            List<Bubble> neighbourBubbleList = bubble.GetNeighbourBubbles();
-
-            if (IsThereAnyMerge(bubble, neighbourBubbleList) && !bubble.IsDisposed)
+            if (!bubble.IsDisposed && bubble.IsMergable())
             {
                 yield return StartCoroutine(OnMerge(bubble));
             }
@@ -263,12 +247,10 @@ namespace Assets.Scripts.BubbleSystem
 
         private IEnumerator OnMerge(Bubble bubble)
         {
-            List<Bubble> mergedBubbleList = GetBubblesWithSameId(bubble);
-
-            Bubble mergeBubble = GetMergeBubble(bubble.BubbleData.id, mergedBubbleList);
-
-            if (mergedBubbleList.Contains(mergeBubble))
-                mergedBubbleList.Remove(mergeBubble);
+            List<Bubble> mergedBubbleList = bubble.GetMergeBubbles();
+            
+            Bubble preferredMergeBubble = GetPreferredMergeBubble(bubble.BubbleData.id, mergedBubbleList);
+            mergedBubbleList.Remove(preferredMergeBubble);
 
             yield return _waitForSeconds_01;
 
@@ -279,30 +261,35 @@ namespace Assets.Scripts.BubbleSystem
                 loopBubble = mergedBubbleList[i];
                 loopBubble.ExplodeEvent -= ExplodeBubble;
 
-                if (loopBubble.IsCeiling)
-                    _bubbleCreator.CeilingBubbleList.Remove(loopBubble);
-                _bubbleCreator.ActiveBubbleList.Remove(loopBubble);
+                _bubbleCreator.RemoveBubbleFromCeiling(loopBubble);
+                _bubbleCreator.RemoveBubble(loopBubble);
 
                 UpdateGeneralScore?.Invoke(loopBubble.BubbleData.id);
                 ShowBubbleScore?.Invoke(loopBubble.BubbleData.id, loopBubble.transform.position);
 
                 BubbleParticleRequested?.Invoke(loopBubble.BubbleData.id, loopBubble.transform.position);
 
-                loopBubble.MoveToDispose(mergeBubble.transform.position);
+                loopBubble.MoveToDispose(preferredMergeBubble.transform.position);
             }
 
             HandleCombo();
 
             yield return _waitForSeconds_02;
 
-            mergeBubble.UpdateBubble(_bubbleDataSO.GetBubbleDataByMultiplication(mergeBubble.BubbleData.id, mergedBubbleList.Count + 1));
+            preferredMergeBubble.UpdateBubble(_bubbleDataSO.GetBubbleDataByMultiplication(preferredMergeBubble.BubbleData.id, mergedBubbleList.Count + 1));
+
+            mergedBubbleList.Add(preferredMergeBubble);
+            UpdateNeighbourOfEffectedBubbles(mergedBubbleList);
+
+            mergedBubbleList.Remove(preferredMergeBubble);
             HandleFall(mergedBubbleList);
+
             HapticExtensions.PlayLightHaptic();
 
-            MergeProcess(mergeBubble);
+            MergeProcess(preferredMergeBubble);
         }
 
-        private Bubble GetMergeBubble(int id, List<Bubble> mergedBubbleList)
+        private Bubble GetPreferredMergeBubble(int id, List<Bubble> mergedBubbleList)
         {
             int newId = _bubbleDataSO.GetMultipliedId(id, mergedBubbleList.Count);
 
@@ -311,37 +298,40 @@ namespace Assets.Scripts.BubbleSystem
 
             for (int i = 0; i < mergedBubbleList.Count; i++)
             {
-                tempNeighbourList = mergedBubbleList[i].GetNeighbourBubbles();
+                tempNeighbourList = new List<Bubble>(mergedBubbleList[i].NeighbourBubbleList);
 
                 for (int j = 0; j < tempNeighbourList.Count; j++)
                 {
                     loopBubble = tempNeighbourList[j];
 
-                    if (!mergedBubbleList.Contains(loopBubble) && loopBubble.BubbleData.id == newId)
+                    if (loopBubble.BubbleData.id == newId)
                     {
                         return mergedBubbleList[i];
                     }
                 }
             }
 
-            return mergedBubbleList[^1];
+            return GetHighestPreferredMergeBubble(mergedBubbleList);
         }
 
-        private bool IsThereAnyMerge(Bubble bubble, List<Bubble> neighbourBubbleList)
+        private Bubble GetHighestPreferredMergeBubble(List<Bubble> mergedBubbleList)
         {
             Bubble loopBubble = null;
+            Bubble highestBubble = null;
+            float highestY = float.NegativeInfinity;
 
-            for (int i = 0; i < neighbourBubbleList.Count; i++)
+            for (int i = 0; i < mergedBubbleList.Count; i++)
             {
-                loopBubble = neighbourBubbleList[i];
+                loopBubble = mergedBubbleList[i];
 
-                if (loopBubble.BubbleData.id == bubble.BubbleData.id)
+                if (loopBubble.transform.position.y > highestY)
                 {
-                    return true;
+                    highestBubble = loopBubble;
+                    highestY = loopBubble.transform.position.y;
                 }
             }
 
-            return false;
+            return highestBubble;
         }
 
         #endregion Merge Functions
