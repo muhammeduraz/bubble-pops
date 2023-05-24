@@ -12,8 +12,8 @@ namespace Assets.Scripts.BubbleSystem
     {
         #region Events
 
-        public delegate Bubble BubbleRequest();
-        public BubbleRequest BubbleRequested;
+        public delegate Bubble ThrowBubbleRequest();
+        public ThrowBubbleRequest ThrowBubbleRequested;
 
         public delegate BubbleData BubbleDataRequest();
         public BubbleDataRequest BubbleDataRequested;
@@ -116,7 +116,7 @@ namespace Assets.Scripts.BubbleSystem
 
         private void GetNewNextBubble()
         {
-            _nextBubble = BubbleRequested();
+            _nextBubble = ThrowBubbleRequested();
 
             _nextBubble.Initialize();
             _nextBubble.SetPosition(_nextBubbleTransform.position);
@@ -127,8 +127,8 @@ namespace Assets.Scripts.BubbleSystem
 
         private void InitializeCurrentAndNextBubbles()
         {
-            _nextBubble = BubbleRequested();
-            _currentBubble = BubbleRequested();
+            _nextBubble = ThrowBubbleRequested();
+            _currentBubble = ThrowBubbleRequested();
 
             _nextBubble.Initialize();
             _currentBubble.Initialize();

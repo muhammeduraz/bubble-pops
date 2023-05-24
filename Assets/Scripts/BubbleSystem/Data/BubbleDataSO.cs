@@ -10,18 +10,21 @@ namespace Assets.Scripts.BubbleSystem.Data
     {
         #region Variables
 
+        [SerializeField] private int _randomMaxValue;
         [SerializeField] private List<BubbleData> _bubbleDataList;
 
         #endregion Variables
 
         #region Functions
 
-        public BubbleData GetRandomBubbleData(int maxExclusive = -1)
+        public BubbleData GetRandomBubbleData()
         {
-            if (maxExclusive == -1 || maxExclusive > _bubbleDataList.Count)
-                maxExclusive = _bubbleDataList.Count;
+            return _bubbleDataList[UnityEngine.Random.Range(0, _bubbleDataList.Count)];
+        }
 
-            return _bubbleDataList[UnityEngine.Random.Range(0, maxExclusive)];
+        public BubbleData GetRandomBubbleDataByRandomMaxValue()
+        {
+            return _bubbleDataList[UnityEngine.Random.Range(0, _randomMaxValue)];
         }
 
         public BubbleData GetBubbleDataById(int id)

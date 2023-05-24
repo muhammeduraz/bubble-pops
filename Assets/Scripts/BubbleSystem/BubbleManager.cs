@@ -3,9 +3,8 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using Assets.Scripts.HapticSystem;
-using Assets.Scripts.BubbleSystem.Pool;
 using Assets.Scripts.BubbleSystem.Data;
-using Assets.Scripts.BubbleSystem.Factory;
+using Assets.Scripts.BubbleSystem.Creator;
 
 namespace Assets.Scripts.BubbleSystem
 {
@@ -26,45 +25,18 @@ namespace Assets.Scripts.BubbleSystem
         #region Variables
 
         private int _comboCounter;
-        private int _verticalOffsetIndex;
-
-        private List<Bubble> _activeBubbleList;
-        private List<Bubble> _ceilingBubbleList;
-
-        private BubblePool _bubblePool;
-        private BubbleFactory _bubbleFactory;
 
         private WaitForSeconds _waitForSeconds_01;
         private WaitForSeconds _waitForSeconds_02;
 
-        [SerializeField] private float _verticalOffset;
-        [SerializeField] private float _horizontalOffset;
-        [SerializeField] private Vector3 _initialSpawnPosition;
+        private BubbleCreator _bubbleCreator;
 
-        [SerializeField] private int _lineSize;
-        [SerializeField] private int _initialLineCount;
-
-        [SerializeField] private int _randomMaxExclusive;
         [SerializeField] private int _minActiveBubbleToCreateNewLine;
 
-        [SerializeField] private Bubble _bubblePrefab;
         [SerializeField] private BubbleDataSO _bubbleDataSO;
+        [SerializeField] private BubbleCreatorSettings _bubbleCreatorSettings;
 
         #endregion Variables
-
-        #region Properties
-
-        private int VerticalOffsetIndex 
-        { 
-            get => _verticalOffsetIndex;
-            set 
-            {
-                if (value == 2) value = 0;
-                _verticalOffsetIndex = value;
-            } 
-        }
-
-        #endregion Properties
 
         #region Unity Functions
 
@@ -84,149 +56,53 @@ namespace Assets.Scripts.BubbleSystem
 
         private void Initialize()
         {
-            VerticalOffsetIndex = 0;
-
             _waitForSeconds_01 = new WaitForSeconds(0.1f);
             _waitForSeconds_02 = new WaitForSeconds(0.2f);
 
-            _bubbleFactory = new BubbleFactory(_bubblePrefab);
-            _bubblePool = new BubblePool(_bubbleFactory);
+            _bubbleCreator = new BubbleCreator(_bubbleDataSO, _bubbleCreatorSettings, transform);
 
-            _activeBubbleList = new List<Bubble>();
-            _ceilingBubbleList = new List<Bubble>();
-
-            StartCoroutine(CreateInitialPile());
+            Subscribe(true);
+            StartCoroutine(_bubbleCreator.CreateInitialPile());
         }
 
         public void Dispose()
         {
-            _bubblePool = null;
-            _bubbleFactory = null;
+            Subscribe(false);
         }
 
-        private void AddBubble(Bubble bubble)
+        private void Subscribe(bool subscribe)
         {
-            if (_activeBubbleList.Contains(bubble)) return;
-
-            _activeBubbleList.Add(bubble);
-        }
-
-        private void RemoveBubble(Bubble bubble)
-        {
-            _activeBubbleList.Remove(bubble);
-        }
-
-        public Bubble OnBubbleRequested()
-        {
-            return GetBubble();
-        }
-
-        public BubbleData OnBubbleDataRequested()
-        {
-            return GetRandomBubbleData();
-        }
-
-        private Bubble GetBubble(bool withSubscription = true)
-        {
-            Bubble bubble = _bubblePool.GetProduct();
-
-            bubble.transform.position = _initialSpawnPosition;
-            bubble.transform.SetParent(transform, true);
-            bubble.ExplodeEvent += ExplodeBubble;
-
-            if (withSubscription)
-                bubble.ThrowEvent += MatchProcess;
-
-            return bubble;
-        }
-
-        private BubbleData GetRandomBubbleData()
-        {
-            return _bubbleDataSO.GetRandomBubbleData(_randomMaxExclusive);
-        }
-
-        private IEnumerator CreateInitialPile()
-        {
-            Vector3 spawnPosition = _initialSpawnPosition;
-            spawnPosition.y += (_verticalOffset * (_initialLineCount - 1));
-
-            for (int i = 0; i < _initialLineCount; i++)
+            if (subscribe)
             {
-                StartCoroutine(CreateLinePile(spawnPosition));
-                yield return null;
-                spawnPosition.y -= _verticalOffset;
+                _bubbleCreator.BubbleCreated += OnBubbleCreated;
             }
-        }
-
-        private IEnumerator CreateLinePile(Vector3 spawnPosition)
-        {
-            ResetCeilingBubbles();
-
-            Bubble instantiatedBubble = null;
-            spawnPosition.x -= 0.5f * (VerticalOffsetIndex % 2);
-            VerticalOffsetIndex++;
-
-            for (int j = 0; j < _lineSize; j++)
+            else
             {
-                instantiatedBubble = GetBubble(false);
-                instantiatedBubble.transform.position = spawnPosition + Vector3.down * _verticalOffset;
-
-                instantiatedBubble.MoveTo(spawnPosition);
-                instantiatedBubble.ScaleOut();
-
-                instantiatedBubble.Initialize();
-                instantiatedBubble.UpdateBubble(_bubbleDataSO.GetRandomBubbleData(_randomMaxExclusive));
-                instantiatedBubble.SendToPool += RemoveBubble;
-                AddBubble(instantiatedBubble);
-                
-                AddBubbleToCeiling(instantiatedBubble);
-
-                spawnPosition.x += _horizontalOffset;
+                _bubbleCreator.BubbleCreated -= OnBubbleCreated;
             }
-
-            yield return null;
-        }
-
-        private void AddBubbleToCeiling(Bubble bubble)
-        {
-            bubble.IsCeiling = true;
-            _ceilingBubbleList.Add(bubble);
-        }
-
-        private void ResetCeilingBubbles()
-        {
-            Bubble loopBubble = null;
-
-            for (int i = 0; i < _ceilingBubbleList.Count; i++)
-            {
-                loopBubble = _ceilingBubbleList[i];
-                loopBubble.IsCeiling = false;
-            }
-
-            _ceilingBubbleList.Clear();
         }
 
         private void MoveAllBubblesDown()
         {
             Bubble loopBubble = null;
 
-            for (int i = 0; i < _activeBubbleList.Count; i++)
+            for (int i = 0; i < _bubbleCreator.ActiveBubbleList.Count; i++)
             {
-                loopBubble = _activeBubbleList[i];
+                loopBubble = _bubbleCreator.ActiveBubbleList[i];
 
                 if (loopBubble != null)
                 {
-                    loopBubble.MoveDown(_verticalOffset);
+                    loopBubble.MoveDown(_bubbleCreatorSettings.verticalOffset);
                 }
             }
         }
 
         private void MoveDownAndCreateLine()
         {
-            if (_activeBubbleList.Count >= _minActiveBubbleToCreateNewLine) return;
+            if (_bubbleCreator.ActiveBubbleList.Count >= _minActiveBubbleToCreateNewLine) return;
 
             MoveAllBubblesDown();
-            StartCoroutine(CreateLinePile(_initialSpawnPosition));
+            _bubbleCreator.CreateLinePile();
         }
 
         private void HandleFall(List<Bubble> matchedBubbleList)
@@ -236,9 +112,9 @@ namespace Assets.Scripts.BubbleSystem
 
             Bubble loopBubble = null;
 
-            for (int i = 0; i < _activeBubbleList.Count; i++)
+            for (int i = 0; i < _bubbleCreator.ActiveBubbleList.Count; i++)
             {
-                loopBubble = _activeBubbleList[i];
+                loopBubble = _bubbleCreator.ActiveBubbleList[i];
 
                 if (loopBubble.IsFallable())
                 {
@@ -248,7 +124,7 @@ namespace Assets.Scripts.BubbleSystem
 
             fallList.ForEach(dallBubble =>
             {
-                _activeBubbleList.Remove(dallBubble);
+                _bubbleCreator.ActiveBubbleList.Remove(dallBubble);
                 dallBubble.Fall(()=> BubbleParticleRequested?.Invoke(dallBubble.BubbleData.id, dallBubble.transform.position));
             });
         }
@@ -334,9 +210,9 @@ namespace Assets.Scripts.BubbleSystem
                     ShowBubbleScore?.Invoke(loopBubble.BubbleData.id, loopBubble.transform.position);
 
                     if (loopBubble.IsCeiling)
-                        _ceilingBubbleList.Remove(loopBubble);
+                        _bubbleCreator.CeilingBubbleList.Remove(loopBubble);
 
-                    _activeBubbleList.Remove(loopBubble);
+                    _bubbleCreator.ActiveBubbleList.Remove(loopBubble);
                     loopBubble.Dispose();
                 }
             }
@@ -351,7 +227,7 @@ namespace Assets.Scripts.BubbleSystem
 
         private IEnumerator MatchProcessCoroutine(Bubble bubble)
         {
-            AddBubble(bubble);
+            _bubbleCreator.AddBubble(bubble);
             bubble.ThrowEvent -= MatchProcess;
 
             List<Bubble> neighbourBubbleList = bubble.GetNeighbourBubbles();
@@ -387,8 +263,8 @@ namespace Assets.Scripts.BubbleSystem
                 loopBubble.ExplodeEvent -= ExplodeBubble;
 
                 if (loopBubble.IsCeiling)
-                    _ceilingBubbleList.Remove(loopBubble);
-                _activeBubbleList.Remove(loopBubble);
+                    _bubbleCreator.CeilingBubbleList.Remove(loopBubble);
+                _bubbleCreator.ActiveBubbleList.Remove(loopBubble);
 
                 UpdateGeneralScore?.Invoke(loopBubble.BubbleData.id);
                 ShowBubbleScore?.Invoke(loopBubble.BubbleData.id, loopBubble.transform.position);
@@ -458,5 +334,31 @@ namespace Assets.Scripts.BubbleSystem
         }
 
         #endregion Functions
+
+        #region Bubble Data Functions
+
+        public BubbleData OnBubbleDataRequested()
+        {
+            return _bubbleDataSO.GetRandomBubbleDataByRandomMaxValue();
+        }
+
+        #endregion Bubble Data Functions
+
+        #region Creator Functions
+
+        public Bubble OnThrowBubbleRequested()
+        {
+            Bubble bubble = _bubbleCreator.GetBubble();
+            bubble.ThrowEvent += MatchProcess;
+
+            return bubble;
+        }
+
+        private void OnBubbleCreated(Bubble bubble)
+        {
+            bubble.ExplodeEvent += ExplodeBubble;
+        }
+
+        #endregion Creator Functions
     }
 }

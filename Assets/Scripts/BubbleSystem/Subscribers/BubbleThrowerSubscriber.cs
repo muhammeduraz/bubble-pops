@@ -44,8 +44,8 @@ namespace Assets.Scripts.BubbleSystem.Subscriber
             _inputHandler.OnFinger += _bubbleThrower.OnFinger;
             _inputHandler.OnFingerUp += _bubbleThrower.OnFingerUp;
 
-            _bubbleThrower.BubbleRequested += _bubbleManager.OnBubbleRequested;
             _bubbleThrower.BubbleDataRequested += _bubbleManager.OnBubbleDataRequested;
+            _bubbleThrower.ThrowBubbleRequested += _bubbleManager.OnThrowBubbleRequested;
         }
 
         protected override void UnSubscribe()
@@ -56,8 +56,8 @@ namespace Assets.Scripts.BubbleSystem.Subscriber
             _inputHandler.OnFinger -= _bubbleThrower.OnFinger;
             _inputHandler.OnFingerUp -= _bubbleThrower.OnFingerUp;
 
-            _bubbleThrower.BubbleRequested -= _bubbleManager.OnBubbleRequested;
             _bubbleThrower.BubbleDataRequested -= _bubbleManager.OnBubbleDataRequested;
+            _bubbleThrower.ThrowBubbleRequested -= _bubbleManager.OnThrowBubbleRequested;
         }
 
         #endregion Functions

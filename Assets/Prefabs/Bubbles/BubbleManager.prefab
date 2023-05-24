@@ -45,15 +45,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad8092e3e3d3e8444b731e74a10a57db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _verticalOffset: -0.88
-  _horizontalOffset: 1
-  _initialSpawnPosition: {x: -2.25, y: 5, z: 5}
-  _lineSize: 6
-  _initialLineCount: 5
-  _randomMaxExclusive: 5
   _minActiveBubbleToCreateNewLine: 30
-  _bubblePrefab: {fileID: 4110070478810438712, guid: f360d6dc728904d428a7c37396ee18bc, type: 3}
   _bubbleDataSO: {fileID: 11400000, guid: 2930ab207f0dae44ca7bf0d570306eca, type: 2}
+  _bubbleCreatorSettings: {fileID: 11400000, guid: ac78e078ff2458c47b4e85a51ec99c32, type: 2}
 --- !u!114 &4090868761407155098
 MonoBehaviour:
   m_ObjectHideFlags: 0
