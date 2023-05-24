@@ -5,7 +5,7 @@ using Assets.Scripts.Extensions.Numeric;
 
 namespace Assets.Scripts.BubbleSystem.Data
 {
-    [CreateAssetMenu (fileName = "BubbleDataSO", menuName = "Scriptable Objects/Bubble/Data/BubbleDataSO")]
+    [CreateAssetMenu (fileName = "BubbleDataSO", menuName = "Scriptable Objects/BubbleSystem/Data/BubbleDataSO")]
     public class BubbleDataSO : ScriptableObject
     {
         #region Variables
@@ -44,6 +44,14 @@ namespace Assets.Scripts.BubbleSystem.Data
             return null;
         }
 
+        public int GetMultipliedId(int id, int count)
+        {
+            int power = IntegerExtensions.GetPow(id);
+            int newId = (int)Math.Pow(2, power + (count - 1));
+
+            return newId;
+        }
+
         public BubbleData GetBubbleDataByMultiplication(int id, int count)
         {
             BubbleData bubbleData = null;
@@ -64,14 +72,6 @@ namespace Assets.Scripts.BubbleSystem.Data
                 bubbleData = _bubbleDataList[^1];
 
             return bubbleData;
-        }
-
-        public int GetMultipliedId(int id, int count)
-        {
-            int power = IntegerExtensions.GetPow(id);
-            int newId = (int)Math.Pow(2, power + (count - 1));
-
-            return newId;
         }
 
         #endregion Functions
