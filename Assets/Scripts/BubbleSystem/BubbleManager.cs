@@ -11,7 +11,6 @@ using Assets.Scripts.BubbleSystem.Factory;
 using Assets.Scripts.CanvasSystem.Score.Combo;
 using Assets.Scripts.CanvasSystem.Score.General;
 using Assets.Scripts.CanvasSystem.Score.BubbleScore;
-using DG.Tweening;
 
 namespace Assets.Scripts.BubbleSystem
 {
@@ -34,6 +33,9 @@ namespace Assets.Scripts.BubbleSystem
         private BubbleScoreHandler _scoreHandler;
         private BubbleComboHandler _comboHandler;
         private GeneralScoreHandler _generalScoreHandler;
+
+        private WaitForSeconds _waitForSeconds_01;
+        private WaitForSeconds _waitForSeconds_02;
 
         private int _comboCounter;
 
@@ -87,6 +89,9 @@ namespace Assets.Scripts.BubbleSystem
         private void Initialize()
         {
             VerticalOffsetIndex = 0;
+
+            _waitForSeconds_01 = new WaitForSeconds(0.1f);
+            _waitForSeconds_02 = new WaitForSeconds(0.2f);
 
             _cameraService = FindObjectOfType<CameraService>();
 
@@ -145,7 +150,7 @@ namespace Assets.Scripts.BubbleSystem
             for (int i = 0; i < _initialLineCount; i++)
             {
                 StartCoroutine(CreateLinePile(spawnPosition));
-                yield return new WaitForSeconds(0.1f);
+                yield return null;
                 spawnPosition.y -= _verticalOffset;
             }
         }
@@ -174,9 +179,9 @@ namespace Assets.Scripts.BubbleSystem
                 AddBubbleToCeiling(instantiatedBubble);
 
                 spawnPosition.x += _horizontalOffset;
-
-                yield return new WaitForSeconds(0.05f);
             }
+
+            yield return null;
         }
 
         private void AddBubbleToCeiling(Bubble bubble)
@@ -238,10 +243,10 @@ namespace Assets.Scripts.BubbleSystem
                 }
             }
 
-            fallList.ForEach(x =>
+            fallList.ForEach(dallBubble =>
             {
-                _activeBubbleList.Remove(x);
-                x.Fall(()=> _particlePlayer.PlayParticle(x.BubbleData.id, x.transform.position));
+                _activeBubbleList.Remove(dallBubble);
+                dallBubble.Fall(()=> _particlePlayer.PlayParticle(dallBubble.BubbleData.id, dallBubble.transform.position));
             });
         }
 
@@ -339,6 +344,11 @@ namespace Assets.Scripts.BubbleSystem
 
         private void MatchProcess(Bubble bubble)
         {
+            StartCoroutine(MatchProcessCoroutine(bubble));
+        }
+
+        private IEnumerator MatchProcessCoroutine(Bubble bubble)
+        {
             AddBubble(bubble);
             bubble.ThrowEvent -= MatchProcess;
 
@@ -346,7 +356,7 @@ namespace Assets.Scripts.BubbleSystem
 
             if (IsThereAnyMatch(bubble, neighbourBubbleList) && !bubble.IsDisposed)
             {
-                StartCoroutine(OnMatch(bubble));
+                yield return StartCoroutine(OnMatch(bubble));
             }
             else
             {
@@ -362,12 +372,10 @@ namespace Assets.Scripts.BubbleSystem
 
             Bubble mergeBubble = GetMergeBubble(bubble.BubbleData.id, mergedBubbleList);
 
-            
-
             if (mergedBubbleList.Contains(mergeBubble))
                 mergedBubbleList.Remove(mergeBubble);
 
-            yield return new WaitForSeconds(0.1f);
+            yield return _waitForSeconds_01;
 
             Bubble loopBubble = null;
 
@@ -390,7 +398,7 @@ namespace Assets.Scripts.BubbleSystem
 
             HandleCombo();
 
-            yield return new WaitForSeconds(0.2f);
+            yield return _waitForSeconds_02;
 
             mergeBubble.UpdateBubble(_bubbleDataSO.GetBubbleDataByMultiplication(mergeBubble.BubbleData.id, mergedBubbleList.Count + 1));
             HandleFall(mergedBubbleList);
