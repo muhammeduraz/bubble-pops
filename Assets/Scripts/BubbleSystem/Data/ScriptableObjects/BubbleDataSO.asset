@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8709ca4e4982e3468b2f65251138f37, type: 3}
   m_Name: BubbleDataSO
   m_EditorClassIdentifier: 
+  _randomMaxValue: 6
   _bubbleDataList:
   - id: 2
     color: {r: 0.9568628, g: 0.46274513, b: 0.5647059, a: 1}

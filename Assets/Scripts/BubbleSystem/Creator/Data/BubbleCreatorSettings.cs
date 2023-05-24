@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Assets.Scripts.BubbleSystem.Creator
+namespace Assets.Scripts.BubbleSystem.Creator.Data
 {
     [CreateAssetMenu (fileName = "BubbleCreatorSettings", menuName = "Scriptable Objects/BubbleSystem/BubbleCreatorSettings")]
     public class BubbleCreatorSettings : ScriptableObject

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Assets.Scripts.HapticSystem;
 using Assets.Scripts.BubbleSystem.Data;
 using Assets.Scripts.BubbleSystem.Creator;
+using Assets.Scripts.BubbleSystem.Creator.Data;
 
 namespace Assets.Scripts.BubbleSystem
 {

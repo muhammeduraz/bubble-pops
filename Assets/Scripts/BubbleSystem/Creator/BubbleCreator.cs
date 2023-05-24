@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Assets.Scripts.BubbleSystem.Pool;
 using Assets.Scripts.BubbleSystem.Data;
 using Assets.Scripts.BubbleSystem.Factory;
+using Assets.Scripts.BubbleSystem.Creator.Data;
 
 namespace Assets.Scripts.BubbleSystem.Creator
 {
@@ -131,7 +132,6 @@ namespace Assets.Scripts.BubbleSystem.Creator
                 CreateLinePile(true);
                 yield return _waitForSeconds_01;
                 _spawnPosition.y -= _settings.verticalOffset;
-                _spawnPosition.x -= _settings.horizontalOffset * _settings.lineSize;
             }
 
             _spawnPosition = _settings.initialSpawnPosition;
@@ -149,7 +149,7 @@ namespace Assets.Scripts.BubbleSystem.Creator
             for (int j = 0; j < _settings.lineSize; j++)
             {
                 instantiatedBubble = GetBubble();
-                instantiatedBubble.transform.position = _spawnPosition + Vector3.down * _settings.verticalOffset;
+                instantiatedBubble.transform.position = _spawnPosition;
 
                 instantiatedBubble.MoveTo(_spawnPosition);
                 instantiatedBubble.ScaleOut();
@@ -163,6 +163,8 @@ namespace Assets.Scripts.BubbleSystem.Creator
 
                 _spawnPosition.x += _settings.horizontalOffset;
             }
+
+            _spawnPosition.x = _settings.initialSpawnPosition.x;
 
             if (!isInitial)
                 _spawnPosition = _settings.initialSpawnPosition;

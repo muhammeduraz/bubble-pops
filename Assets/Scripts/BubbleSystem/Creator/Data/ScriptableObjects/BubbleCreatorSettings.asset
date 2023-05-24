@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: BubbleCreatorSettings
   m_EditorClassIdentifier: 
   bubblePrefab: {fileID: 4110070478810438712, guid: f360d6dc728904d428a7c37396ee18bc, type: 3}
-  verticalOffset: 0.88
+  verticalOffset: -0.88
   horizontalOffset: 1
-  initialSpawnPosition: {x: -4, y: 2, z: 5}
+  initialSpawnPosition: {x: -2.25, y: 5, z: 5}
   lineSize: 6
   initialLineCount: 5
