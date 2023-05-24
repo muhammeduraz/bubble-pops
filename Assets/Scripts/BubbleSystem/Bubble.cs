@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using Assets.Scripts.HapticSystem;
 using Assets.Scripts.ProductSystem;
 using Assets.Scripts.BubbleSystem.Data;
-using System.Linq;
 
 namespace Assets.Scripts.BubbleSystem
 {
