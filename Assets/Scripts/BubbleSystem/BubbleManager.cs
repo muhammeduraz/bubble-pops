@@ -11,6 +11,7 @@ using Assets.Scripts.BubbleSystem.Factory;
 using Assets.Scripts.CanvasSystem.Score.Combo;
 using Assets.Scripts.CanvasSystem.Score.General;
 using Assets.Scripts.CanvasSystem.Score.BubbleScore;
+using DG.Tweening;
 
 namespace Assets.Scripts.BubbleSystem
 {
@@ -22,6 +23,7 @@ namespace Assets.Scripts.BubbleSystem
         private int _verticalOffsetIndex;
 
         private List<Bubble> _activeBubbleList;
+        private List<Bubble> _ceilingBubbleList;
 
         private BubblePool _bubblePool;
         private BubbleFactory _bubbleFactory;
@@ -98,6 +100,7 @@ namespace Assets.Scripts.BubbleSystem
             _generalScoreHandler = FindObjectOfType<GeneralScoreHandler>();
             
             _activeBubbleList = new List<Bubble>();
+            _ceilingBubbleList = new List<Bubble>();
 
             StartCoroutine(CreateInitialPile());
         }
@@ -137,17 +140,20 @@ namespace Assets.Scripts.BubbleSystem
         private IEnumerator CreateInitialPile()
         {
             Vector3 spawnPosition = _initialSpawnPosition;
+            spawnPosition.y += (_verticalOffset * (_initialLineCount - 1));
 
             for (int i = 0; i < _initialLineCount; i++)
             {
                 StartCoroutine(CreateLinePile(spawnPosition));
                 yield return new WaitForSeconds(0.1f);
-                spawnPosition.y += _verticalOffset;
+                spawnPosition.y -= _verticalOffset;
             }
         }
 
         private IEnumerator CreateLinePile(Vector3 spawnPosition)
         {
+            ResetCeilingBubbles();
+
             Bubble instantiatedBubble = null;
             spawnPosition.x -= 0.5f * (VerticalOffsetIndex % 2);
             VerticalOffsetIndex++;
@@ -164,11 +170,32 @@ namespace Assets.Scripts.BubbleSystem
                 instantiatedBubble.UpdateBubble(_bubbleDataSO.GetRandomBubbleData(_randomMaxExclusive));
                 instantiatedBubble.SendToPool += RemoveBubble;
                 AddBubble(instantiatedBubble);
+                
+                AddBubbleToCeiling(instantiatedBubble);
 
                 spawnPosition.x += _horizontalOffset;
 
                 yield return new WaitForSeconds(0.05f);
             }
+        }
+
+        private void AddBubbleToCeiling(Bubble bubble)
+        {
+            bubble.IsCeiling = true;
+            _ceilingBubbleList.Add(bubble);
+        }
+
+        private void ResetCeilingBubbles()
+        {
+            Bubble loopBubble = null;
+
+            for (int i = 0; i < _ceilingBubbleList.Count; i++)
+            {
+                loopBubble = _ceilingBubbleList[i];
+                loopBubble.IsCeiling = false;
+            }
+
+            _ceilingBubbleList.Clear();
         }
 
         private void MoveAllBubblesDown()
@@ -194,60 +221,78 @@ namespace Assets.Scripts.BubbleSystem
             StartCoroutine(CreateLinePile(_initialSpawnPosition));
         }
 
-        private void HandleFall()
+        private void HandleFall(List<Bubble> matchedBubbleList)
         {
-
-        }
-
-        //private Bubble GetMergeBubble(int id, List<Bubble> matchedBubbleList)
-        //{
-        //    int newId = _bubbleDataSO.GetMultipliedId(id, matchedBubbleList.Count);
-
-        //    Bubble loopBubble = null;
-        //    List<Bubble> tempNeighbourList = new List<Bubble>();
-        //    List<Bubble> otherNeighbourList = new List<Bubble>();
-
-        //    for (int i = 0; i < matchedBubbleList.Count; i++)
-        //    {
-        //        tempNeighbourList = matchedBubbleList[i].GetNeighbourBubbles();
-
-        //        for (int j = 0; j < tempNeighbourList.Count; j++)
-        //        {
-        //            loopBubble = tempNeighbourList[i];
-
-        //            if (!matchedBubbleList.Contains(loopBubble) && !otherNeighbourList.Contains(loopBubble) && loopBubble.BubbleData.id == newId)
-        //            {
-        //                otherNeighbourList.Add(loopBubble);
-        //            }
-        //        }
-        //    }
-
-        //    return loopBubble;
-        //}
-
-        private Bubble GetMergeBubble(int id, List<Bubble> matchedBubbleList)
-        {
-            int newId = _bubbleDataSO.GetMultipliedId(id, matchedBubbleList.Count);
+            List<Bubble> fallBubbleList = GetFallBubbles(matchedBubbleList);
+            List<Bubble> fallList = new List<Bubble>();
 
             Bubble loopBubble = null;
-            List<Bubble> tempNeighbourList = new List<Bubble>();
+
+            for (int i = 0; i < _activeBubbleList.Count; i++)
+            {
+                loopBubble = _activeBubbleList[i];
+
+                if (loopBubble.IsFallable())
+                {
+                    fallList.Add(loopBubble);
+                }
+            }
+
+            fallList.ForEach(x =>
+            {
+                _activeBubbleList.Remove(x);
+                x.Fall(()=> _particlePlayer.PlayParticle(x.BubbleData.id, x.transform.position));
+            });
+        }
+
+        private List<Bubble> GetFallBubbles(List<Bubble> matchedBubbleList)
+        {
+            List<Bubble> tempBubbleList;
+            List<Bubble> fallBubbleList = new List<Bubble>();
+
+            Bubble loopBubble = null;
 
             for (int i = 0; i < matchedBubbleList.Count; i++)
             {
-                tempNeighbourList = matchedBubbleList[i].GetNeighbourBubbles();
+                tempBubbleList = matchedBubbleList[i].GetNeighbourBubblesWithDifferentId();
+
+                for (int j = 0; j < tempBubbleList.Count; j++)
+                {
+                    loopBubble = tempBubbleList[j];
+
+                    if (!matchedBubbleList.Contains(loopBubble) && !fallBubbleList.Contains(loopBubble))
+                    {
+                        fallBubbleList.Add(loopBubble);
+                    }
+                }
+            }
+
+            return fallBubbleList;
+        }
+
+        private Bubble GetMergeBubble(int id, List<Bubble> mergedBubbleList)
+        {
+            int newId = _bubbleDataSO.GetMultipliedId(id, mergedBubbleList.Count);
+
+            Bubble loopBubble = null;
+            List<Bubble> tempNeighbourList;
+
+            for (int i = 0; i < mergedBubbleList.Count; i++)
+            {
+                tempNeighbourList = mergedBubbleList[i].GetNeighbourBubbles();
 
                 for (int j = 0; j < tempNeighbourList.Count; j++)
                 {
                     loopBubble = tempNeighbourList[j];
 
-                    if (!matchedBubbleList.Contains(loopBubble) && loopBubble.BubbleData.id == newId)
+                    if (!mergedBubbleList.Contains(loopBubble) && loopBubble.BubbleData.id == newId)
                     {
-                        return matchedBubbleList[i];
+                        return mergedBubbleList[i];
                     }
                 }
             }
 
-            return matchedBubbleList[^1];
+            return mergedBubbleList[^1];
         }
 
         private void HandleCombo()
@@ -267,6 +312,7 @@ namespace Assets.Scripts.BubbleSystem
             bubble.ExplodeEvent -= ExplodeBubble;
 
             List<Bubble> neighbourList = bubble.GetNeighbourBubbles();
+            HandleFall(neighbourList);
             neighbourList.Add(bubble);
 
             Bubble loopBubble = null;
@@ -279,6 +325,9 @@ namespace Assets.Scripts.BubbleSystem
                     _particlePlayer.PlayParticle(loopBubble.BubbleData.id, loopBubble.transform.position);
                     _generalScoreHandler.UpdateScore(loopBubble.BubbleData.id);
                     _scoreHandler.ShowScore(loopBubble.BubbleData.id, loopBubble.transform.position);
+
+                    if (loopBubble.IsCeiling)
+                        _ceilingBubbleList.Remove(loopBubble);
 
                     _activeBubbleList.Remove(loopBubble);
                     loopBubble.Dispose();
@@ -295,7 +344,7 @@ namespace Assets.Scripts.BubbleSystem
 
             List<Bubble> neighbourBubbleList = bubble.GetNeighbourBubbles();
 
-            if (IsThereAnyMatch(bubble, neighbourBubbleList))
+            if (IsThereAnyMatch(bubble, neighbourBubbleList) && !bubble.IsDisposed)
             {
                 StartCoroutine(OnMatch(bubble));
             }
@@ -309,21 +358,27 @@ namespace Assets.Scripts.BubbleSystem
 
         private IEnumerator OnMatch(Bubble bubble)
         {
-            List<Bubble> matchedBubbleList = GetBubblesWithSameId(bubble);
+            List<Bubble> mergedBubbleList = GetBubblesWithSameId(bubble);
+
+            Bubble mergeBubble = GetMergeBubble(bubble.BubbleData.id, mergedBubbleList);
+
             
-            Bubble mergeBubble = GetMergeBubble(bubble.BubbleData.id, matchedBubbleList);
-            if (matchedBubbleList.Contains(mergeBubble))
-            matchedBubbleList.Remove(mergeBubble);
+
+            if (mergedBubbleList.Contains(mergeBubble))
+                mergedBubbleList.Remove(mergeBubble);
 
             yield return new WaitForSeconds(0.1f);
 
             Bubble loopBubble = null;
 
-            for (int i = 0; i < matchedBubbleList.Count; i++)
+            for (int i = 0; i < mergedBubbleList.Count; i++)
             {
-                loopBubble = matchedBubbleList[i];
-                _activeBubbleList.Remove(loopBubble);
+                loopBubble = mergedBubbleList[i];
                 loopBubble.ExplodeEvent -= ExplodeBubble;
+
+                if (loopBubble.IsCeiling)
+                    _ceilingBubbleList.Remove(loopBubble);
+                _activeBubbleList.Remove(loopBubble);
 
                 _generalScoreHandler.UpdateScore(loopBubble.BubbleData.id);
                 _scoreHandler.ShowScore(loopBubble.BubbleData.id, loopBubble.transform.position);
@@ -334,9 +389,11 @@ namespace Assets.Scripts.BubbleSystem
             }
 
             HandleCombo();
+
             yield return new WaitForSeconds(0.2f);
 
-            mergeBubble.UpdateBubble(_bubbleDataSO.GetBubbleDataByMultiplication(mergeBubble.BubbleData.id, matchedBubbleList.Count + 1));
+            mergeBubble.UpdateBubble(_bubbleDataSO.GetBubbleDataByMultiplication(mergeBubble.BubbleData.id, mergedBubbleList.Count + 1));
+            HandleFall(mergedBubbleList);
             HapticExtensions.PlayLightHaptic();
 
             MatchProcess(mergeBubble);
@@ -373,7 +430,7 @@ namespace Assets.Scripts.BubbleSystem
             List<Bubble> finalBubbles = new List<Bubble>();
             finalBubbles.Add(bubble);
 
-            tempBubbles = bubble.GetNeighbourBubblesWithTheSameId();
+            tempBubbles = bubble.GetNeighbourBubblesWithSameId();
 
             for (int i = 0; i < tempBubbles.Count; i++)
             {
@@ -382,7 +439,7 @@ namespace Assets.Scripts.BubbleSystem
                 if (!finalBubbles.Contains(loopBubble))
                 {
                     finalBubbles.Add(loopBubble);
-                    tempBubbles.AddRange(loopBubble.GetNeighbourBubblesWithTheSameId());
+                    tempBubbles.AddRange(loopBubble.GetNeighbourBubblesWithSameId());
                 }
             }
 

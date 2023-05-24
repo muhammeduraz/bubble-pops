@@ -44,13 +44,7 @@ namespace Assets.Scripts.SceneSystem
         {
             _loadingPanel = null;
         }
-        private void Update()
-        {
-            if (Input.GetKeyDown(KeyCode.S))
-            {
-                ReloadCurrentLevel();
-            }
-        }
+
         public void ReloadCurrentLevel()
         {
             StartCoroutine(LoadSceneAsync(GameScene, LoadSceneMode.Additive));

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using Assets.Scripts.HapticSystem;
 using Assets.Scripts.ProductSystem;
 using Assets.Scripts.BubbleSystem.Data;
+using System.Linq;
 
 namespace Assets.Scripts.BubbleSystem
 {
@@ -20,6 +21,9 @@ namespace Assets.Scripts.BubbleSystem
         #endregion Events
 
         #region Variables
+
+        private bool _isCeiling;
+        private bool _isDisposed;
 
         private Tween _scaleTween;
         private Tween _movementTween;
@@ -61,6 +65,8 @@ namespace Assets.Scripts.BubbleSystem
 
         #region Properties
 
+        public bool IsCeiling { get => _isCeiling; set => _isCeiling = value; }
+        public bool IsDisposed { get => _isDisposed; set => _isDisposed = value; }
         public BubbleData BubbleData { get => _bubbleData; set => _bubbleData = value; }
         public Action<Bubble> SendToPool { get => DisposeEvent; set => DisposeEvent = value; }
         public TrailRenderer TrailRenderer { get => _trailRenderer; }
@@ -71,6 +77,7 @@ namespace Assets.Scripts.BubbleSystem
 
         public void Initialize()
         {
+            _isDisposed = false;
             _trailRenderer.enabled = false;
 
             _neighbourColliders = new Collider[9];
@@ -82,6 +89,9 @@ namespace Assets.Scripts.BubbleSystem
 
         public void Dispose()
         {
+            _isCeiling = false;
+            _isDisposed = true;
+
             transform.localScale = Vector3.zero;
 
             _scaleTween?.Kill();
@@ -120,7 +130,7 @@ namespace Assets.Scripts.BubbleSystem
             _idText.text = text;
         }
 
-        private void SetColor(Color color, bool withTween, float duration = 0.2f)
+        public void SetColor(Color color, bool withTween, float duration = 0.2f)
         {
             if (!withTween)
             {
@@ -135,6 +145,47 @@ namespace Assets.Scripts.BubbleSystem
         public void SetPosition(Vector3 position)
         {
             transform.position = position;
+        }
+
+        public void Fall(Action action)
+        {
+            _collider.enabled = false;
+            float duration = Mathf.Abs(transform.position.y - -3.5f) * .2f;
+            transform.DOMoveY(-3.5f, duration).SetEase(Ease.InCubic).OnComplete(() =>
+            {
+                action?.Invoke();
+                Dispose();
+            });
+        }
+
+        public bool IsFallable()
+        {
+            List<Bubble> neighbourBubbleList = GetNeighbourBubbles();
+            List<Bubble> checkedBubbleList = new List<Bubble>();
+            checkedBubbleList.Add(this);
+
+            Bubble loopBubble = null;
+
+            for (int i = 0; i < neighbourBubbleList.Count; i++)
+            {
+                loopBubble = neighbourBubbleList[i];
+
+                if (loopBubble.IsCeiling) return false;
+                if (!checkedBubbleList.Contains(loopBubble))
+                {
+                    List<Bubble> tempList = loopBubble.GetNeighbourBubbles();
+                    for (int j = 0; j < tempList.Count; j++)
+                    {
+                        if (!neighbourBubbleList.Contains(tempList[j]))
+                        {
+                            neighbourBubbleList.Add(tempList[j]);
+                        }
+                    }
+                    checkedBubbleList.Add(loopBubble);
+                }
+            }
+
+            return true;
         }
 
         public void MoveTo(Vector3 targetPosition, float duration = 0.25f)
@@ -254,7 +305,7 @@ namespace Assets.Scripts.BubbleSystem
             return bubbleList;
         }
 
-        public List<Bubble> GetNeighbourBubblesWithTheSameId()
+        public List<Bubble> GetNeighbourBubblesWithSameId()
         {
             List<Bubble> neighbourList = GetNeighbourBubbles();
 
@@ -264,6 +315,24 @@ namespace Assets.Scripts.BubbleSystem
                 loopBubble = neighbourList[i];
 
                 if (loopBubble._bubbleData.id != _bubbleData.id)
+                {
+                    neighbourList.RemoveAt(i);
+                }
+            }
+
+            return neighbourList;
+        }
+
+        public List<Bubble> GetNeighbourBubblesWithDifferentId()
+        {
+            List<Bubble> neighbourList = GetNeighbourBubbles();
+
+            Bubble loopBubble = null;
+            for (int i = neighbourList.Count - 1; i >= 0; i--)
+            {
+                loopBubble = neighbourList[i];
+
+                if (loopBubble.BubbleData != null && _bubbleData != null && loopBubble._bubbleData.id == _bubbleData.id)
                 {
                     neighbourList.RemoveAt(i);
                 }
