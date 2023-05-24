@@ -12,3 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6aad922cc69df3142a26b67df4f01589, type: 3}
   m_Name: CameraSettings
   m_EditorClassIdentifier: 
+  shakeDuration: 0.2
+  shakeStrength: 0.1
+  shakeVibrato: 30
