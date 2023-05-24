@@ -234,9 +234,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _mainCamera: {fileID: 2094164086675579359}
   _gameCamera: {fileID: 2094164087629177186}
-  _shakeDuration: 0.2
-  _shakeStrength: 0.1
-  _shakeVibrato: 30
+  _settings: {fileID: 11400000, guid: 52f731d7774832943a198927d5ebf20c, type: 2}
 --- !u!1 &2094164087629177196
 GameObject:
   m_ObjectHideFlags: 0

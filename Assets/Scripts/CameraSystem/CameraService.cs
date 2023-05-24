@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using Cinemachine;
 using DG.Tweening;
+using Assets.Scripts.CameraSystem.Data;
 
 namespace Assets.Scripts.CameraSystem
 {
@@ -12,9 +13,7 @@ namespace Assets.Scripts.CameraSystem
         [SerializeField] private Camera _mainCamera;
         [SerializeField] private CinemachineVirtualCamera _gameCamera;
 
-        [SerializeField] private float _shakeDuration;
-        [SerializeField] private float _shakeStrength;
-        [SerializeField] private int _shakeVibrato;
+        [SerializeField] private CameraSettings _settings;
 
         #endregion Variables
 
@@ -47,7 +46,7 @@ namespace Assets.Scripts.CameraSystem
 
         public void ShakeCamera()
         {
-            _gameCamera.transform.DOShakePosition(_shakeDuration, _shakeStrength, _shakeVibrato);
+            _gameCamera.transform.DOShakePosition(_settings.shakeDuration, _settings.shakeStrength, _settings.shakeVibrato);
         }
 
         #endregion Functions
