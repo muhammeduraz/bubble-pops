@@ -5,6 +5,7 @@ using DG.Tweening;
 using System.Collections.Generic;
 using Assets.Scripts.HapticSystem;
 using Assets.Scripts.ProductSystem;
+using Assets.Scripts.ThrowSystem.Data;
 using Assets.Scripts.BubbleSystem.Data;
 
 namespace Assets.Scripts.BubbleSystem
@@ -47,8 +48,7 @@ namespace Assets.Scripts.BubbleSystem
             new Vector3(-1f, 0f, 0f),
         };
 
-        [SerializeField] private float _distance;
-        [SerializeField] private float _duration;
+        [SerializeField] private ThrowSettings _throwSettings;
 
         [SerializeField] private float _shakeAmount;
         [SerializeField] private float _shakeDuration;
@@ -236,9 +236,14 @@ namespace Assets.Scripts.BubbleSystem
 
             for (int i = 0; i < targetPositions.Length; i++)
             {
-                distance = Vector3.Distance(transform.position, targetPositions[i]);
-                throwDuration = (distance * _duration) / _distance;
-                _throwSequence.Append(transform.DOMove(targetPositions[i], throwDuration / targetPositions.Length).SetEase(Ease.Linear));
+                if (i == 0)
+                    distance = Vector3.Distance(transform.position, targetPositions[i]);
+                else
+                    distance = Vector3.Distance(targetPositions[i - 1], targetPositions[i]);
+
+                throwDuration = _throwSettings.GetThrowDuration(distance);
+
+                _throwSequence.Append(transform.DOMove(targetPositions[i], throwDuration).SetEase(Ease.Linear));
             }
 
             _throwSequence.OnComplete(() =>

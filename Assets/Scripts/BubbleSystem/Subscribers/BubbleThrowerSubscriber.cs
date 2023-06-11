@@ -1,4 +1,5 @@
 using Assets.Scripts.InputSystem;
+using Assets.Scripts.ThrowSystem;
 using Assets.Scripts.SubscriberSystem;
 
 namespace Assets.Scripts.BubbleSystem.Subscriber

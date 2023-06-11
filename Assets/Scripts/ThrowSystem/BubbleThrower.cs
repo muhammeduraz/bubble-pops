@@ -2,11 +2,12 @@ using System;
 using UnityEngine;
 using DG.Tweening;
 using System.Collections.Generic;
+using Assets.Scripts.BubbleSystem;
 using Assets.Scripts.HapticSystem;
 using Assets.Scripts.EnvironmentSystem;
 using Assets.Scripts.BubbleSystem.Data;
 
-namespace Assets.Scripts.BubbleSystem
+namespace Assets.Scripts.ThrowSystem
 {
     public class BubbleThrower : MonoBehaviour, IDisposable
     {

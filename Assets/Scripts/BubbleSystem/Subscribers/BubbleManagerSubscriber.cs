@@ -1,4 +1,5 @@
 using Assets.Scripts.Particle;
+using Assets.Scripts.ThrowSystem;
 using Assets.Scripts.CameraSystem;
 using Assets.Scripts.SubscriberSystem;
 using Assets.Scripts.CanvasSystem.Score.Combo;

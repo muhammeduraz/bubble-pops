@@ -2,7 +2,7 @@ using System;
 using DG.Tweening;
 using UnityEngine;
 
-namespace Assets.Scripts.BubbleSystem
+namespace Assets.Scripts.ThrowSystem
 {
     public class ThrowGuide : MonoBehaviour, IDisposable
     {
