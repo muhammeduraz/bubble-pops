@@ -24,7 +24,8 @@ namespace Assets.Scripts.ThrowSystem
         #region Variables
 
         private bool _isFingerDown;
-        private bool _isThrowActive;
+        private bool _isMergeCompleted;
+        private bool _isNextBubbleReady;
 
         private Camera _camera;
 
@@ -71,7 +72,8 @@ namespace Assets.Scripts.ThrowSystem
         private void Initialize()
         {
             _camera = Camera.main;
-            _isThrowActive = true;
+            _isMergeCompleted = true;
+            _isNextBubbleReady = true;
 
             InitializeLineRenderer();
             InitializeCurrentAndNextBubbles();
@@ -89,7 +91,7 @@ namespace Assets.Scripts.ThrowSystem
 
         public void OnMergeOperationCompleted()
         {
-            _isThrowActive = true;
+            _isMergeCompleted = true;
         }
 
         private Vector3 GetScreenPosition(Vector3 mousePosition)
@@ -113,6 +115,8 @@ namespace Assets.Scripts.ThrowSystem
                 .AppendInterval(0.2f)
                 .Append(_currentBubble.transform.DOScale(1f, 0.2f))
                 .Append(_currentBubble.transform.DOMove(_currentBubbleTransform.position, 0.2f));
+
+            _currentBubbleSequence.OnComplete(() => _isNextBubbleReady = true);
         }
 
         private void GetNewNextBubble()
@@ -165,7 +169,7 @@ namespace Assets.Scripts.ThrowSystem
 
         private void ThrowBubble()
         {
-            _isThrowActive = false;
+            _isMergeCompleted = false;
 
             Vector3[] targetPositions = GetThrowPath();
             _currentBubble.Throw(targetPositions);
@@ -288,7 +292,7 @@ namespace Assets.Scripts.ThrowSystem
 
         public void OnFingerDown(Vector3 mousePosition)
         {
-            if (!_isThrowActive) return;
+            if (!_isMergeCompleted || !_isNextBubbleReady) return;
             _isFingerDown = true;
 
             FireRay(mousePosition);
@@ -297,16 +301,17 @@ namespace Assets.Scripts.ThrowSystem
 
         public void OnFinger(Vector3 mousePosition)
         {
-            if (!_isThrowActive || !_isFingerDown) return;
+            if (!_isMergeCompleted || !_isFingerDown) return;
 
             FireRay(mousePosition);
         }
 
         public void OnFingerUp(Vector3 mousePosition)
         {
-            if (!_isThrowActive || !_isFingerDown) return;
+            if (!_isMergeCompleted || !_isNextBubbleReady || !_isFingerDown) return;
             _isFingerDown = false;
-            
+            _isNextBubbleReady = false;
+
             _lineRenderer.enabled = false;
 
             ThrowBubble();

@@ -83,7 +83,7 @@ namespace Assets.Scripts.BubbleSystem.Subscriber
 
             _bubbleManager.BubbleParticleRequested -= _particlePlayer.PlayBubbleParticle;
 
-            _bubbleManager.MergeOperationCompleted += _bubbleThrower.OnMergeOperationCompleted;
+            _bubbleManager.MergeOperationCompleted -= _bubbleThrower.OnMergeOperationCompleted;
         }
 
         #endregion Functions
