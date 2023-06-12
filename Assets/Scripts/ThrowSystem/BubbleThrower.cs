@@ -36,6 +36,7 @@ namespace Assets.Scripts.ThrowSystem
         private Sequence _currentBubbleSequence;
 
         private Vector3 _targetPosition;
+        private Vector3[] _cachedTargetPositions;
         private List<Vector3> _cachedPositionList;
 
         [SerializeField] private LayerMask _wallLayerMask;
@@ -149,30 +150,27 @@ namespace Assets.Scripts.ThrowSystem
             _throwGuide.SetColor(_currentBubble.BubbleData.color);
         }
 
-        private Vector3[] GetThrowPath()
+        private void CacheThrowPath()
         {
-            Vector3[] targetPositions;
-
             if (_lineRenderer.GetPosition(0) == _lineRenderer.GetPosition(1) || _lineRenderer.GetPosition(1).y > _targetPosition.y)
             {
-                targetPositions = new Vector3[1];
+                _cachedTargetPositions = new Vector3[1];
             }
             else
             {
-                targetPositions = new Vector3[2];
-                targetPositions[0] = _lineRenderer.GetPosition(1);
+                _cachedTargetPositions = new Vector3[2];
+                _cachedTargetPositions[0] = _lineRenderer.GetPosition(1);
             }
 
-            targetPositions[^1] = _targetPosition;
-            return targetPositions;
+            _cachedTargetPositions[^1] = _targetPosition;
         }
 
         private void ThrowBubble()
         {
             _isMergeCompleted = false;
 
-            Vector3[] targetPositions = GetThrowPath();
-            _currentBubble.Throw(targetPositions);
+            CacheThrowPath();
+            _currentBubble.Throw(_cachedTargetPositions);
         }
 
         private void InitializeLineRenderer()
