@@ -1,5 +1,5 @@
 using Assets.Scripts.SceneSystem;
-using Assets.Scripts.SubscriberSystem;
+using Assets.Scripts.SubscribeSystem;
 
 namespace Assets.Scripts.CanvasSystem.Buttons
 {
@@ -15,30 +15,28 @@ namespace Assets.Scripts.CanvasSystem.Buttons
 
         #region Functions
 
-        protected override void OnInitialize()
+        protected override void Initialize()
         {
-            base.OnInitialize();
-
             _retryButton = FindObjectOfType<RetryButton>();
+
             _sceneService = FindObjectOfType<SceneService>();
         }
 
-        protected override void OnDispose()
+        protected override void Dispose()
         {
-            base.OnDispose();
-
             _retryButton = null;
+
             _sceneService = null;
         }
 
-        protected override void Subscribe()
+        protected override void SubscribeEvents()
         {
             if (_retryButton == null || _sceneService == null) return;
 
             _retryButton.ReloadSceneRequested += _sceneService.ReloadCurrentLevel;
         }
 
-        protected override void UnSubscribe()
+        protected override void UnSubscribeEvents()
         {
             if (_retryButton == null || _sceneService == null) return;
 

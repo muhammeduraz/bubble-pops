@@ -150,6 +150,7 @@ namespace Assets.Scripts.BubbleSystem
         {
             _collider.enabled = false;
             float duration = Mathf.Abs(transform.position.y - -3.5f) * .2f;
+            
             transform.DOMoveY(-3.5f, duration).SetEase(Ease.InCubic).OnComplete(() =>
             {
                 action?.Invoke();

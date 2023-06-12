@@ -1,0 +1,39 @@
+using System;
+using UnityEngine;
+using Assets.Scripts.SubscribeSystem;
+
+namespace Assets.Scripts
+{
+    public class #SCRIPTNAME# : BaseSubscriber 
+    {
+        #region Variables
+
+
+
+        #endregion Variables
+
+        #region Functions
+
+        protected override void Initialize()
+        {
+
+        }
+
+        protected override void Dispose()
+        {
+
+        }
+
+        protected override void SubscribeEvents()
+        {
+            
+        }
+
+        protected override void UnSubscribeEvents()
+        {
+            
+        }
+
+        #endregion Functions
+    }
+}

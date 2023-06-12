@@ -170,10 +170,10 @@ namespace Assets.Scripts.BubbleSystem
                 }
             }
 
-            fallList.ForEach(dallBubble =>
+            fallList.ForEach(fallBubble =>
             {
-                _bubbleCreator.ActiveBubbleList.Remove(dallBubble);
-                dallBubble.Fall(() => BubbleParticleRequested?.Invoke(dallBubble.BubbleData.id, dallBubble.transform.position));
+                _bubbleCreator.ActiveBubbleList.Remove(fallBubble);
+                fallBubble.Fall(() => BubbleParticleRequested?.Invoke(fallBubble.BubbleData.id, fallBubble.transform.position));
             });
         }
 

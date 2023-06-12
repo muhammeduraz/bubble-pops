@@ -1,6 +1,6 @@
 using Assets.Scripts.InputSystem;
 using Assets.Scripts.ThrowSystem;
-using Assets.Scripts.SubscriberSystem;
+using Assets.Scripts.SubscribeSystem;
 
 namespace Assets.Scripts.BubbleSystem.Subscriber
 {
@@ -17,27 +17,23 @@ namespace Assets.Scripts.BubbleSystem.Subscriber
 
         #region Functions
 
-        protected override void OnInitialize()
+        protected override void Initialize()
         {
-            base.OnInitialize();
-
             _bubbleThrower = FindObjectOfType<BubbleThrower>();
 
             _inputHandler = FindObjectOfType<InputHandler>();
             _bubbleManager = FindObjectOfType<BubbleManager>();
         }
 
-        protected override void OnDispose()
+        protected override void Dispose()
         {
-            base.OnDispose();
-
             _bubbleThrower = null;
 
             _inputHandler = null;
             _bubbleManager = null;
         }
 
-        protected override void Subscribe()
+        protected override void SubscribeEvents()
         {
             if (_bubbleThrower == null) return;
 
@@ -49,7 +45,7 @@ namespace Assets.Scripts.BubbleSystem.Subscriber
             _bubbleThrower.ThrowBubbleRequested += _bubbleManager.OnThrowBubbleRequested;
         }
 
-        protected override void UnSubscribe()
+        protected override void UnSubscribeEvents()
         {
             if (_bubbleThrower == null) return;
 

@@ -1,7 +1,7 @@
 using Assets.Scripts.Particle;
 using Assets.Scripts.ThrowSystem;
 using Assets.Scripts.CameraSystem;
-using Assets.Scripts.SubscriberSystem;
+using Assets.Scripts.SubscribeSystem;
 using Assets.Scripts.CanvasSystem.Score.Combo;
 using Assets.Scripts.CanvasSystem.Score.General;
 using Assets.Scripts.CanvasSystem.Score.BubbleScore;
@@ -25,10 +25,8 @@ namespace Assets.Scripts.BubbleSystem.Subscriber
 
         #region Functions
 
-        protected override void OnInitialize()
+        protected override void Initialize()
         {
-            base.OnInitialize();
-
             _bubbleManager = FindObjectOfType<BubbleManager>();
 
             _bubbleThrower = FindObjectOfType<BubbleThrower>();
@@ -39,12 +37,11 @@ namespace Assets.Scripts.BubbleSystem.Subscriber
             _generalScoreHandler = FindObjectOfType<GeneralScoreHandler>();
         }
 
-        protected override void OnDispose()
+        protected override void Dispose()
         {
-            base.OnDispose();
-
             _bubbleManager = null;
 
+            _bubbleThrower = null;
             _cameraService = null;
             _particlePlayer = null;
             _comboHandler = null;
@@ -52,7 +49,7 @@ namespace Assets.Scripts.BubbleSystem.Subscriber
             _generalScoreHandler = null;
         }
 
-        protected override void Subscribe()
+        protected override void SubscribeEvents()
         {
             if (_bubbleManager == null) return;
 
@@ -69,7 +66,7 @@ namespace Assets.Scripts.BubbleSystem.Subscriber
             _bubbleManager.MergeOperationCompleted += _bubbleThrower.OnMergeOperationCompleted;
         }
 
-        protected override void UnSubscribe()
+        protected override void UnSubscribeEvents()
         {
             if (_bubbleManager == null) return;
 
