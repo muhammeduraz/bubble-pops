@@ -32,6 +32,8 @@ namespace Assets.Scripts.BubbleSystem
 
         private BubbleCreator _bubbleCreator;
 
+        private List<Bubble> _cachedFallList;
+
         [SerializeField] private int _minActiveBubbleToCreateNewLine;
 
         [SerializeField] private BubbleDataSO _bubbleDataSO;
@@ -61,6 +63,8 @@ namespace Assets.Scripts.BubbleSystem
             _waitForSeconds_02 = new WaitForSeconds(0.2f);
 
             _bubbleCreator = new BubbleCreator(_bubbleDataSO, _bubbleCreatorSettings, transform);
+
+            _cachedFallList = new List<Bubble>();
 
             Subscribe(true);
             StartCoroutine(_bubbleCreator.CreateInitialPile());
@@ -153,10 +157,10 @@ namespace Assets.Scripts.BubbleSystem
 
         #region Fall Functions
 
-        private void HandleFall(List<Bubble> matchedBubbleList)
+        private IEnumerator HandleFall(List<Bubble> matchedBubbleList)
         {
             List<Bubble> fallBubbleList = GetBubblesThatEffectedByMerge(matchedBubbleList);
-            List<Bubble> fallList = new List<Bubble>();
+            _cachedFallList = new List<Bubble>();
 
             Bubble loopBubble = null;
 
@@ -166,15 +170,20 @@ namespace Assets.Scripts.BubbleSystem
 
                 if (loopBubble.IsFallable())
                 {
-                    fallList.Add(loopBubble);
+                    _cachedFallList.Add(loopBubble);
                 }
             }
 
-            fallList.ForEach(fallBubble =>
+            if (_cachedFallList.Count < 1) yield return null;
+
+            _cachedFallList.ForEach(fallBubble =>
             {
                 _bubbleCreator.ActiveBubbleList.Remove(fallBubble);
                 fallBubble.Fall(() => BubbleParticleRequested?.Invoke(fallBubble.BubbleData.id, fallBubble.transform.position));
             });
+
+            HapticExtensions.PlayLightHaptic();
+            yield return _waitForSeconds_02;
         }
 
         private List<Bubble> GetBubblesThatEffectedByMerge(List<Bubble> matchedBubbleList)
@@ -223,9 +232,11 @@ namespace Assets.Scripts.BubbleSystem
             else
             {
                 OnNonMerge();
-            }
 
-            MoveDownAndCreateLine();
+                yield return _waitForSeconds_02;
+
+                MoveDownAndCreateLine();
+            }
         }
 
         private void OnNonMerge()
@@ -266,12 +277,10 @@ namespace Assets.Scripts.BubbleSystem
             }
 
             HandleCombo();
-
-            yield return _waitForSeconds_02;
+            HapticExtensions.PlayLightHaptic();
 
             mergeBubble.UpdateBubble(_bubbleDataSO.GetBubbleDataByMultiplication(mergeBubble.BubbleData.id, mergedBubbleList.Count + 1));
-            HandleFall(mergedBubbleList);
-            HapticExtensions.PlayLightHaptic();
+            yield return HandleFall(mergedBubbleList);
 
             MergeProcess(mergeBubble);
         }
