@@ -6,6 +6,7 @@ using Assets.Scripts.HapticSystem;
 using Assets.Scripts.BubbleSystem.Data;
 using Assets.Scripts.BubbleSystem.Creator;
 using Assets.Scripts.BubbleSystem.Creator.Data;
+using TMPro;
 
 namespace Assets.Scripts.BubbleSystem
 {
@@ -109,7 +110,7 @@ namespace Assets.Scripts.BubbleSystem
             MoveAllBubblesDown();
             _bubbleCreator.CreateLinePile();
         }
-        
+
         private void HandleCombo()
         {
             _comboCounter++;
@@ -157,7 +158,7 @@ namespace Assets.Scripts.BubbleSystem
 
         #region Fall Functions
 
-        private IEnumerator HandleFall(List<Bubble> matchedBubbleList)
+        private void HandleFall(List<Bubble> matchedBubbleList)
         {
             List<Bubble> fallBubbleList = GetBubblesThatEffectedByMerge(matchedBubbleList);
             _cachedFallList = new List<Bubble>();
@@ -174,7 +175,7 @@ namespace Assets.Scripts.BubbleSystem
                 }
             }
 
-            if (_cachedFallList.Count < 1) yield return null;
+            //if (_cachedFallList.Count < 1) yield return null;
 
             _cachedFallList.ForEach(fallBubble =>
             {
@@ -183,7 +184,7 @@ namespace Assets.Scripts.BubbleSystem
             });
 
             HapticExtensions.PlayLightHaptic();
-            yield return _waitForSeconds_02;
+            //yield return _waitForSeconds_02;
         }
 
         private List<Bubble> GetBubblesThatEffectedByMerge(List<Bubble> matchedBubbleList)
@@ -223,19 +224,21 @@ namespace Assets.Scripts.BubbleSystem
         private IEnumerator MergeProcessCoroutine(Bubble bubble)
         {
             _bubbleCreator.AddBubble(bubble);
+
+            bubble.IsThrowBubble = false;
             bubble.ThrowEvent -= MergeProcess;
 
-            if (!bubble.IsDisposed && bubble.IsMergable())
+            if (!bubble.IsDisposed && bubble.IsMergable() && !bubble.IsExploded)
             {
                 yield return StartCoroutine(OnMerge(bubble));
             }
             else
             {
-                OnNonMerge();
+                MoveDownAndCreateLine();
 
                 yield return _waitForSeconds_02;
 
-                MoveDownAndCreateLine();
+                OnNonMerge();
             }
         }
 
@@ -279,8 +282,12 @@ namespace Assets.Scripts.BubbleSystem
             HandleCombo();
             HapticExtensions.PlayLightHaptic();
 
+            yield return _waitForSeconds_02;
+            
             mergeBubble.UpdateBubble(_bubbleDataSO.GetBubbleDataByMultiplication(mergeBubble.BubbleData.id, mergedBubbleList.Count + 1));
-            yield return HandleFall(mergedBubbleList);
+            
+            //yield return HandleFall(mergedBubbleList);
+            HandleFall(mergedBubbleList);
 
             MergeProcess(mergeBubble);
         }
@@ -307,7 +314,30 @@ namespace Assets.Scripts.BubbleSystem
                 }
             }
 
-            return GetHighestPreferredMergeBubble(mergedBubbleList);
+            loopBubble = GetPreferredMergeBubbleThatHasNeighboursWithDifferentId(mergedBubbleList);
+
+            if (loopBubble != null)
+                return loopBubble;
+
+            loopBubble = GetHighestPreferredMergeBubble(mergedBubbleList);
+            return loopBubble;
+        }
+
+        private Bubble GetPreferredMergeBubbleThatHasNeighboursWithDifferentId(List<Bubble> mergedBubbleList)
+        {
+            Bubble loopBubble = null;
+
+            for (int i = 0; i < mergedBubbleList.Count; i++)
+            {
+                loopBubble = mergedBubbleList[i];
+
+                if (loopBubble.GetNeighbourBubblesWithDifferentId().Count > 0)
+                {
+                    return loopBubble;
+                }
+            }
+
+            return null;
         }
 
         private Bubble GetHighestPreferredMergeBubble(List<Bubble> mergedBubbleList)
@@ -347,6 +377,7 @@ namespace Assets.Scripts.BubbleSystem
         {
             Bubble bubble = _bubbleCreator.GetBubble();
             bubble.ThrowEvent += MergeProcess;
+            bubble.IsThrowBubble = true;
 
             return bubble;
         }

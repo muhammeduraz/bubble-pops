@@ -24,6 +24,8 @@ namespace Assets.Scripts.BubbleSystem
 
         private bool _isCeiling;
         private bool _isDisposed;
+        private bool _isExploded;
+        private bool _isThrowBubble;
 
         private Tween _scaleTween;
         private Tween _movementTween;
@@ -66,6 +68,8 @@ namespace Assets.Scripts.BubbleSystem
 
         public bool IsCeiling { get => _isCeiling; set => _isCeiling = value; }
         public bool IsDisposed { get => _isDisposed; set => _isDisposed = value; }
+        public bool IsExploded { get => _isExploded; set => _isExploded = value; }
+        public bool IsThrowBubble { get => _isThrowBubble; set => _isThrowBubble = value; }
         public BubbleData BubbleData { get => _bubbleData; set => _bubbleData = value; }
         public Action<Bubble> SendToPool { get => DisposeEvent; set => DisposeEvent = value; }
         public TrailRenderer TrailRenderer { get => _trailRenderer; }
@@ -77,6 +81,7 @@ namespace Assets.Scripts.BubbleSystem
         public void Initialize()
         {
             _isDisposed = false;
+            _isExploded = false;
             _trailRenderer.enabled = false;
 
             _neighbourColliders = new Collider[9];
@@ -120,8 +125,20 @@ namespace Assets.Scripts.BubbleSystem
             _bubbleData = bubbleData;
             UpdateBubble();
 
-            if (_bubbleData.id == 2048)
-                ExplodeEvent?.Invoke(this);
+            ExplodeBubbleIfPossible();
+        }
+
+        private void ExplodeBubbleIfPossible()
+        {
+            if (_bubbleData.id != 2048) return;
+
+            ExplodeBubble();
+        }
+
+        private void ExplodeBubble()
+        {
+            _isExploded = true;
+            ExplodeEvent?.Invoke(this);
         }
 
         private void SetText(string text)
@@ -406,7 +423,7 @@ namespace Assets.Scripts.BubbleSystem
             {
                 loopBubble = tempBubbleList[i];
 
-                if (!finalBubbleList.Contains(loopBubble))
+                if (!loopBubble.IsThrowBubble && !finalBubbleList.Contains(loopBubble))
                 {
                     finalBubbleList.Add(loopBubble);
                     AddRangeWithoutDuplicate(tempBubbleList, loopBubble.GetNeighbourBubblesWithSameId());
