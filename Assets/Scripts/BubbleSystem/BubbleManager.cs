@@ -6,7 +6,6 @@ using Assets.Scripts.HapticSystem;
 using Assets.Scripts.BubbleSystem.Data;
 using Assets.Scripts.BubbleSystem.Creator;
 using Assets.Scripts.BubbleSystem.Creator.Data;
-using TMPro;
 
 namespace Assets.Scripts.BubbleSystem
 {
@@ -125,7 +124,7 @@ namespace Assets.Scripts.BubbleSystem
 
         private void ExplodeBubble(Bubble bubble)
         {
-            bubble.ThrowEvent -= MergeProcess;
+            bubble.ThrowEvent -= OnThrow;
             bubble.ExplodeEvent -= ExplodeBubble;
 
             List<Bubble> neighbourList = bubble.GetNeighbourBubbles();
@@ -175,8 +174,6 @@ namespace Assets.Scripts.BubbleSystem
                 }
             }
 
-            //if (_cachedFallList.Count < 1) yield return null;
-
             _cachedFallList.ForEach(fallBubble =>
             {
                 _bubbleCreator.ActiveBubbleList.Remove(fallBubble);
@@ -184,7 +181,6 @@ namespace Assets.Scripts.BubbleSystem
             });
 
             HapticExtensions.PlayLightHaptic();
-            //yield return _waitForSeconds_02;
         }
 
         private List<Bubble> GetBubblesThatEffectedByMerge(List<Bubble> matchedBubbleList)
@@ -216,6 +212,16 @@ namespace Assets.Scripts.BubbleSystem
 
         #region Merge Functions
 
+        private void OnThrow(Bubble bubble)
+        {
+            bubble.IsThrowBubble = false;
+            bubble.ThrowEvent -= OnThrow;
+
+            _bubbleCreator.AddBubble(bubble);
+
+            MergeProcess(bubble);
+        }
+
         private void MergeProcess(Bubble bubble)
         {
             StartCoroutine(MergeProcessCoroutine(bubble));
@@ -223,11 +229,6 @@ namespace Assets.Scripts.BubbleSystem
 
         private IEnumerator MergeProcessCoroutine(Bubble bubble)
         {
-            _bubbleCreator.AddBubble(bubble);
-
-            bubble.IsThrowBubble = false;
-            bubble.ThrowEvent -= MergeProcess;
-
             if (!bubble.IsDisposed && bubble.IsMergable() && !bubble.IsExploded)
             {
                 yield return StartCoroutine(OnMerge(bubble));
@@ -286,8 +287,9 @@ namespace Assets.Scripts.BubbleSystem
             
             mergeBubble.UpdateBubble(_bubbleDataSO.GetBubbleDataByMultiplication(mergeBubble.BubbleData.id, mergedBubbleList.Count + 1));
             
-            //yield return HandleFall(mergedBubbleList);
             HandleFall(mergedBubbleList);
+
+            yield return _waitForSeconds_01;
 
             MergeProcess(mergeBubble);
         }
@@ -376,7 +378,7 @@ namespace Assets.Scripts.BubbleSystem
         public Bubble OnThrowBubbleRequested()
         {
             Bubble bubble = _bubbleCreator.GetBubble();
-            bubble.ThrowEvent += MergeProcess;
+            bubble.ThrowEvent += OnThrow;
             bubble.IsThrowBubble = true;
 
             return bubble;

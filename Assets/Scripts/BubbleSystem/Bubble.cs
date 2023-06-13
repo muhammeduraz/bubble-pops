@@ -166,7 +166,7 @@ namespace Assets.Scripts.BubbleSystem
         public void Fall(Action action)
         {
             _collider.enabled = false;
-            float duration = Mathf.Abs(transform.position.y - -3.5f) * .2f;
+            float duration = Mathf.Abs(transform.position.y + 3.5f) * .15f;
             
             transform.DOMoveY(-3.5f, duration).SetEase(Ease.InCubic).OnComplete(() =>
             {
