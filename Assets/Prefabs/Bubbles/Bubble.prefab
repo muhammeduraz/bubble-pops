@@ -193,6 +193,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _throwSettings: {fileID: 11400000, guid: af3a6139983d7674d8bb37215e03efee, type: 2}
+  _fallTargetHeight: -3.5
+  _fallDurationMultiplier: 0.15
   _shakeAmount: 0.1
   _shakeDuration: 0.2
   _bubbleWallMask:

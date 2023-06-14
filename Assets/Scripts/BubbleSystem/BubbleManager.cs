@@ -32,7 +32,7 @@ namespace Assets.Scripts.BubbleSystem
 
         private BubbleCreator _bubbleCreator;
 
-        private Bubble _cachedLoopBubble;
+        private Bubble _cachedTempBubble;
         private List<Bubble> _cachedFallList;
         private List<Bubble> _cachedNeighbourList;
 
@@ -92,17 +92,17 @@ namespace Assets.Scripts.BubbleSystem
 
         private void MoveAllBubblesDown()
         {
-            Bubble loopBubble = null;
-
             for (int i = 0; i < _bubbleCreator.ActiveBubbleList.Count; i++)
             {
-                loopBubble = _bubbleCreator.ActiveBubbleList[i];
+                _cachedTempBubble = _bubbleCreator.ActiveBubbleList[i];
 
-                if (loopBubble != null)
+                if (_cachedTempBubble != null)
                 {
-                    loopBubble.MoveDown(_bubbleCreatorSettings.verticalOffset);
+                    _cachedTempBubble.MoveDown(_bubbleCreatorSettings.verticalOffset);
                 }
             }
+
+            _cachedTempBubble = null;
         }
 
         private void MoveDownAndCreateLine()
@@ -134,25 +134,25 @@ namespace Assets.Scripts.BubbleSystem
             HandleFall(_cachedNeighbourList);
             _cachedNeighbourList.Add(bubble);
 
-            Bubble loopBubble = null;
             for (int i = 0; i < _cachedNeighbourList.Count; i++)
             {
-                loopBubble = _cachedNeighbourList[i];
+                _cachedTempBubble = _cachedNeighbourList[i];
 
-                if (loopBubble != null && loopBubble.BubbleData != null)
+                if (_cachedTempBubble != null && _cachedTempBubble.BubbleData != null)
                 {
-                    BubbleParticleRequested?.Invoke(loopBubble.BubbleData.id, loopBubble.transform.position);
-                    UpdateGeneralScore?.Invoke(loopBubble.BubbleData.id);
-                    ShowBubbleScore?.Invoke(loopBubble.BubbleData.id, loopBubble.transform.position);
+                    BubbleParticleRequested?.Invoke(_cachedTempBubble.BubbleData.id, _cachedTempBubble.transform.position);
+                    UpdateGeneralScore?.Invoke(_cachedTempBubble.BubbleData.id);
+                    ShowBubbleScore?.Invoke(_cachedTempBubble.BubbleData.id, _cachedTempBubble.transform.position);
 
-                    if (loopBubble.IsCeiling)
-                        _bubbleCreator.CeilingBubbleList.Remove(loopBubble);
+                    if (_cachedTempBubble.IsCeiling)
+                        _bubbleCreator.CeilingBubbleList.Remove(_cachedTempBubble);
 
-                    _bubbleCreator.ActiveBubbleList.Remove(loopBubble);
-                    loopBubble.Dispose();
+                    _bubbleCreator.ActiveBubbleList.Remove(_cachedTempBubble);
+                    _cachedTempBubble.Dispose();
                 }
             }
 
+            _cachedTempBubble = null;
             CameraShakeRequested.Invoke();
         }
 
@@ -165,15 +165,13 @@ namespace Assets.Scripts.BubbleSystem
             List<Bubble> fallBubbleList = GetBubblesThatEffectedByMerge(matchedBubbleList);
             _cachedFallList = new List<Bubble>();
 
-            Bubble loopBubble = null;
-
             for (int i = 0; i < _bubbleCreator.ActiveBubbleList.Count; i++)
             {
-                loopBubble = _bubbleCreator.ActiveBubbleList[i];
+                _cachedTempBubble = _bubbleCreator.ActiveBubbleList[i];
 
-                if (loopBubble.IsFallable())
+                if (_cachedTempBubble.IsFallable())
                 {
-                    _cachedFallList.Add(loopBubble);
+                    _cachedFallList.Add(_cachedTempBubble);
                 }
             }
 
@@ -183,6 +181,7 @@ namespace Assets.Scripts.BubbleSystem
                 fallBubble.Fall(() => BubbleParticleRequested?.Invoke(fallBubble.BubbleData.id, fallBubble.transform.position));
             });
 
+            _cachedTempBubble = null;
             HapticExtensions.PlayLightHaptic();
         }
 
@@ -191,22 +190,22 @@ namespace Assets.Scripts.BubbleSystem
             List<Bubble> tempBubbleList;
             List<Bubble> fallBubbleList = new List<Bubble>();
 
-            Bubble loopBubble = null;
-
             for (int i = 0; i < matchedBubbleList.Count; i++)
             {
                 tempBubbleList = matchedBubbleList[i].GetNeighbourBubblesWithDifferentId();
 
                 for (int j = 0; j < tempBubbleList.Count; j++)
                 {
-                    loopBubble = tempBubbleList[j];
+                    _cachedTempBubble = tempBubbleList[j];
 
-                    if (!matchedBubbleList.Contains(loopBubble) && !fallBubbleList.Contains(loopBubble))
+                    if (!matchedBubbleList.Contains(_cachedTempBubble) && !fallBubbleList.Contains(_cachedTempBubble))
                     {
-                        fallBubbleList.Add(loopBubble);
+                        fallBubbleList.Add(_cachedTempBubble);
                     }
                 }
             }
+
+            _cachedTempBubble = null;
 
             return fallBubbleList;
         }
@@ -232,7 +231,7 @@ namespace Assets.Scripts.BubbleSystem
 
         private IEnumerator MergeProcessCoroutine(Bubble bubble)
         {
-            if (!bubble.IsDisposed && bubble.IsMergable() && !bubble.IsExploded)
+            if (!bubble.IsDisposed && !bubble.IsExploded && bubble.IsMergable())
             {
                 yield return StartCoroutine(OnMerge(bubble));
             }
@@ -264,24 +263,24 @@ namespace Assets.Scripts.BubbleSystem
 
             yield return _waitForSeconds_01;
 
-            Bubble loopBubble = null;
-
             for (int i = 0; i < mergedBubbleList.Count; i++)
             {
-                loopBubble = mergedBubbleList[i];
-                loopBubble.ExplodeEvent -= ExplodeBubble;
+                _cachedTempBubble = mergedBubbleList[i];
+                _cachedTempBubble.ExplodeEvent -= ExplodeBubble;
 
-                if (loopBubble.IsCeiling)
-                    _bubbleCreator.CeilingBubbleList.Remove(loopBubble);
-                _bubbleCreator.ActiveBubbleList.Remove(loopBubble);
+                if (_cachedTempBubble.IsCeiling)
+                    _bubbleCreator.CeilingBubbleList.Remove(_cachedTempBubble);
+                _bubbleCreator.ActiveBubbleList.Remove(_cachedTempBubble);
 
-                UpdateGeneralScore?.Invoke(loopBubble.BubbleData.id);
-                ShowBubbleScore?.Invoke(loopBubble.BubbleData.id, loopBubble.transform.position);
+                UpdateGeneralScore?.Invoke(_cachedTempBubble.BubbleData.id);
+                ShowBubbleScore?.Invoke(_cachedTempBubble.BubbleData.id, _cachedTempBubble.transform.position);
 
-                BubbleParticleRequested?.Invoke(loopBubble.BubbleData.id, loopBubble.transform.position);
+                BubbleParticleRequested?.Invoke(_cachedTempBubble.BubbleData.id, _cachedTempBubble.transform.position);
 
-                loopBubble.MoveToDispose(mergeBubble.transform.position);
+                _cachedTempBubble.MoveToDispose(mergeBubble.transform.position);
             }
+
+            _cachedTempBubble = null;
 
             HandleCombo();
             HapticExtensions.PlayLightHaptic();
@@ -301,7 +300,6 @@ namespace Assets.Scripts.BubbleSystem
         {
             int newId = _bubbleDataSO.GetMultipliedId(id, mergedBubbleList.Count);
 
-            Bubble loopBubble = null;
             List<Bubble> tempNeighbourList;
 
             for (int i = 0; i < mergedBubbleList.Count; i++)
@@ -310,35 +308,33 @@ namespace Assets.Scripts.BubbleSystem
 
                 for (int j = 0; j < tempNeighbourList.Count; j++)
                 {
-                    loopBubble = tempNeighbourList[j];
+                    _cachedTempBubble = tempNeighbourList[j];
 
-                    if (!mergedBubbleList.Contains(loopBubble) && loopBubble.BubbleData.id == newId)
+                    if (!mergedBubbleList.Contains(_cachedTempBubble) && _cachedTempBubble.BubbleData.id == newId)
                     {
                         return mergedBubbleList[i];
                     }
                 }
             }
 
-            loopBubble = GetPreferredMergeBubbleThatHasNeighboursWithDifferentId(mergedBubbleList);
+            _cachedTempBubble = GetPreferredMergeBubbleThatHasNeighboursWithDifferentId(mergedBubbleList);
 
-            if (loopBubble != null)
-                return loopBubble;
+            if (_cachedTempBubble != null)
+                return _cachedTempBubble;
 
-            loopBubble = GetHighestPreferredMergeBubble(mergedBubbleList);
-            return loopBubble;
+            _cachedTempBubble = GetHighestPreferredMergeBubble(mergedBubbleList);
+            return _cachedTempBubble;
         }
 
         private Bubble GetPreferredMergeBubbleThatHasNeighboursWithDifferentId(List<Bubble> mergedBubbleList)
         {
-            Bubble loopBubble = null;
-
             for (int i = 0; i < mergedBubbleList.Count; i++)
             {
-                loopBubble = mergedBubbleList[i];
+                _cachedTempBubble = mergedBubbleList[i];
 
-                if (loopBubble.GetNeighbourBubblesWithDifferentId().Count > 0)
+                if (_cachedTempBubble.GetNeighbourBubblesWithDifferentId().Count > 0)
                 {
-                    return loopBubble;
+                    return _cachedTempBubble;
                 }
             }
 
@@ -347,20 +343,21 @@ namespace Assets.Scripts.BubbleSystem
 
         private Bubble GetHighestPreferredMergeBubble(List<Bubble> mergedBubbleList)
         {
-            Bubble loopBubble = null;
             Bubble highestBubble = null;
             float highestY = float.NegativeInfinity;
 
             for (int i = 0; i < mergedBubbleList.Count; i++)
             {
-                loopBubble = mergedBubbleList[i];
+                _cachedTempBubble = mergedBubbleList[i];
 
-                if (loopBubble.transform.position.y > highestY)
+                if (_cachedTempBubble.transform.position.y > highestY)
                 {
-                    highestBubble = loopBubble;
-                    highestY = loopBubble.transform.position.y;
+                    highestBubble = _cachedTempBubble;
+                    highestY = _cachedTempBubble.transform.position.y;
                 }
             }
+
+            _cachedTempBubble = null;
 
             return highestBubble;
         }
@@ -380,11 +377,11 @@ namespace Assets.Scripts.BubbleSystem
 
         public Bubble OnThrowBubbleRequested()
         {
-            Bubble bubble = _bubbleCreator.GetBubble();
-            bubble.ThrowEvent += OnThrow;
-            bubble.IsThrowBubble = true;
+            _cachedTempBubble = _bubbleCreator.GetBubble();
+            _cachedTempBubble.ThrowEvent += OnThrow;
+            _cachedTempBubble.IsThrowBubble = true;
 
-            return bubble;
+            return _cachedTempBubble;
         }
 
         private void OnBubbleCreated(Bubble bubble)

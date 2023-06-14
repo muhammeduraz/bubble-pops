@@ -22,6 +22,8 @@ namespace Assets.Scripts.BubbleSystem
 
         #region Variables
 
+        private const int FinalId = 2048;
+
         private bool _isCeiling;
         private bool _isDisposed;
         private bool _isExploded;
@@ -33,10 +35,12 @@ namespace Assets.Scripts.BubbleSystem
 
         private Vector3 _currentPosition;
 
+        private Bubble _cachedTempBubble;
         private BubbleData _bubbleData;
 
         private Collider[] _neighbourColliders;
         private Collider[] _emptyNeighbourColliders;
+        private List<Bubble> _neighbourBubbleList;
 
         private List<Vector3> _neighbourOffsetList = new List<Vector3>
         {
@@ -51,6 +55,9 @@ namespace Assets.Scripts.BubbleSystem
         };
 
         [SerializeField] private ThrowSettings _throwSettings;
+
+        [SerializeField] private float _fallTargetHeight;
+        [SerializeField] private float _fallDurationMultiplier;
 
         [SerializeField] private float _shakeAmount;
         [SerializeField] private float _shakeDuration;
@@ -86,6 +93,7 @@ namespace Assets.Scripts.BubbleSystem
 
             _neighbourColliders = new Collider[9];
             _emptyNeighbourColliders = new Collider[1];
+            _neighbourBubbleList = new List<Bubble>();
 
             _collider.enabled = true;
             gameObject.SetActive(true);
@@ -130,7 +138,7 @@ namespace Assets.Scripts.BubbleSystem
 
         private void ExplodeBubbleIfPossible()
         {
-            if (_bubbleData.id != 2048) return;
+            if (_bubbleData.id != FinalId) return;
 
             ExplodeBubble();
         }
@@ -166,9 +174,9 @@ namespace Assets.Scripts.BubbleSystem
         public void Fall(Action action)
         {
             _collider.enabled = false;
-            float duration = Mathf.Abs(transform.position.y + 3.5f) * .15f;
+            float duration = Mathf.Abs(transform.position.y - _fallTargetHeight) * _fallDurationMultiplier;
             
-            transform.DOMoveY(-3.5f, duration).SetEase(Ease.InCubic).OnComplete(() =>
+            transform.DOMoveY(_fallTargetHeight, duration).SetEase(Ease.InCubic).OnComplete(() =>
             {
                 action?.Invoke();
                 Dispose();
@@ -179,30 +187,31 @@ namespace Assets.Scripts.BubbleSystem
         {
             if (IsCeiling) return false;
 
-            List<Bubble> neighbourBubbleList = GetNeighbourBubbles();
+            _neighbourBubbleList = GetNeighbourBubbles();
             List<Bubble> checkedBubbleList = new List<Bubble>();
             checkedBubbleList.Add(this);
 
-            Bubble loopBubble = null;
-
-            for (int i = 0; i < neighbourBubbleList.Count; i++)
+            for (int i = 0; i < _neighbourBubbleList.Count; i++)
             {
-                loopBubble = neighbourBubbleList[i];
+                _cachedTempBubble = _neighbourBubbleList[i];
 
-                if (loopBubble.IsCeiling) return false;
-                if (!checkedBubbleList.Contains(loopBubble))
+                if (_cachedTempBubble.IsCeiling) return false;
+                if (!checkedBubbleList.Contains(_cachedTempBubble))
                 {
-                    List<Bubble> tempList = loopBubble.GetNeighbourBubbles();
+                    List<Bubble> tempList = _cachedTempBubble.GetNeighbourBubbles();
                     for (int j = 0; j < tempList.Count; j++)
                     {
-                        if (!neighbourBubbleList.Contains(tempList[j]))
+                        if (!_neighbourBubbleList.Contains(tempList[j]))
                         {
-                            neighbourBubbleList.Add(tempList[j]);
+                            _neighbourBubbleList.Add(tempList[j]);
                         }
                     }
-                    checkedBubbleList.Add(loopBubble);
+                    checkedBubbleList.Add(_cachedTempBubble);
                 }
             }
+
+            _cachedTempBubble = null;
+            _neighbourBubbleList.Clear();
 
             return true;
         }
@@ -290,26 +299,27 @@ namespace Assets.Scripts.BubbleSystem
 
         private void ShakeNeighbourBubbles()
         {
-            List<Bubble> neighbourBubbleList = GetNeighbourBubbles();
-            if (neighbourBubbleList.Count <= 0) return;
+            _neighbourBubbleList = GetNeighbourBubbles();
+            if (_neighbourBubbleList.Count <= 0) return;
 
             Vector3 direction;
-            Bubble loopBubble = null;
 
-            for (int i = 0; i < neighbourBubbleList.Count; i++)
+            for (int i = 0; i < _neighbourBubbleList.Count; i++)
             {
-                loopBubble = neighbourBubbleList[i];
+                _cachedTempBubble = _neighbourBubbleList[i];
 
-                direction = loopBubble.transform.position - transform.position;
+                direction = _cachedTempBubble.transform.position - transform.position;
                 direction = direction.normalized;
 
-                loopBubble.ShakeBubble(direction);
+                _cachedTempBubble.ShakeBubble(direction);
             }
+
+            _cachedTempBubble = null;
+            _neighbourBubbleList.Clear();
         }
 
         public List<Bubble> GetNeighbourBubbles()
         {
-            Bubble loopBubble = null;
             Collider loopCollider = null;
             List<Bubble> bubbleList = new List<Bubble>();
 
@@ -319,12 +329,14 @@ namespace Assets.Scripts.BubbleSystem
             for (int i = 0; i < count; i++)
             {
                 loopCollider = _neighbourColliders[i];
-                loopCollider.TryGetComponent(out loopBubble);
-                if (loopBubble != null && loopBubble != this)
+                loopCollider.TryGetComponent(out _cachedTempBubble);
+                if (_cachedTempBubble != null && !_cachedTempBubble.IsThrowBubble && _cachedTempBubble != this)
                 {
-                    bubbleList.Add(loopBubble);
+                    bubbleList.Add(_cachedTempBubble);
                 }
             }
+
+            _cachedTempBubble = null;
 
             return bubbleList;
         }
@@ -333,16 +345,17 @@ namespace Assets.Scripts.BubbleSystem
         {
             List<Bubble> neighbourList = GetNeighbourBubbles();
 
-            Bubble loopBubble = null;
             for (int i = neighbourList.Count - 1; i >= 0; i--)
             {
-                loopBubble = neighbourList[i];
+                _cachedTempBubble = neighbourList[i];
 
-                if (loopBubble._bubbleData.id != _bubbleData.id)
+                if (_cachedTempBubble._bubbleData.id != _bubbleData.id)
                 {
                     neighbourList.RemoveAt(i);
                 }
             }
+
+            _cachedTempBubble = null;
 
             return neighbourList;
         }
@@ -351,16 +364,17 @@ namespace Assets.Scripts.BubbleSystem
         {
             List<Bubble> neighbourList = GetNeighbourBubbles();
 
-            Bubble loopBubble = null;
             for (int i = neighbourList.Count - 1; i >= 0; i--)
             {
-                loopBubble = neighbourList[i];
+                _cachedTempBubble = neighbourList[i];
 
-                if (loopBubble.BubbleData != null && _bubbleData != null && loopBubble._bubbleData.id == _bubbleData.id)
+                if (_cachedTempBubble.BubbleData != null && _bubbleData != null && _cachedTempBubble._bubbleData.id == _bubbleData.id)
                 {
                     neighbourList.RemoveAt(i);
                 }
             }
+
+            _cachedTempBubble = null;
 
             return neighbourList;
         }
@@ -392,60 +406,62 @@ namespace Assets.Scripts.BubbleSystem
 
         public bool IsMergable()
         {
-            Bubble loopBubble = null;
-            List<Bubble> neighbourBubbleList = GetNeighbourBubblesWithSameId();
+            _neighbourBubbleList = GetNeighbourBubblesWithSameId();
             
-            for (int i = 0; i < neighbourBubbleList.Count; i++)
+            for (int i = 0; i < _neighbourBubbleList.Count; i++)
             {
-                loopBubble = neighbourBubbleList[i];
+                _cachedTempBubble = _neighbourBubbleList[i];
 
-                if (loopBubble.BubbleData.id == _bubbleData.id)
+                if (_cachedTempBubble.BubbleData.id == _bubbleData.id)
                 {
                     return true;
                 }
             }
+
+            _cachedTempBubble = null;
+            _neighbourBubbleList.Clear();
 
             return false;
         }
 
         public List<Bubble> GetMergeBubbles()
         {
-            Bubble loopBubble = null;
-
-            List<Bubble> tempBubbleList;
             List<Bubble> finalBubbleList = new List<Bubble>();
 
             finalBubbleList.Add(this);
 
-            tempBubbleList = GetNeighbourBubblesWithSameId();
+            _neighbourBubbleList = GetNeighbourBubblesWithSameId();
 
-            for (int i = 0; i < tempBubbleList.Count; i++)
+            for (int i = 0; i < _neighbourBubbleList.Count; i++)
             {
-                loopBubble = tempBubbleList[i];
+                _cachedTempBubble = _neighbourBubbleList[i];
 
-                if (!loopBubble.IsThrowBubble && !finalBubbleList.Contains(loopBubble))
+                if (!_cachedTempBubble.IsThrowBubble && !finalBubbleList.Contains(_cachedTempBubble))
                 {
-                    finalBubbleList.Add(loopBubble);
-                    AddRangeWithoutDuplicate(tempBubbleList, loopBubble.GetNeighbourBubblesWithSameId());
+                    finalBubbleList.Add(_cachedTempBubble);
+                    AddRangeWithoutDuplicate(_neighbourBubbleList, _cachedTempBubble.GetNeighbourBubblesWithSameId());
                 }
             }
+
+            _cachedTempBubble = null;
+            _neighbourBubbleList.Clear();
 
             return finalBubbleList;
         }
 
         private void AddRangeWithoutDuplicate(List<Bubble> mainList, List<Bubble> toBeAddedList)
         {
-            Bubble loopBubble = null;
-
             for (int i = 0; i < toBeAddedList.Count; i++)
             {
-                loopBubble = toBeAddedList[i];
+                _cachedTempBubble = toBeAddedList[i];
 
-                if (!mainList.Contains(loopBubble))
+                if (!mainList.Contains(_cachedTempBubble))
                 {
-                    mainList.Add(loopBubble);
+                    mainList.Add(_cachedTempBubble);
                 }
             }
+
+            _cachedTempBubble = null;
         }
 
         #endregion Functions
