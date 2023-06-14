@@ -32,7 +32,9 @@ namespace Assets.Scripts.BubbleSystem
 
         private BubbleCreator _bubbleCreator;
 
+        private Bubble _cachedLoopBubble;
         private List<Bubble> _cachedFallList;
+        private List<Bubble> _cachedNeighbourList;
 
         [SerializeField] private int _minActiveBubbleToCreateNewLine;
 
@@ -65,6 +67,7 @@ namespace Assets.Scripts.BubbleSystem
             _bubbleCreator = new BubbleCreator(_bubbleDataSO, _bubbleCreatorSettings, transform);
 
             _cachedFallList = new List<Bubble>();
+            _cachedNeighbourList = new List<Bubble>();
 
             Subscribe(true);
             StartCoroutine(_bubbleCreator.CreateInitialPile());
@@ -127,14 +130,14 @@ namespace Assets.Scripts.BubbleSystem
             bubble.ThrowEvent -= OnThrow;
             bubble.ExplodeEvent -= ExplodeBubble;
 
-            List<Bubble> neighbourList = bubble.GetNeighbourBubbles();
-            HandleFall(neighbourList);
-            neighbourList.Add(bubble);
+            _cachedNeighbourList = bubble.GetNeighbourBubbles();
+            HandleFall(_cachedNeighbourList);
+            _cachedNeighbourList.Add(bubble);
 
             Bubble loopBubble = null;
-            for (int i = 0; i < neighbourList.Count; i++)
+            for (int i = 0; i < _cachedNeighbourList.Count; i++)
             {
-                loopBubble = neighbourList[i];
+                loopBubble = _cachedNeighbourList[i];
 
                 if (loopBubble != null && loopBubble.BubbleData != null)
                 {
