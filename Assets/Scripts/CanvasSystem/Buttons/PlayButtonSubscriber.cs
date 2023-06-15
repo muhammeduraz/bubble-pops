@@ -31,14 +31,14 @@ namespace Assets.Scripts.CanvasSystem.Buttons
 
         protected override void SubscribeEvents()
         {
-            if (_playButton == null) return;
+            if (_playButton == null || _sceneService == null) return;
 
             _playButton.PlayButtonClicked += _sceneService.LoadGameSceneFromMenu;
         }
 
         protected override void UnSubscribeEvents()
         {
-            if (_playButton == null) return;
+            if (_playButton == null || _sceneService == null) return;
 
             _playButton.PlayButtonClicked -= _sceneService.LoadGameSceneFromMenu;
         }
