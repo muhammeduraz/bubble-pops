@@ -42,7 +42,7 @@ namespace Assets.Scripts.BubbleSystem
         private Collider[] _emptyNeighbourColliders;
         private List<Bubble> _neighbourBubbleList;
 
-        private List<Vector3> _neighbourOffsetList = new List<Vector3>
+        private readonly List<Vector3> _neighbourOffsetList = new List<Vector3>
         {
             new Vector3(0.5f, 0.88f, 0f),
             new Vector3(-0.5f, 0.88f, 0f),
@@ -191,14 +191,21 @@ namespace Assets.Scripts.BubbleSystem
             List<Bubble> checkedBubbleList = new List<Bubble>();
             checkedBubbleList.Add(this);
 
+            List<Bubble> tempList = new List<Bubble>();
+
             for (int i = 0; i < _neighbourBubbleList.Count; i++)
             {
                 _cachedTempBubble = _neighbourBubbleList[i];
 
-                if (_cachedTempBubble.IsCeiling) return false;
+                if (_cachedTempBubble.IsCeiling)
+                {
+                    _neighbourBubbleList.Clear();
+                    return false;
+                }
+
                 if (!checkedBubbleList.Contains(_cachedTempBubble))
                 {
-                    List<Bubble> tempList = _cachedTempBubble.GetNeighbourBubbles();
+                    tempList = _cachedTempBubble.GetNeighbourBubbles();
                     for (int j = 0; j < tempList.Count; j++)
                     {
                         if (!_neighbourBubbleList.Contains(tempList[j]))

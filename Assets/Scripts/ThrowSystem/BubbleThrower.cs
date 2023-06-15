@@ -6,7 +6,7 @@ using Assets.Scripts.BubbleSystem;
 using Assets.Scripts.HapticSystem;
 using Assets.Scripts.EnvironmentSystem;
 using Assets.Scripts.BubbleSystem.Data;
-using TMPro;
+using System.Security.Cryptography;
 
 namespace Assets.Scripts.ThrowSystem
 {
@@ -24,6 +24,7 @@ namespace Assets.Scripts.ThrowSystem
 
         #region Variables
 
+        private bool _isThrowable;
         private bool _isFingerDown;
         private bool _isMergeCompleted;
         private bool _isNextBubbleReady;
@@ -172,6 +173,8 @@ namespace Assets.Scripts.ThrowSystem
 
             CacheThrowPath();
             _currentBubble.Throw(_cachedTargetPositions);
+
+            _targetPosition = Vector3.zero;
         }
 
         private void InitializeLineRenderer()
@@ -223,7 +226,7 @@ namespace Assets.Scripts.ThrowSystem
                 if (bubble != null)
                 {
                     UpdateLineRenderer(2, hit.point);
-                    UpdateThrowGuide(bubble, hit.point);
+                    UpdateTargetPositionAndThrowGuide(bubble, hit.point);
 
                     _targetBubble = bubble;
                 }
@@ -244,27 +247,43 @@ namespace Assets.Scripts.ThrowSystem
                     UpdateLineRenderer(1, _rayStartTransform.position);
                     UpdateLineRenderer(2, hit.point);
 
-                    UpdateThrowGuide(bubble, hit.point);
+                    UpdateTargetPositionAndThrowGuide(bubble, hit.point);
 
                     _targetBubble = bubble;
                 }
             }
         }
 
-        private void UpdateThrowGuide(Bubble bubble, Vector3 point)
+        private void UpdateTargetPositionAndThrowGuide(Bubble bubble, Vector3 point)
         {
-            Vector3 guidePosition = GetClosestPosition(bubble, point);
+            Vector3 guidePosition = GetClosestPositionFromEmptyNeigbours(bubble, point);
 
+            UpdateThrowGuide(guidePosition);
+            UpdateTargetPosition(guidePosition);
+        }
+
+        private void UpdateThrowGuide(Vector3 guidePosition)
+        {
             if (guidePosition != _targetPosition)
             {
-                _targetPosition = guidePosition;
-
                 _throwGuide.SetPosition(guidePosition);
                 _throwGuide.ScaleOut();
             }
         }
 
-        private Vector3 GetClosestPosition(Bubble bubble, Vector3 hitPoint)
+        private void UpdateTargetPosition(Vector3 guidePosition)
+        {
+            if (guidePosition == Vector3.zero)
+            {
+                _isThrowable = false;
+                return;
+            }
+
+            _isThrowable = true;
+            _targetPosition = guidePosition;
+        }
+
+        private Vector3 GetClosestPositionFromEmptyNeigbours(Bubble bubble, Vector3 hitPoint)
         {
             if (_targetBubble != bubble) 
                 _cachedPositionList = bubble.GetEmptyPositions();
@@ -307,11 +326,11 @@ namespace Assets.Scripts.ThrowSystem
 
         public void OnFingerUp(Vector3 mousePosition)
         {
-            if (!_isMergeCompleted || !_isNextBubbleReady || !_isFingerDown) return;
+            _lineRenderer.enabled = false;
+            
+            if (!_isMergeCompleted || !_isNextBubbleReady || !_isFingerDown || !_isThrowable) return;
             _isFingerDown = false;
             _isNextBubbleReady = false;
-
-            _lineRenderer.enabled = false;
 
             ThrowBubble();
 
