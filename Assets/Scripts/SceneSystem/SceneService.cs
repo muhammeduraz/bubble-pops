@@ -11,6 +11,7 @@ namespace Assets.Scripts.SceneSystem
         #region Variables
 
         private const string MainScene = "MainScene";
+        private const string MenuScene = "MenuScene";
         private const string GameScene = "GameScene";
 
         [SerializeField] private float _extraLoadingDuration;
@@ -37,7 +38,7 @@ namespace Assets.Scripts.SceneSystem
 
         public void Initialize()
         {
-            StartCoroutine(LoadSceneAsync(GameScene, LoadSceneMode.Additive));
+            StartCoroutine(LoadSceneAsync(MenuScene, LoadSceneMode.Additive));
         }
 
         public void Dispose()
@@ -75,7 +76,7 @@ namespace Assets.Scripts.SceneSystem
 
             _loadingPanel.UpdateProgress(1f, _extraLoadingDuration);
 
-            Scene scene = SceneManager.GetSceneByBuildIndex(1);
+            Scene scene = SceneManager.GetSceneByName(sceneName);
             SceneManager.SetActiveScene(scene);
 
             yield return new WaitForSeconds(_extraLoadingDuration);
@@ -91,13 +92,24 @@ namespace Assets.Scripts.SceneSystem
                 yield return new WaitForSeconds(_loadingPanel.AppearDuration);
             }
 
-            AsyncOperation unloadOperation = SceneManager.UnloadSceneAsync(GameScene);
+            AsyncOperation unloadOperation = SceneManager.UnloadSceneAsync(sceneName);
 
             while (!unloadOperation.isDone)
             {
                 _loadingPanel.UpdateProgress(unloadOperation.progress / 3f);
                 yield return null;
             }
+        }
+
+        public void LoadGameSceneFromMenu()
+        {
+            StartCoroutine(LoadGameSceneFromMenuAsync());
+        }
+
+        private IEnumerator LoadGameSceneFromMenuAsync()
+        {
+            yield return StartCoroutine(UnloadSceneAsync(MenuScene));
+            yield return StartCoroutine(LoadSceneAsync(GameScene, LoadSceneMode.Additive));
         }
 
         #endregion Functions
