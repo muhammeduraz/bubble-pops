@@ -18,6 +18,7 @@ namespace Assets.Scripts.BubbleSystem
         public Action CameraShakeRequested;
         public Action MergeOperationCompleted;
         public Action<double> UpdateGeneralScore;
+        public Action MoveAllBubblesDownCompleted;
         public Action<int, Vector3> ShowBubbleScore;
         public Action<int, Vector3> BubbleParticleRequested;
 
@@ -36,9 +37,8 @@ namespace Assets.Scripts.BubbleSystem
         private List<Bubble> _cachedFallList;
         private List<Bubble> _cachedNeighbourList;
 
-        [SerializeField] private int _minActiveBubbleToCreateNewLine;
-
         [SerializeField] private BubbleDataSO _bubbleDataSO;
+        [SerializeField] private BubbleManagerSettings _bubbleManagerSettings;
         [SerializeField] private BubbleCreatorSettings _bubbleCreatorSettings;
 
         #endregion Variables
@@ -90,7 +90,7 @@ namespace Assets.Scripts.BubbleSystem
             }
         }
 
-        private void MoveAllBubblesDown()
+        private IEnumerator MoveAllBubblesDown()
         {
             for (int i = 0; i < _bubbleCreator.ActiveBubbleList.Count; i++)
             {
@@ -103,13 +103,17 @@ namespace Assets.Scripts.BubbleSystem
             }
 
             _cachedTempBubble = null;
+
+            yield return _waitForSeconds_02;
+
+            MoveAllBubblesDownCompleted?.Invoke();
         }
 
         private void MoveDownAndCreateLine()
         {
-            if (_bubbleCreator.ActiveBubbleList.Count >= _minActiveBubbleToCreateNewLine) return;
+            if (_bubbleCreator.ActiveBubbleList.Count >= _bubbleManagerSettings.minActiveBubbleToCreateNewLine) return;
 
-            MoveAllBubblesDown();
+            StartCoroutine(MoveAllBubblesDown());
             _bubbleCreator.CreateLinePile();
         }
 

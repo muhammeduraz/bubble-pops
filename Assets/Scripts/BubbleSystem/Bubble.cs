@@ -249,7 +249,7 @@ namespace Assets.Scripts.BubbleSystem
             });
         }
 
-        public void MoveDown(float amount, float duration = 0.25f)
+        public void MoveDown(float amount, float duration = 0.2f)
         {
             _currentPosition.y += amount;
 
