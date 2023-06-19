@@ -17,7 +17,7 @@ namespace Assets.Scripts.CanvasSystem.Buttons
 
         protected override void Initialize()
         {
-            _retryButton = FindObjectOfType<RetryButton>();
+            _retryButton = GetComponent<RetryButton>();
 
             _sceneService = FindObjectOfType<SceneService>();
         }

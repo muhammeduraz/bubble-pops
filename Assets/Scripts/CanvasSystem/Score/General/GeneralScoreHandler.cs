@@ -64,6 +64,8 @@ namespace Assets.Scripts.CanvasSystem.Score.General
             _scoreText = null;
         }
 
+        public double GetScore() => _score;
+
         private void UpdateTimer()
         {
             if (_multiplier <= 1) return;
