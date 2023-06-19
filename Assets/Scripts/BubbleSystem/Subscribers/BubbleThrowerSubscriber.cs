@@ -1,6 +1,7 @@
 using Assets.Scripts.InputSystem;
 using Assets.Scripts.ThrowSystem;
 using Assets.Scripts.SubscribeSystem;
+using Assets.Scripts.EnvironmentSystem;
 
 namespace Assets.Scripts.BubbleSystem.Subscriber
 {
@@ -10,6 +11,7 @@ namespace Assets.Scripts.BubbleSystem.Subscriber
 
         private BubbleThrower _bubbleThrower;
 
+        private FailTrigger _failTrigger;
         private InputHandler _inputHandler;
         private BubbleManager _bubbleManager;
 
@@ -21,6 +23,7 @@ namespace Assets.Scripts.BubbleSystem.Subscriber
         {
             _bubbleThrower = FindObjectOfType<BubbleThrower>();
 
+            _failTrigger = FindObjectOfType<FailTrigger>();
             _inputHandler = FindObjectOfType<InputHandler>();
             _bubbleManager = FindObjectOfType<BubbleManager>();
         }
@@ -29,6 +32,7 @@ namespace Assets.Scripts.BubbleSystem.Subscriber
         {
             _bubbleThrower = null;
 
+            _failTrigger = null;
             _inputHandler = null;
             _bubbleManager = null;
         }
@@ -36,6 +40,8 @@ namespace Assets.Scripts.BubbleSystem.Subscriber
         protected override void SubscribeEvents()
         {
             if (_bubbleThrower == null) return;
+
+            _failTrigger.Failed += _bubbleThrower.OnFailed;
 
             _inputHandler.OnFingerDown += _bubbleThrower.OnFingerDown;
             _inputHandler.OnFinger += _bubbleThrower.OnFinger;
@@ -48,6 +54,8 @@ namespace Assets.Scripts.BubbleSystem.Subscriber
         protected override void UnSubscribeEvents()
         {
             if (_bubbleThrower == null) return;
+
+            _failTrigger.Failed -= _bubbleThrower.OnFailed;
 
             _inputHandler.OnFingerDown -= _bubbleThrower.OnFingerDown;
             _inputHandler.OnFinger -= _bubbleThrower.OnFinger;

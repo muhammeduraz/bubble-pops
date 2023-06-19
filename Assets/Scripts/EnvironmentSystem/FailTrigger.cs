@@ -1,9 +1,16 @@
+using System;
 using UnityEngine;
 
 namespace Assets.Scripts.EnvironmentSystem
 {
     public class FailTrigger : MonoBehaviour
     {
+        #region Events
+
+        public Action Failed;
+
+        #endregion Events
+        
         #region Variables
 
         private Ray _ray;
@@ -31,7 +38,7 @@ namespace Assets.Scripts.EnvironmentSystem
 
         private void OnFailed()
         {
-            Debug.LogError("Fail");
+            Failed?.Invoke();
         }
 
         public void CheckIfFail()

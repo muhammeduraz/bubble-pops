@@ -6,7 +6,6 @@ using Assets.Scripts.BubbleSystem;
 using Assets.Scripts.HapticSystem;
 using Assets.Scripts.EnvironmentSystem;
 using Assets.Scripts.BubbleSystem.Data;
-using System.Security.Cryptography;
 
 namespace Assets.Scripts.ThrowSystem
 {
@@ -90,6 +89,14 @@ namespace Assets.Scripts.ThrowSystem
             _lineStartTransform = null;
             _nextBubbleTransform = null;
             _currentBubbleTransform = null;
+        }
+
+        public void OnFailed()
+        {
+            _currentBubbleSequence?.Kill();
+
+            if (_currentBubble != null) _currentBubble.Dispose();
+            if (_nextBubble != null) _nextBubble.Dispose();
         }
 
         public void OnMergeOperationCompleted()

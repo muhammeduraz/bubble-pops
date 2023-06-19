@@ -5,6 +5,7 @@ using Assets.Scripts.SubscribeSystem;
 using Assets.Scripts.CanvasSystem.Score.Combo;
 using Assets.Scripts.CanvasSystem.Score.General;
 using Assets.Scripts.CanvasSystem.Score.BubbleScore;
+using Assets.Scripts.EnvironmentSystem;
 
 namespace Assets.Scripts.BubbleSystem.Subscriber
 {
@@ -14,6 +15,7 @@ namespace Assets.Scripts.BubbleSystem.Subscriber
 
         private BubbleManager _bubbleManager;
 
+        private FailTrigger _failTrigger;
         private BubbleThrower _bubbleThrower;
         private CameraService _cameraService;
         private ParticlePlayer _particlePlayer;
@@ -29,6 +31,7 @@ namespace Assets.Scripts.BubbleSystem.Subscriber
         {
             _bubbleManager = FindObjectOfType<BubbleManager>();
 
+            _failTrigger = FindObjectOfType<FailTrigger>();
             _bubbleThrower = FindObjectOfType<BubbleThrower>();
             _cameraService = FindObjectOfType<CameraService>();
             _particlePlayer = FindObjectOfType<ParticlePlayer>();
@@ -41,6 +44,7 @@ namespace Assets.Scripts.BubbleSystem.Subscriber
         {
             _bubbleManager = null;
 
+            _failTrigger = null;
             _bubbleThrower = null;
             _cameraService = null;
             _particlePlayer = null;
@@ -52,6 +56,8 @@ namespace Assets.Scripts.BubbleSystem.Subscriber
         protected override void SubscribeEvents()
         {
             if (_bubbleManager == null) return;
+
+            _failTrigger.Failed += _bubbleManager.OnFailed;
 
             _bubbleManager.CameraShakeRequested += _cameraService.ShakeCamera;
 
@@ -69,6 +75,8 @@ namespace Assets.Scripts.BubbleSystem.Subscriber
         protected override void UnSubscribeEvents()
         {
             if (_bubbleManager == null) return;
+
+            _failTrigger.Failed -= _bubbleManager.OnFailed;
 
             _bubbleManager.CameraShakeRequested -= _cameraService.ShakeCamera;
 

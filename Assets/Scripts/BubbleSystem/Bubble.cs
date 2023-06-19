@@ -171,7 +171,7 @@ namespace Assets.Scripts.BubbleSystem
             transform.position = position;
         }
 
-        public void Fall(Action action)
+        public void Fall(Action action = null)
         {
             _collider.enabled = false;
             float duration = Mathf.Abs(transform.position.y - _fallTargetHeight) * _fallDurationMultiplier;

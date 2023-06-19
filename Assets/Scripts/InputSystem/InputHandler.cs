@@ -64,6 +64,11 @@ namespace Assets.Scripts.InputSystem
             _eventData = null;
         }
 
+        public void Deactivate()
+        {
+            IsEnabled = false;
+        }
+
         private void UpdateInput()
         {
             if (Input.GetMouseButtonDown(0))
