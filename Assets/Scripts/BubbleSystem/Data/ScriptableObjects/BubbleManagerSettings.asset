@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a6e083b6be23fa4bae05f2df8415161, type: 3}
   m_Name: BubbleManagerSettings
   m_EditorClassIdentifier: 
-  minActiveBubbleToCreateNewLine: 40
+  minActiveBubbleToCreateNewLine: 30
