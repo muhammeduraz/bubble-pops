@@ -15,6 +15,7 @@ namespace Assets.Scripts.EnvironmentSystem.Theme
 
         [SerializeField] private ThemeDataSO _themeDataSO;
         [SerializeField] private SpriteRenderer _backgroundSprite;
+        [SerializeField] private SpriteRenderer _backgroundPlaneRenderer;
 
         #endregion Variables
 
@@ -51,6 +52,8 @@ namespace Assets.Scripts.EnvironmentSystem.Theme
 
             _themeTween?.Kill();
             _themeTween = _backgroundSprite.DOColor(_themeDataSO.CurrentThemeData.BackgroundColor, _colorChangeDuration);
+
+            _backgroundPlaneRenderer.color = _themeDataSO.CurrentThemeData.BackgroundColor;
         }
 
         #endregion Functions

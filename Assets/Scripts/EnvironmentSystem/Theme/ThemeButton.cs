@@ -5,6 +5,7 @@ using Assets.Scripts.EnvironmentSystem.Theme.Data;
 
 namespace Assets.Scripts.EnvironmentSystem.Theme
 {
+    [DefaultExecutionOrder(-1000)]
     public class ThemeButton : MonoBehaviour, IDisposable
     {
         #region Events

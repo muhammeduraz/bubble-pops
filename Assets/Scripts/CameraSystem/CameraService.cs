@@ -10,6 +10,8 @@ namespace Assets.Scripts.CameraSystem
     {
         #region Variables
 
+        private Vector3 _initialPosition;
+
         [SerializeField] private Camera _mainCamera;
         [SerializeField] private CinemachineVirtualCamera _gameCamera;
 
@@ -46,7 +48,13 @@ namespace Assets.Scripts.CameraSystem
 
         public void ShakeCamera()
         {
-            _gameCamera.transform.DOShakePosition(_settings.shakeDuration, _settings.shakeStrength, _settings.shakeVibrato);
+            _gameCamera.transform.DOShakePosition(_settings.shakeDuration, _settings.shakeStrength, _settings.shakeVibrato)
+                .OnComplete(()=> SetInitialPosition());
+        }
+
+        private void SetInitialPosition()
+        {
+            transform.position = _initialPosition;
         }
 
         #endregion Functions
