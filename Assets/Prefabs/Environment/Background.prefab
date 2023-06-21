@@ -117,7 +117,7 @@ Transform:
   - {fileID: 7512328175546279643}
   - {fileID: 2081256466020691492}
   m_Father: {fileID: 0}
-  m_RootOrder: -1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &7512328174386832117
 MonoBehaviour:
@@ -147,6 +147,7 @@ MonoBehaviour:
   _colorChangeDuration: 0.25
   _themeDataSO: {fileID: 11400000, guid: 9f9796871cf24d548ae54048f99552cf, type: 2}
   _backgroundSprite: {fileID: 7512328175546279640}
+  _backgroundPlaneRenderer: {fileID: 350985613825629425}
 --- !u!1 &7512328175005469348
 GameObject:
   m_ObjectHideFlags: 0
